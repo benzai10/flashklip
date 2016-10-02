@@ -1,4 +1,6 @@
-<div class="jumbotron">
-  <h2><%= gettext "Welcome to %{name}", name: "Flashklip!" %></h2>
-  <p class="lead">Create Flashcards based on Videoclips<br />Rewatch for Maximized Learning Effect</p>
-</div>
+<%= if !@current_user do %>
+  <div class="jumbotron">
+    <h2><%= gettext "Welcome to %{name}", name: "Flashklip!" %></h2>
+    <p class="lead">Create Flashcards based on Videoclips<br />Rewatch for Maximized Learning Effect</p>
+  </div>
+<% end %>
