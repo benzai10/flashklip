@@ -17,12 +17,12 @@ form.link, form.button {
   border-bottom: 1px solid #e5e5e5;
 }
 .logo {
-  width: 519px;
-  height: 71px;
+  width: 260px;
+  height: 35px;
   display: inline-block;
   margin-bottom: 1em;
-  background-image: url("/images/flashklip_beta_low_logo_520x70.png");
-  background-size: 519px 71px;
+  background-image: url("/images/flashklip_beta_low_logo_260x35.png");
+  background-size: 260px 35px;
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
@@ -68,12 +68,5 @@ form.link, form.button {
   /* Remove the bottom border on the jumbotron for visual effect */
   .jumbotron {
     border-bottom: 0;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .logo {
-    max-width: 100%;
-    background-size: 300px 70px;
   }
 }
