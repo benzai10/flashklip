@@ -26,4 +26,10 @@ defmodule Flashklip.Router do
   # scope "/api", Flashklip do
   #   pipe_through :api
   # end
+
+  scope "/manage", Flashklip do
+    pipe_through [:browser, :authenticate_user]
+
+    resources "/videos", VideoController
+  end
 end
