@@ -10,6 +10,9 @@ defmodule Flashklip.Metavideo do
     timestamps()
   end
 
+  @required_fields ~w(url)
+  @optional_fields ~w(title, created_by)
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """

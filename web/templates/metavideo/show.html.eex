@@ -1,0 +1,34 @@
+<h2>Show Metavideo</h2>
+
+<ul>
+
+  <li>
+    <strong>Metavideo:</strong>
+    <%= @metavideo.id %>
+  </li>
+
+  <li>
+    <strong>Created by:</strong>
+    <%= @metavideo.created_by %>
+  </li>
+
+  <li>
+    <strong>URL:</strong>
+    <%= @metavideo.url %>
+  </li>
+
+  <li>
+    <strong>Category:</strong>
+    <%= @metavideo.category_id %>
+  </li>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @metavideo.title %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: metavideo_path(@conn, :edit, @metavideo) %>
+
+<%= link "Back", to: metavideo_path(@conn, :index) %>

@@ -30,6 +30,7 @@ defmodule Flashklip.Router do
   scope "/manage", Flashklip do
     pipe_through [:browser, :authenticate_user]
 
+    resources "/metavideos", MetavideoController
     resources "/videos", VideoController
   end
 end

@@ -1,0 +1,34 @@
+<h2>Listing Metavideos</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Metavideo</th>
+      <th>Created by</th>
+      <th>URL</th>
+      <th>Category</th>
+      <th>Title</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for metavideo <- @metavideos do %>
+    <tr>
+      <td><%= metavideo.id %></td>
+      <td><%= metavideo.created_by %></td>
+      <td><%= metavideo.url %></td>
+      <td><%= metavideo.category_id %></td>
+      <td><%= metavideo.title %></td>
+
+      <td class="text-right">
+        <%= link "Show", to: metavideo_path(@conn, :show, metavideo), class: "btn btn-default btn-xs" %>
+        <%= link "Edit", to: metavideo_path(@conn, :edit, metavideo), class: "btn btn-default btn-xs" %>
+        <%= link "Delete", to: metavideo_path(@conn, :delete, metavideo), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<%= link "New Metavideo", to: metavideo_path(@conn, :new) %>
