@@ -19,6 +19,6 @@ defmodule Flashklip.Metavideo do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:url, :title, :created_by])
-    |> validate_required([:url, :title, :created_by])
+    |> validate_required([:url, :created_by])
   end
 end
