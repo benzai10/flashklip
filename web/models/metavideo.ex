@@ -11,7 +11,7 @@ defmodule Flashklip.Metavideo do
   end
 
   @required_fields ~w(url)
-  @optional_fields ~w(title, created_by)
+  @optional_fields ~w(title created_by)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -19,6 +19,6 @@ defmodule Flashklip.Metavideo do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:url, :title, :created_by])
-    |> validate_required([:url, :created_by])
+    |> validate_required([:url])
   end
 end

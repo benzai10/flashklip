@@ -1,7 +1,10 @@
 defmodule Flashklip.Video do
   use Flashklip.Web, :model
 
+  # alias Flashklip.Metavideo
+
   schema "videos" do
+    field :url, :string, virtual: true
     field :title, :string
     belongs_to :user, Flashklip.User
     belongs_to :metavideo, Flashklip.Metavideo
