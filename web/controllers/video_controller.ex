@@ -12,7 +12,10 @@ defmodule Flashklip.VideoController do
   end
 
   def index(conn, _params, user) do
-    videos = Repo.all(Video)
+    videos =
+      Repo.all(user_videos(user))
+      |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo]) end)
+
     render(conn, "index.html", videos: videos)
   end
 
@@ -52,18 +55,18 @@ defmodule Flashklip.VideoController do
   end
 
   def show(conn, %{"id" => id}, user) do
-    video = Repo.get!(Video, id)
+    video = Repo.get!(user_videos(user), id)
     render(conn, "show.html", video: video)
   end
 
   def edit(conn, %{"id" => id}, user) do
-    video = Repo.get!(Video, id)
+    video = Repo.get!(user_videos(user), id)
     changeset = Video.changeset(video)
     render(conn, "edit.html", video: video, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "video" => video_params}, user) do
-    video = Repo.get!(Video, id)
+    video = Repo.get!(user_videos(user), id)
     changeset = Video.changeset(video, video_params)
 
     case Repo.update(changeset) do
@@ -77,7 +80,7 @@ defmodule Flashklip.VideoController do
   end
 
   def delete(conn, %{"id" => id}, user) do
-    video = Repo.get!(Video, id)
+    video = Repo.get!(user_videos(user), id)
 
     # Here we use delete! (with a bang) because we expect
     # it to always work (and if it does not, it will raise).
@@ -86,5 +89,9 @@ defmodule Flashklip.VideoController do
     conn
     |> put_flash(:info, "Video deleted successfully.")
     |> redirect(to: video_path(conn, :index))
+  end
+
+  defp user_videos(user) do
+    assoc(user, :videos)
   end
 end
