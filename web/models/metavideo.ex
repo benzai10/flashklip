@@ -5,7 +5,7 @@ defmodule Flashklip.Metavideo do
     field :url, :string
     field :title, :string
     field :created_by, :integer
-    has_many :metavideos, Flashklip.Metavideo
+    has_many :videos, Flashklip.Video
 
     timestamps()
   end
