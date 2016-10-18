@@ -18,11 +18,6 @@
   </li>
 
   <li>
-    <strong>Category:</strong>
-    <%= @metavideo.category_id %>
-  </li>
-
-  <li>
     <strong>Title:</strong>
     <%= @metavideo.title %>
   </li>
