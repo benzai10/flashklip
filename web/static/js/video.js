@@ -20,10 +20,18 @@ let Video = {
     let vidChannel      = socket.channel("videos:" + videoId)
 
     postButton.addEventListener("click", e => {
-      let payload = {body: klipInput.value, at: Player.getCurrentTime()}
+      let payload = {content: klipInput.value, at: Player.getCurrentTime()}
       vidChannel.push("new_klip", payload)
         .receive("error", e => console.log(e))
       klipInput.value = ""
+    })
+
+    myKlipContainer.addEventListener("click", e => {
+      e.preventDefault()
+      let seconds = e.target.getAttribute("data-seek") ||
+                    e.target.parentNode.getAttribute("data-seek")
+      if (!seconds) { return }
+      Player.seekTo(seconds)
     })
 
     vidChannel.on("new_klip", (resp) => {
@@ -31,10 +39,10 @@ let Video = {
     })
 
     vidChannel.join()
-      .receive("ok", resp => console.log("joined the video channel", resp))
+      .receive("ok", resp => {
+        this.scheduleKlips(myKlipContainer, resp.klips)
+      })
       .receive("error", reason => console.log("join failed", reason))
-
-    vidChannel.on("ping", ({count}) => console.log("PING", count))
   },
 
   esc(str) {
@@ -43,16 +51,41 @@ let Video = {
     return div.innerHTML
   },
 
-  renderKlip(myKlipContainer, {user, body, at}) {
+  renderKlip(myKlipContainer, {user, content, at}) {
     let template = document.createElement("div")
 
     template.innerHTML = `
     <a href="#" data-seek="${this.esc(at)}">
-      <b>${this.esc(user.username)}</b>: ${this.esc(body)}
+      <b>${this.esc(user.username)}</b>: ${this.esc(content)}
     </a>
     `
     myKlipContainer.appendChild(template)
     myKlipContainer.scrollTop = myKlipContainer.scrollHeight
+  },
+
+  scheduleKlips(myKlipContainer, klips) {
+    setTimeout(() => {
+      let ctime = Player.getCurrentTime()
+      let remaining = this.renderAtTime(klips, ctime, myKlipContainer)
+      this.scheduleKlips(myKlipContainer, remaining)
+    }, 1000)
+  },
+
+  renderAtTime(klips, seconds, myKlipContainer) {
+    return klips.filter( klip => {
+      if (klip.at > seconds) {
+        return true
+      } else {
+        this.renderKlip(myKlipContainer, klip)
+        return false
+      }
+    })
+  },
+
+  formatTime(at) {
+    let date = new Date(null)
+    date.setSeconds(at / 1000)
+    return data.toISOString().substr(14, 5)
   }
 
 }

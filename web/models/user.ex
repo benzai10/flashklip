@@ -7,6 +7,7 @@ defmodule Flashklip.User do
 		field :password, :string, virtual: true
 		field :password_hash, :string
     has_many :videos, Flashklip.Video
+    has_many :klips, Flashklip.Klip
 
 		timestamps
 	end
