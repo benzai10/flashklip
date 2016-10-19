@@ -14,7 +14,7 @@ let Video = {
   onReady(videoId, socket) {
     let myKlipContainer = document.getElementById("my-klip-container")
     let klipInput       = document.getElementById("klip-input")
-    let postButton       = document.getElementById("klip-submit")
+    let postButton      = document.getElementById("klip-submit")
 
     // maybe later change to aggChannel?
     let vidChannel      = socket.channel("videos:" + videoId)
@@ -35,11 +35,14 @@ let Video = {
     })
 
     vidChannel.on("new_klip", (resp) => {
+      vidChannel.params.last_seen_id = resp.id
       this.renderKlip(myKlipContainer, resp)
     })
 
     vidChannel.join()
       .receive("ok", resp => {
+        let ids = resp.klips.map(klip => klip.id)
+        if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }
         this.scheduleKlips(myKlipContainer, resp.klips)
       })
       .receive("error", reason => console.log("join failed", reason))

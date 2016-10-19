@@ -12,30 +12,37 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="column row centered">
       <header class="header">
-        <ol class="breadcrumb text-right">
-          <%= if @current_user do %>
-            <li><%= @current_user.username %></li>
-            <li><%= link "My Videos", to: video_path(@conn, :index) %></li>
-            <li><%= link "Log out", to: session_path(@conn, :delete, @current_user), method: "delete" %></li>
-          <% else %>
-            <li><%= link "Register", to: user_path(@conn, :new) %></li>
-            <li><%= link "Log in", to: session_path(@conn, :new) %></li>
-          <% end %>
-        </ol>
-        <span class="logo"></span>
+        <div class="top-bar">
+          <div class="top-bar-left">
+            <a href="#"><img src="/images/flashklip_beta_low_logo_260x35.png"></a>
+          </div>
+          <div class="top-bar-right">
+            <ul class="menu">
+              <%= if @current_user do %>
+                <li><%= @current_user.username %></li>
+                <li><%= link "My Videos", to: video_path(@conn, :index) %></li>
+                <li><%= link "Log out", to: session_path(@conn, :delete, @current_user), method: "delete" %></li>
+              <% else %>
+                <li><%= link "Register", to: user_path(@conn, :new) %></li>
+                <li><%= link "Log in", to: session_path(@conn, :new) %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
       </header>
 
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+      <%= render "alerts.html", conn: @conn %>
 
       <main role="main">
         <%= render @view_module, @view_template, assigns %>
       </main>
 
-    </div> <!-- /container -->
+    </div>
+
     <script>window.userToken = "<%= assigns[:user_token] %>"</script>
-    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <%= render "script.html", conn: @conn %>
+
   </body>
 </html>

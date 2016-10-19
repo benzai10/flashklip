@@ -21,14 +21,14 @@
       <td><%= video.metavideo.url %></td>
       <td><%= video.title %></td>
 
-      <td class="text-right">
-        <%= link "Watch", to: watch_path(@conn, :show, video), class: "btn btn-default btn-xs" %>
-        <%= link "Edit", to: video_path(@conn, :edit, video), class: "btn btn-default btn-xs" %>
-        <%= link "Delete", to: video_path(@conn, :delete, video), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+      <td>
+        <%= link "Watch", to: watch_path(@conn, :show, video), class: "tiny button" %>
+        <%= link "Edit", to: video_path(@conn, :edit, video), class: "tiny button" %>
+        <%= link "Delete", to: video_path(@conn, :delete, video), method: :delete, data: [confirm: "Are you sure?"], class: "tiny alert button" %>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<%= link "New video", to: video_path(@conn, :new) %>
+<%= link "New video", to: video_path(@conn, :new), class: "button" %>

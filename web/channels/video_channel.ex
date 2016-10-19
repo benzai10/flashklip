@@ -2,12 +2,14 @@ defmodule Flashklip.VideoChannel do
   use Flashklip.Web, :channel
   alias Flashklip.KlipView
 
-  def join("videos:" <> video_id, _params, socket) do
+  def join("videos:" <> video_id, params, socket) do
+    last_seen_id = params["last_seen_id"] || 0
     video_id = String.to_integer(video_id)
     video = Repo.get!(Flashklip.Video, video_id)
 
     klips = Repo.all(
       from k in assoc(video, :klips),
+        where: k.id > ^last_seen_id,
         order_by: [asc: k.at, asc: k.id],
         limit: 200,
         preload: [:user]
@@ -23,7 +25,6 @@ defmodule Flashklip.VideoChannel do
   end
 
   def handle_in("new_klip", params, user, socket) do
-
     changeset =
       user
       |> build_assoc(:klips, video_id: socket.assigns.video_id)

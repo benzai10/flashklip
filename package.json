@@ -14,7 +14,11 @@
     "brunch": "2.7.4",
     "clean-css-brunch": "~2.0.0",
     "css-brunch": "~2.0.0",
+    "foundation-sites": "^6.2.4-rc2",
     "javascript-brunch": "~2.0.0",
+    "jquery": "^2.2.4",
+    "motion-ui": "^1.2.2",
+    "sass-brunch": "^2.7.0",
     "uglify-js-brunch": "~2.0.1"
   }
 }

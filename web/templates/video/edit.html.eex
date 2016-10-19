@@ -3,4 +3,4 @@
 <%= render "form.html", changeset: @changeset,
                         action: video_path(@conn, :update, @video) %>
 
-<%= link "Back", to: video_path(@conn, :index) %>
+<%= link "Back", to: video_path(@conn, :index), class: "button" %>
