@@ -44,4 +44,15 @@ defmodule Flashklip.VideoChannel do
         {:reply, {:error, %{errors: changeset}}, socket}
     end
   end
+
+  def handle_in("delete_klip", params, _user, socket) do
+    # why do I have to get the record first before deleting??
+    klip = Flashklip.Repo.get!(Flashklip.Klip, params["id"])
+    # add delete restriction here if user != current_user
+
+    Flashklip.Repo.delete!(klip)
+
+    broadcast! socket, "delete_klip", %{id: params["id"]}
+    {:reply, :ok, socket}
+  end
 end

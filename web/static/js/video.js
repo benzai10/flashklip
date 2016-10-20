@@ -2,6 +2,10 @@ import Player from "./player"
 
 let Video = {
 
+  currentLiveKlipId: 0,
+  currentAllKlips: [],
+  liveKlipTimer: {},
+
   init(socket, element) { if (!element) { return }
     let playerId = element.getAttribute("data-player-id")
     let videoId = element.getAttribute("data-id")
@@ -16,6 +20,7 @@ let Video = {
     let allKlipsContainer = document.getElementById("all-klips-container")
     let klipInput         = document.getElementById("klip-input")
     let postButton        = document.getElementById("klip-submit")
+    let deleteButton      = document.getElementById("klip-delete")
 
     // maybe later change to aggChannel?
     let vidChannel        = socket.channel("videos:" + videoId)
@@ -25,6 +30,21 @@ let Video = {
       vidChannel.push("new_klip", payload)
         .receive("error", e => console.log(e))
       klipInput.value = ""
+    })
+
+    deleteButton.addEventListener("click", e => {
+      clearTimeout(this.liveKlipTimer)
+      let conf = confirm("Are you sure?")
+      if (conf == true) {
+        let payload = {
+          id: this.currentLiveKlipId
+        }
+        vidChannel.push("delete_klip", payload)
+          .receive("error", e => console.log(e) )
+      } else
+      {
+        return
+      }
     })
 
     myKlipContainer.addEventListener("click", e => {
@@ -48,16 +68,37 @@ let Video = {
       this.renderLiveKlip(myKlipContainer, resp)
     })
 
+    vidChannel.on("delete_klip", (resp) => {
+      // remove deleted klip from array
+      this.currentAllKlips = this.currentAllKlips.filter( klip => {
+        return klip.id != resp.id
+      })
+
+      // remove deleted klip from navi container
+      let deletedKlip = document.getElementById("klip-id-" + resp.id)
+      deletedKlip.parentElement.removeChild(deletedKlip)
+
+      // remove deleted klip from live container
+      myKlipContainer.innerHTML = ""
+      document.getElementById("klip-delete").className += " hide"
+
+
+      // restart liveKlipTimer
+      this.scheduleKlips(myKlipContainer, this.currentAllKlips)
+    })
+
     vidChannel.join()
       .receive("ok", resp => {
-        let ids = resp.klips.map(klip => klip.id)
-        if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }
-        this.scheduleKlips(myKlipContainer, resp.klips)
+        /* let ids = resp.klips.map(klip => klip.id)*/
+        /* if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }*/
+
+        this.currentAllKlips = resp.klips
+        this.scheduleKlips(myKlipContainer, this.currentAllKlips)
 
         // display all klips in the navigator
         let i = 0
-        for (i = 0; i < ids.length; i++) {
-          this.renderNaviKlip(allKlipsContainer, resp.klips[i])
+        for (i = 0; i < this.currentAllKlips.length; i++) {
+          this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
         }
       })
       .receive("error", reason => console.log("join failed", reason))
@@ -72,7 +113,6 @@ let Video = {
   renderLiveKlip(myKlipContainer, {user, content, at}) {
     let template = document.createElement("div")
 
-    /* template.innerHTML = `*/
     myKlipContainer.innerHTML = `
     <div class="callout">
       <a href="#" data-seek="${this.esc(at)}">
@@ -81,12 +121,12 @@ let Video = {
       </a>
     </div>
     `
-    /* myKlipContainer.appendChild(template)*/
-    /* myKlipContainer.scrollTop = myKlipContainer.scrollHeight*/
+    document.getElementById("klip-delete").classList.remove("hide")
   },
 
-  renderNaviKlip(allKlipsContainer, {user, content, at}) {
+  renderNaviKlip(allKlipsContainer, {id, user, content, at}) {
     let template = document.createElement("div")
+    template.setAttribute("id", "klip-id-" + id)
 
     template.innerHTML = `
     <div class="callout">
@@ -101,22 +141,19 @@ let Video = {
   },
 
   scheduleKlips(myKlipContainer, klips) {
-    setTimeout(() => {
+    // get last klip before current time and display it
+    this.liveKlipTimer = setTimeout(() => {
       let ctime = Player.getCurrentTime()
-      let remaining = this.renderAtTime(klips, ctime, myKlipContainer)
-      this.scheduleKlips(myKlipContainer, remaining)
-    }, 1000)
-  },
-
-  renderAtTime(klips, seconds, myKlipContainer) {
-    return klips.filter( klip => {
-      if (klip.at > seconds) {
-        return true
-      } else {
-        this.renderLiveKlip(myKlipContainer, klip)
-        return false
+      let liveKlip = klips.filter( klip => {
+        if (klip.at < ctime) {
+          return true
+        }}).slice(-1)[0]
+      if (liveKlip) {
+        this.currentLiveKlipId = liveKlip.id
+        this.renderLiveKlip(myKlipContainer, liveKlip)
       }
-    })
+      this.scheduleKlips(myKlipContainer, this.currentAllKlips)
+    }, 1000)
   },
 
   formatTime(at) {

@@ -18,6 +18,7 @@
   <div class="tabs-panel is-active" id="live">
     <div id="my-klip-container">
     </div>
+    <button type="button" class="alert button hide" id="klip-delete">Delete</button>
   </div>
   <div class="tabs-panel" id="navi">
     <%#= Enum.map(@video.klips, fn(k) -> render "klip.html", klip: k end) %>
