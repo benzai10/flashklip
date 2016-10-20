@@ -45,6 +45,8 @@ let Video = {
         }
         vidChannel.push("delete_klip", payload)
           .receive("error", e => console.log(e) )
+        // restart liveKlipTimer
+        this.scheduleKlips(myKlipContainer, this.currentAllKlips)
       } else
       {
         return
@@ -69,6 +71,8 @@ let Video = {
           klip.content = payload.content
         }
       })
+      // restart liveKlipTimer
+      this.scheduleKlips(myKlipContainer, this.currentAllKlips)
     })
 
     editButton.addEventListener("click", e => {
@@ -140,9 +144,6 @@ let Video = {
       for (i = 0; i < this.currentAllKlips.length; i++) {
         this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
       }
-
-      // restart liveKlipTimer
-      this.scheduleKlips(myKlipContainer, this.currentAllKlips)
     })
 
     vidChannel.on("delete_klip", (resp) => {
@@ -161,10 +162,6 @@ let Video = {
       document.getElementById("klip-edit").className += " hide"
       document.getElementById("klip-cancel-edit").className += " hide"
       document.getElementById("my-edit-container").className += " hide"
-
-
-      // restart liveKlipTimer
-      this.scheduleKlips(myKlipContainer, this.currentAllKlips)
     })
 
     vidChannel.join()
