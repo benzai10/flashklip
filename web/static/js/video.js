@@ -12,12 +12,13 @@ let Video = {
   },
 
   onReady(videoId, socket) {
-    let myKlipContainer = document.getElementById("my-klip-container")
-    let klipInput       = document.getElementById("klip-input")
-    let postButton      = document.getElementById("klip-submit")
+    let myKlipContainer   = document.getElementById("my-klip-container")
+    let allKlipsContainer = document.getElementById("all-klips-container")
+    let klipInput         = document.getElementById("klip-input")
+    let postButton        = document.getElementById("klip-submit")
 
     // maybe later change to aggChannel?
-    let vidChannel      = socket.channel("videos:" + videoId)
+    let vidChannel        = socket.channel("videos:" + videoId)
 
     postButton.addEventListener("click", e => {
       let payload = {content: klipInput.value, at: Player.getCurrentTime()}
@@ -34,9 +35,17 @@ let Video = {
       Player.seekTo(seconds)
     })
 
+    allKlipsContainer.addEventListener("click", e => {
+      e.preventDefault()
+      let seconds = e.target.getAttribute("data-seek") ||
+                    e.target.parentNode.getAttribute("data-seek")
+      if (!seconds) { return }
+      Player.seekTo(seconds)
+    })
+
     vidChannel.on("new_klip", (resp) => {
       vidChannel.params.last_seen_id = resp.id
-      this.renderKlip(myKlipContainer, resp)
+      this.renderLiveKlip(myKlipContainer, resp)
     })
 
     vidChannel.join()
@@ -44,6 +53,12 @@ let Video = {
         let ids = resp.klips.map(klip => klip.id)
         if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }
         this.scheduleKlips(myKlipContainer, resp.klips)
+
+        // display all klips in the navigator
+        let i = 0
+        for (i = 0; i < ids.length; i++) {
+          this.renderNaviKlip(allKlipsContainer, resp.klips[i])
+        }
       })
       .receive("error", reason => console.log("join failed", reason))
   },
@@ -54,16 +69,35 @@ let Video = {
     return div.innerHTML
   },
 
-  renderKlip(myKlipContainer, {user, content, at}) {
+  renderLiveKlip(myKlipContainer, {user, content, at}) {
+    let template = document.createElement("div")
+
+    /* template.innerHTML = `*/
+    myKlipContainer.innerHTML = `
+    <div class="callout">
+      <a href="#" data-seek="${this.esc(at)}">
+        [${this.formatTime(at)}]
+        <b>${this.esc(user.username)}</b>: ${this.esc(content)}
+      </a>
+    </div>
+    `
+    /* myKlipContainer.appendChild(template)*/
+    /* myKlipContainer.scrollTop = myKlipContainer.scrollHeight*/
+  },
+
+  renderNaviKlip(allKlipsContainer, {user, content, at}) {
     let template = document.createElement("div")
 
     template.innerHTML = `
-    <a href="#" data-seek="${this.esc(at)}">
-      <b>${this.esc(user.username)}</b>: ${this.esc(content)}
-    </a>
+    <div class="callout">
+      <a href="#" data-seek="${this.esc(at)}">
+        [${this.formatTime(at)}]
+        <b>${this.esc(user.username)}</b>: ${this.esc(content)}
+      </a>
+    </div>
     `
-    myKlipContainer.appendChild(template)
-    myKlipContainer.scrollTop = myKlipContainer.scrollHeight
+    allKlipsContainer.appendChild(template)
+    allKlipsContainer.scrollTop = allKlipsContainer.scrollHeight
   },
 
   scheduleKlips(myKlipContainer, klips) {
@@ -79,7 +113,7 @@ let Video = {
       if (klip.at > seconds) {
         return true
       } else {
-        this.renderKlip(myKlipContainer, klip)
+        this.renderLiveKlip(myKlipContainer, klip)
         return false
       }
     })
@@ -88,7 +122,7 @@ let Video = {
   formatTime(at) {
     let date = new Date(null)
     date.setSeconds(at / 1000)
-    return data.toISOString().substr(14, 5)
+    return date.toISOString().substr(14, 5)
   }
 
 }

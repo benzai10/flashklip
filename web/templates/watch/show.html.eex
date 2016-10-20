@@ -1,6 +1,7 @@
-<%= content_tag :div, id: "video",
-data: [id: @video.id, player_id: player_id(@video)] do %>
+<div class="flex-video widescreen">
+<%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video)] do %>
 <% end %>
+</div>
 
 <ul class="tabs" data-tabs id="klipTabs">
   <li class="tabs-title is-active">
@@ -9,20 +10,26 @@ data: [id: @video.id, player_id: player_id(@video)] do %>
   <li class="tabs-title">
     <a href="#navi">All Klips</a>
   </li>
+  <li class="tabs-title">
+    <a href="#add-klip">Add Klip</a>
+  </li>
 </ul>
 <div class="tabs-content" data-tabs-content="klipTabs">
   <div class="tabs-panel is-active" id="live">
     <div id="my-klip-container">
     </div>
-    <textarea id="klip-input"
-      rows="3"
-      class="form-control"
-      placeholder="Your Content..."></textarea>
-    <button id="klip-submit" class="button" type="submit">
-      Add Klip
-    </button>
   </div>
   <div class="tabs-panel" id="navi">
-    <p>Hello Navitab</p>
+    <%#= Enum.map(@video.klips, fn(k) -> render "klip.html", klip: k end) %>
+    <div id="all-klips-container">
+    </div>
+  </div>
+  <div class="tabs-panel" id="add-klip">
+    <div class="input-group">
+      <input id="klip-input" class="input-group-field" type="text">
+      <div class="input-group-button">
+        <input id="klip-submit" type="submit" class="button" value="Save">
+      </div>
+    </div>
   </div>
 </div>

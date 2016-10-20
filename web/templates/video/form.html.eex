@@ -6,7 +6,7 @@
   <% end %>
 
   <div class="form-group">
-    <%= if @changeset.action == :insert do %>
+    <%= if @with_url do %>
       <%= label f, :url, class: "control-label" %>
       <%= text_input f, :url, class: "form-control" %>
       <%= error_tag f, :url %>
