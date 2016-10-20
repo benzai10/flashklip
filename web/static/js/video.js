@@ -66,6 +66,24 @@ let Video = {
     vidChannel.on("new_klip", (resp) => {
       vidChannel.params.last_seen_id = resp.id
       this.renderLiveKlip(myKlipContainer, resp)
+
+      // *** quick hack
+
+      // sort klips (asc: at) and delete current klipContainer
+      this.currentAllKlips.push(resp)
+      this.currentAllKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
+      /* if (allKlipsContainer.hasChildNodes()) {
+       *   allKlipsContainer.removeChild(allKlipsContainer.childNodes[0])
+       * }
+       */
+      allKlipsContainer.innerHTML = ""
+      // display all klips in the navigator
+      let i = 0
+      for (i = 0; i < this.currentAllKlips.length; i++) {
+        this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
+      }
+
+      // *** end quick hack
     })
 
     vidChannel.on("delete_klip", (resp) => {
@@ -89,6 +107,11 @@ let Video = {
 
     vidChannel.join()
       .receive("ok", resp => {
+
+        // this is from the phoenix book to prevent rerendering of
+        // already displayed klips after loosing connection
+        // TODO: check if still needed
+
         /* let ids = resp.klips.map(klip => klip.id)*/
         /* if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }*/
 
@@ -151,6 +174,9 @@ let Video = {
       if (liveKlip) {
         this.currentLiveKlipId = liveKlip.id
         this.renderLiveKlip(myKlipContainer, liveKlip)
+      } else {
+        document.getElementById("my-klip-container").innerHTML = ""
+        document.getElementById("klip-delete").className += " hide"
       }
       this.scheduleKlips(myKlipContainer, this.currentAllKlips)
     }, 1000)
