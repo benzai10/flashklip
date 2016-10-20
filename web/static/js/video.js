@@ -114,10 +114,7 @@ let Video = {
       // sort klips (asc: at) and delete current klipContainer
       this.currentAllKlips.push(resp)
       this.currentAllKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
-      /* if (allKlipsContainer.hasChildNodes()) {
-       *   allKlipsContainer.removeChild(allKlipsContainer.childNodes[0])
-       * }
-       */
+
       allKlipsContainer.innerHTML = ""
       // display all klips in the navigator
       let i = 0
@@ -130,6 +127,19 @@ let Video = {
 
     vidChannel.on("update_klip", (resp) => {
       this.renderLiveKlip(myKlipContainer, resp)
+
+      this.currentAllKlips = this.currentAllKlips.filter( klip => {
+        return klip.id != resp.id
+      })
+      this.currentAllKlips.push(resp)
+      this.currentAllKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
+
+      allKlipsContainer.innerHTML = ""
+      // display all klips in the navigator
+      let i = 0
+      for (i = 0; i < this.currentAllKlips.length; i++) {
+        this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
+      }
 
       // restart liveKlipTimer
       this.scheduleKlips(myKlipContainer, this.currentAllKlips)
