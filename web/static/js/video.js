@@ -2,7 +2,7 @@ import Player from "./player"
 
 let Video = {
 
-  currentLiveKlipId: 0,
+  currentLiveKlip: {},
   currentAllKlips: [],
   liveKlipTimer: {},
 
@@ -21,6 +21,10 @@ let Video = {
     let klipInput         = document.getElementById("klip-input")
     let postButton        = document.getElementById("klip-submit")
     let deleteButton      = document.getElementById("klip-delete")
+    let editButton        = document.getElementById("klip-edit")
+    let cancelEditButton  = document.getElementById("klip-cancel-edit")
+    let updateButton      = document.getElementById("klip-update")
+
 
     // maybe later change to aggChannel?
     let vidChannel        = socket.channel("videos:" + videoId)
@@ -37,7 +41,7 @@ let Video = {
       let conf = confirm("Are you sure?")
       if (conf == true) {
         let payload = {
-          id: this.currentLiveKlipId
+          id: this.currentLiveKlip.id
         }
         vidChannel.push("delete_klip", payload)
           .receive("error", e => console.log(e) )
@@ -45,6 +49,44 @@ let Video = {
       {
         return
       }
+    })
+
+    updateButton.addEventListener("click", e => {
+      let payload = {
+        id: this.currentLiveKlip.id,
+        at: this.currentLiveKlip.at,
+        content: document.getElementById("klip-input-edit").value
+      }
+      vidChannel.push("update_klip", payload)
+        .receive("error", e => console.log(e) )
+      document.getElementById("my-edit-container").className += " hide"
+      document.getElementById("klip-cancel-edit").className += " hide"
+      document.getElementById("my-klip-container").classList.remove("hide")
+      document.getElementById("klip-edit").classList.remove("hide")
+      this.currentAllKlips.forEach( klip => {
+        if (klip.id == payload.id) {
+          klip.at = payload.at,
+          klip.content = payload.content
+        }
+      })
+    })
+
+    editButton.addEventListener("click", e => {
+      clearTimeout(this.liveKlipTimer)
+      document.getElementById("my-klip-container").className += " hide"
+      document.getElementById("klip-edit").className += " hide"
+      document.getElementById("my-edit-container").classList.remove("hide")
+      document.getElementById("klip-cancel-edit").classList.remove("hide")
+    })
+
+    cancelEditButton.addEventListener("click", e => {
+      document.getElementById("my-edit-container").className += " hide"
+      document.getElementById("klip-cancel-edit").className += " hide"
+      document.getElementById("my-klip-container").classList.remove("hide")
+      document.getElementById("klip-edit").classList.remove("hide")
+
+      // restart liveKlipTimer
+      this.scheduleKlips(myKlipContainer, this.currentAllKlips)
     })
 
     myKlipContainer.addEventListener("click", e => {
@@ -86,6 +128,13 @@ let Video = {
       // *** end quick hack
     })
 
+    vidChannel.on("update_klip", (resp) => {
+      this.renderLiveKlip(myKlipContainer, resp)
+
+      // restart liveKlipTimer
+      this.scheduleKlips(myKlipContainer, this.currentAllKlips)
+    })
+
     vidChannel.on("delete_klip", (resp) => {
       // remove deleted klip from array
       this.currentAllKlips = this.currentAllKlips.filter( klip => {
@@ -99,6 +148,9 @@ let Video = {
       // remove deleted klip from live container
       myKlipContainer.innerHTML = ""
       document.getElementById("klip-delete").className += " hide"
+      document.getElementById("klip-edit").className += " hide"
+      document.getElementById("klip-cancel-edit").className += " hide"
+      document.getElementById("my-edit-container").className += " hide"
 
 
       // restart liveKlipTimer
@@ -145,6 +197,8 @@ let Video = {
     </div>
     `
     document.getElementById("klip-delete").classList.remove("hide")
+    document.getElementById("klip-edit").classList.remove("hide")
+    document.getElementById("klip-input-edit").value = this.esc(content)
   },
 
   renderNaviKlip(allKlipsContainer, {id, user, content, at}) {
@@ -172,7 +226,7 @@ let Video = {
           return true
         }}).slice(-1)[0]
       if (liveKlip) {
-        this.currentLiveKlipId = liveKlip.id
+        this.currentLiveKlip = liveKlip
         this.renderLiveKlip(myKlipContainer, liveKlip)
       } else {
         document.getElementById("my-klip-container").innerHTML = ""
