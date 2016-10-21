@@ -13,6 +13,9 @@
   <li class="tabs-title" id="add-klip-tab">
     <a href="#add-klip">ADD KLIP</a>
   </li>
+  <li class="tabs-title" id="add-klip-tab">
+    <a href="#edit-video"><i class="fi-widget"></i></a>
+  </li>
 </ul>
 <div class="tabs-content" data-tabs-content="klipTabs">
   <div class="tabs-panel is-active" id="live">
@@ -66,5 +69,15 @@
         </button>
       </div>
     </div>
+  </div>
+  <div class="tabs-panel" id="edit-video">
+    <%= link "Edit", to: video_path(@conn, :edit, @video),
+    class: "button" %>
+
+    <%= link "Delete", to: video_path(@conn, :delete, @video),
+    method: :delete,
+    data: [confirm: "Are you sure?"],
+    class: "alert button" %>
+
   </div>
 </div>

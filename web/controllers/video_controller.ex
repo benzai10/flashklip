@@ -14,7 +14,7 @@ defmodule Flashklip.VideoController do
   def index(conn, _params, user) do
     videos =
       Repo.all(user_videos(user))
-      |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo]) end)
+      |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
 
     render(conn, "index.html", videos: videos)
   end

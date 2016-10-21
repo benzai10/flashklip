@@ -4,6 +4,42 @@
   max-width: 680px;
 }
 
+/* .index-title { */
+/*   margin-bottom: 16px; */
+/* } */
+
+#new-video-button {
+  margin-bottom: 0;
+}
+
+.video-menu {
+  z-index: 9999;
+}
+
+.youtube-thumbnail {
+  img {
+    width: 133px;
+    height: 100px;
+  }
+}
+
+.video-added {
+  font-size: 12px;
+  color: grey;
+  margin-bottom: 10px;
+}
+
+.video-klips-count {
+  font-size: 14px;
+}
+
+.media-object-section {
+  hr {
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+}
+
 .flex-video {
   margin-bottom: 0;
 }
@@ -52,4 +88,29 @@
   #timestamp-display {
   }
 
+}
+
+
+/* Responsive: Portrait tablets and up */
+/* @media screen and (min-width: 768px) { */
+@media screen and (max-width: 480px) {
+  p {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+
+  .callout {
+    padding: 4px;
+  }
+
+  .tabs-title {
+    a {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+
+  .video-added {
+    margin-bottom: 0px;
+  }
 }

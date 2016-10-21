@@ -12,7 +12,7 @@ defmodule Flashklip.Video do
     belongs_to :user, Flashklip.User
     belongs_to :metavideo, Flashklip.Metavideo
     belongs_to :category, Flashklip.Category
-    has_many :klips, Flashklip.Klip
+    has_many :klips, Flashklip.Klip, on_delete: :delete_all
 
     timestamps()
   end

@@ -4,4 +4,4 @@
                         action: video_path(@conn, :update, @video),
                         with_url: false %>
 
-<%= link "Back", to: video_path(@conn, :index), class: "button" %>
+<%= link "Videos", to: video_path(@conn, :index) %>

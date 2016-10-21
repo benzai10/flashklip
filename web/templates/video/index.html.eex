@@ -1,34 +1,27 @@
-<h2>Listing videos</h2>
+<h5 class="index-title">
+  Video List <span class="badge"><%= Enum.count(@videos) %></span>
+  <%= link "New video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
+</h5>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>Metavideo</th>
-      <th>Category</th>
-      <th>URL</th>
-      <th>Title</th>
+<hr>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
 <%= for video <- @videos do %>
-    <tr>
-      <td><%= video.user_id %></td>
-      <td><%= video.metavideo_id %></td>
-      <td><%= video.category_id %></td>
-      <td><%= video.metavideo.url %></td>
-      <td><%= video.title %></td>
-
-      <td>
-        <%= link "Watch", to: watch_path(@conn, :show, video), class: "tiny button" %>
-        <%= link "Edit", to: video_path(@conn, :edit, video), class: "tiny button" %>
-        <%= link "Delete", to: video_path(@conn, :delete, video), method: :delete, data: [confirm: "Are you sure?"], class: "tiny alert button" %>
-      </td>
-    </tr>
+  <a href="<%= watch_path(@conn, :show, video) %>">
+    <div class="callout">
+      <div class="media-object">
+        <div class="media-object-section">
+          <div class="thumbnail youtube-thumbnail">
+            <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(video)}" %>/0.jpg">
+          </div>
+        </div>
+        <div class="media-object-section">
+          <h6><%= video.title %></h6>
+          <hr>
+          <p class="video-added">added: <%= video.inserted_at %></p>
+          <p class="video-klips-count">Klips <span class="badge"><%= Enum.count(video.klips) %></span></p>
+        </div>
+      </div>
+    </div>
+  </a>
 <% end %>
-  </tbody>
-</table>
 
-<%= link "New video", to: video_path(@conn, :new), class: "button" %>
