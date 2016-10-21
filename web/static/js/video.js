@@ -18,19 +18,33 @@ let Video = {
   onReady(videoId, socket) {
     let myKlipContainer   = document.getElementById("my-klip-container")
     let allKlipsContainer = document.getElementById("all-klips-container")
+    let addKlipTab        = document.getElementById("add-klip-tab")
     let klipInput         = document.getElementById("klip-input")
     let postButton        = document.getElementById("klip-submit")
     let deleteButton      = document.getElementById("klip-delete")
     let editButton        = document.getElementById("klip-edit")
     let cancelEditButton  = document.getElementById("klip-cancel-edit")
     let updateButton      = document.getElementById("klip-update")
+    let editTsBack        = document.getElementById("klip-edit-ts-back")
+    let editTsForward     = document.getElementById("klip-edit-ts-forward")
+    let editTsDisplay     = document.getElementById("klip-edit-ts-display")
+    let newTsBack         = document.getElementById("klip-new-ts-back")
+    let newTsForward      = document.getElementById("klip-new-ts-forward")
+    let newTsDisplay      = document.getElementById("klip-new-ts-display")
+
+    let saveAt            = 0
 
 
     // maybe later change to aggChannel?
     let vidChannel        = socket.channel("videos:" + videoId)
 
+    addKlipTab.addEventListener("click", e => {
+      saveAt = Player.getCurrentTime()
+      newTsDisplay.innerHTML = `[${this.formatTime(saveAt)}]`
+    })
+
     postButton.addEventListener("click", e => {
-      let payload = {content: klipInput.value, at: Player.getCurrentTime()}
+      let payload = {content: klipInput.value, at: saveAt}
       vidChannel.push("new_klip", payload)
         .receive("error", e => console.log(e))
       klipInput.value = ""
@@ -93,10 +107,49 @@ let Video = {
       this.scheduleKlips(myKlipContainer, this.currentAllKlips)
     })
 
+    editTsBack.addEventListener("click", e => {
+      e.preventDefault()
+      this.currentLiveKlip.at -= 1000
+      Player.seekTo(this.currentLiveKlip.at)
+      editTsDisplay.innerHTML = `[${this.formatTime(this.currentLiveKlip.at)}]`
+    })
+
+    editTsForward.addEventListener("click", e => {
+      e.preventDefault()
+      this.currentLiveKlip.at -= -1000
+      Player.seekTo(this.currentLiveKlip.at)
+      editTsDisplay.innerHTML = `[${this.formatTime(this.currentLiveKlip.at)}]`
+    })
+
+    editTsDisplay.addEventListener("click", e => {
+      e.preventDefault()
+      Player.seekTo(this.currentLiveKlip.at)
+    })
+
+    newTsBack.addEventListener("click", e => {
+      e.preventDefault()
+      saveAt -= 1000
+      Player.seekTo(saveAt)
+      newTsDisplay.innerHTML = `[${this.formatTime(saveAt)}]`
+    })
+
+    newTsForward.addEventListener("click", e => {
+      e.preventDefault()
+      saveAt -= -1000
+      Player.seekTo(saveAt)
+      newTsDisplay.innerHTML = `[${this.formatTime(saveAt)}]`
+    })
+
+    newTsDisplay.addEventListener("click", e => {
+      e.preventDefault()
+      Player.seekTo(saveAt)
+    })
+
     myKlipContainer.addEventListener("click", e => {
       e.preventDefault()
       let seconds = e.target.getAttribute("data-seek") ||
-                    e.target.parentNode.getAttribute("data-seek")
+                    e.target.parentNode.getAttribute("data-seek") ||
+                    e.target.parentNode.parentNode.getAttribute("data-seek")
       if (!seconds) { return }
       Player.seekTo(seconds)
     })
@@ -104,7 +157,9 @@ let Video = {
     allKlipsContainer.addEventListener("click", e => {
       e.preventDefault()
       let seconds = e.target.getAttribute("data-seek") ||
-                    e.target.parentNode.getAttribute("data-seek")
+                    e.target.parentNode.getAttribute("data-seek") ||
+                    e.target.parentNode.parentNode.getAttribute("data-seek")
+      console.log(seconds)
       if (!seconds) { return }
       Player.seekTo(seconds)
     })
@@ -112,6 +167,10 @@ let Video = {
     vidChannel.on("new_klip", (resp) => {
       vidChannel.params.last_seen_id = resp.id
       this.renderLiveKlip(myKlipContainer, resp)
+
+      // switch to timeview tab
+      /* $('#live').foundation('selectTab', live)*/
+      $('#timeview-tab').trigger("click");
 
       // *** quick hack
 
@@ -182,8 +241,10 @@ let Video = {
         for (i = 0; i < this.currentAllKlips.length; i++) {
           this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
         }
+        allKlipsContainer.scrollTop = 0
       })
       .receive("error", reason => console.log("join failed", reason))
+
   },
 
   esc(str) {
@@ -196,16 +257,27 @@ let Video = {
     let template = document.createElement("div")
 
     myKlipContainer.innerHTML = `
-    <div class="callout">
-      <a href="#" data-seek="${this.esc(at)}">
-        [${this.formatTime(at)}]
-        <b>${this.esc(user.username)}</b>: ${this.esc(content)}
-      </a>
-    </div>
+    <a href="#" data-seek="${this.esc(at)}">
+      <div class="callout klip-callout">
+        <p>${this.esc(content)}</p>
+        <hr>
+        <span class="timestamp">
+            [${this.formatTime(at)}]
+        </span>
+        <span class="username float-right">
+          by ${this.esc(user.username)}
+        </span>
+      </div>
+    </a>
     `
     document.getElementById("klip-delete").classList.remove("hide")
     document.getElementById("klip-edit").classList.remove("hide")
     document.getElementById("klip-input-edit").value = this.esc(content)
+
+    let timestampDisplay = document.getElementById("klip-edit-ts-display")
+    timestampDisplay.innerHTML = `
+    [${this.formatTime(at)}]
+    `
   },
 
   renderNaviKlip(allKlipsContainer, {id, user, content, at}) {
@@ -213,12 +285,18 @@ let Video = {
     template.setAttribute("id", "klip-id-" + id)
 
     template.innerHTML = `
-    <div class="callout">
-      <a href="#" data-seek="${this.esc(at)}">
-        [${this.formatTime(at)}]
-        <b>${this.esc(user.username)}</b>: ${this.esc(content)}
-      </a>
-    </div>
+    <a href="#" data-seek="${this.esc(at)}">
+      <div class="callout klip-callout">
+        <p>${this.esc(content)}</p>
+        <hr>
+        <span class="timestamp">
+            [${this.formatTime(at)}]
+        </span>
+        <span class="username float-right">
+          by ${this.esc(user.username)}
+        </span>
+      </div>
+    </a>
     `
     allKlipsContainer.appendChild(template)
     allKlipsContainer.scrollTop = allKlipsContainer.scrollHeight
@@ -237,6 +315,7 @@ let Video = {
         this.renderLiveKlip(myKlipContainer, liveKlip)
       } else {
         document.getElementById("my-klip-container").innerHTML = ""
+        document.getElementById("klip-edit").className += " hide"
         document.getElementById("klip-delete").className += " hide"
       }
       this.scheduleKlips(myKlipContainer, this.currentAllKlips)
