@@ -26,24 +26,28 @@
         <div class="input-group">
           <input id="klip-input-edit" class="input-group-field" type="text">
           <div class="input-group-button">
-            <input id="klip-update" type="submit" class="button" value="Update">
+            <input id="klip-update" type="submit" class="hollow button" value="Update">
           </div>
         </div>
         <div class="timestamp-edit small button-group">
-          <button type="button" class="tiny button" id="klip-edit-ts-back">
+          <button type="button" class="tiny hollow button" id="klip-edit-ts-back">
             <i class="fi-rewind"></i>
           </button>
-          <button type="button" class="tiny button" id="klip-edit-ts-display">
+          <button type="button" class="tiny hollow button" id="klip-edit-ts-display">
           </button>
-          <button type="button" class="tiny button" id="klip-edit-ts-forward">
+          <button type="button" class="tiny hollow button" id="klip-edit-ts-forward">
             <i class="fi-fast-forward"></i>
           </button>
         </div>
       </div>
     </div>
-    <button type="button" class="small button hide" id="klip-edit">Edit</button>
-    <button type="button" class="small button hide" id="klip-cancel-edit">Cancel Edit</button>
-    <button type="button" class="alert small button hide" id="klip-delete">Delete</button>
+    <button type="button" class="small hollow disabled button" id="klip-prev">Prev Klip</button>
+    <button type="button" class="small hollow button" id="klip-next">Next Klip</button>
+    <span class="float-right">
+      <button type="button" class="alert small hollow button hide" id="klip-delete">Delete</button>
+      <button type="button" class="small hollow button hide" id="klip-edit">Edit</button>
+      <button type="button" class="small hollow button hide" id="klip-cancel-edit">Cancel Edit</button>
+    </span>
   </div>
   <div class="tabs-panel" id="navi">
     <%#= Enum.map(@video.klips, fn(k) -> render "klip.html", klip: k end) %>
@@ -55,29 +59,29 @@
       <div class="input-group">
         <input id="klip-input" class="input-group-field" type="text">
         <div class="input-group-button">
-          <input id="klip-submit" type="submit" class="button" value="Save">
+          <input id="klip-submit" type="submit" class="hollow button" value="Save">
         </div>
       </div>
       <div class="timestamp-edit small button-group">
-        <button type="button" class="tiny button" id="klip-new-ts-back">
+        <button type="button" class="tiny hollow button" id="klip-new-ts-back">
           <i class="fi-rewind"></i>
         </button>
-        <button type="button" class="tiny button" id="klip-new-ts-display">
+        <button type="button" class="tiny hollow button" id="klip-new-ts-display">
         </button>
-        <button type="button" class="tiny button" id="klip-new-ts-forward">
+        <button type="button" class="tiny hollow button" id="klip-new-ts-forward">
           <i class="fi-fast-forward"></i>
         </button>
       </div>
     </div>
   </div>
-  <div class="tabs-panel" id="edit-video">
-    <%= link "Edit", to: video_path(@conn, :edit, @video),
-    class: "button" %>
-
+  <div class="tabs-panel float-right" id="edit-video">
     <%= link "Delete", to: video_path(@conn, :delete, @video),
     method: :delete,
     data: [confirm: "Are you sure?"],
-    class: "alert button" %>
+    class: "alert small hollow button" %>
+
+    <%= link "Edit", to: video_path(@conn, :edit, @video),
+    class: "hollow small button" %>
 
   </div>
 </div>
