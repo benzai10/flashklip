@@ -3,6 +3,8 @@ import Player from "./player"
 let Video = {
 
   currentLiveKlip: {},
+  nextKlip: {},
+  prevKlip: {},
   currentAllKlips: [],
   liveKlipTimer: {},
 
@@ -31,6 +33,8 @@ let Video = {
     let newTsBack         = document.getElementById("klip-new-ts-back")
     let newTsForward      = document.getElementById("klip-new-ts-forward")
     let newTsDisplay      = document.getElementById("klip-new-ts-display")
+    let nextKlip          = document.getElementById("klip-next")
+    let prevKlip          = document.getElementById("klip-prev")
 
     let saveAt            = 0
 
@@ -93,6 +97,8 @@ let Video = {
       clearTimeout(this.liveKlipTimer)
       document.getElementById("my-klip-container").className += " hide"
       document.getElementById("klip-edit").className += " hide"
+      nextKlip.className += " invisible"
+      prevKlip.className += " invisible"
       document.getElementById("my-edit-container").classList.remove("hide")
       document.getElementById("klip-cancel-edit").classList.remove("hide")
     })
@@ -102,6 +108,8 @@ let Video = {
       document.getElementById("klip-cancel-edit").className += " hide"
       document.getElementById("my-klip-container").classList.remove("hide")
       document.getElementById("klip-edit").classList.remove("hide")
+      nextKlip.classList.remove("invisible")
+      prevKlip.classList.remove("invisible")
 
       // restart liveKlipTimer
       this.scheduleKlips(myKlipContainer, this.currentAllKlips)
@@ -143,6 +151,14 @@ let Video = {
     newTsDisplay.addEventListener("click", e => {
       e.preventDefault()
       Player.seekTo(saveAt)
+    })
+
+    nextKlip.addEventListener("click", e => {
+      Player.seekTo(this.nextKlip.at)
+    })
+
+    prevKlip.addEventListener("click", e => {
+      Player.seekTo(this.prevKlip.at)
     })
 
     myKlipContainer.addEventListener("click", e => {
@@ -306,10 +322,36 @@ let Video = {
     // get last klip before current time and display it
     this.liveKlipTimer = setTimeout(() => {
       let ctime = Player.getCurrentTime()
-      let liveKlip = klips.filter( klip => {
+      let liveKlip = {}
+      this.nextKlip = klips.filter( klip => {
+        if (klip.at > ctime) {
+          return true
+        }
+      }).slice(0,1)[0]
+      if (this.nextKlip) {
+        document.getElementById("klip-next").classList.remove("disabled")
+      } else {
+        document.getElementById("klip-next").classList.remove("disabled")
+        document.getElementById("klip-next").className += " disabled"
+      }
+      let lastTwoKlips = klips.filter( klip => {
         if (klip.at < ctime) {
           return true
-        }}).slice(-1)[0]
+        }
+      }).slice(-2)
+      if (lastTwoKlips.length > 1) {
+        this.prevKlip = lastTwoKlips[0]
+        liveKlip = lastTwoKlips[1]
+      } else {
+        this.prevKlip = null
+        liveKlip = lastTwoKlips[0]
+      }
+      if (this.prevKlip) {
+        document.getElementById("klip-prev").classList.remove("disabled")
+      } else {
+        document.getElementById("klip-prev").classList.remove("disabled")
+        document.getElementById("klip-prev").className += " disabled"
+      }
       if (liveKlip) {
         this.currentLiveKlip = liveKlip
         this.renderLiveKlip(myKlipContainer, liveKlip)
