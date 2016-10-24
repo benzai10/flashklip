@@ -363,7 +363,7 @@ let Video = {
         document.getElementById("klip-delete").className += " hide"
       }
       this.scheduleKlips(myKlipContainer, this.currentAllKlips)
-    }, 1000)
+    }, 500)
   },
 
   formatTime(at) {

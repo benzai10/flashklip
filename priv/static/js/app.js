@@ -11797,7 +11797,7 @@ var Video = {
         document.getElementById("klip-delete").className += " hide";
       }
       _this3.scheduleKlips(myKlipContainer, _this3.currentAllKlips);
-    }, 1000);
+    }, 500);
   },
   formatTime: function formatTime(at) {
     var date = new Date(null);
