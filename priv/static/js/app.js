@@ -11453,6 +11453,7 @@ var Video = {
   prevKlip: {},
   currentAllKlips: [],
   liveKlipTimer: {},
+  userVideoId: 0,
 
   init: function init(socket, element) {
     var _this = this;
@@ -11462,6 +11463,7 @@ var Video = {
     }
     var playerId = element.getAttribute("data-player-id");
     var videoId = element.getAttribute("data-id");
+    this.userVideoId = element.getAttribute("data-user-video-id");
     socket.connect();
     _player2.default.init(element.id, playerId, function () {
       _this.onReady(videoId, socket);
@@ -11499,7 +11501,7 @@ var Video = {
     });
 
     postButton.addEventListener("click", function (e) {
-      var payload = { content: klipInput.value, at: saveAt };
+      var payload = { content: klipInput.value, at: saveAt, user_video_id: _this2.userVideoId };
       vidChannel.push("new_klip", payload).receive("error", function (e) {
         return console.log(e);
       });

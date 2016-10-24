@@ -4560,6 +4560,9 @@ table.hover tbody tr:nth-of-type(even):hover {
 .video-menu {
   z-index: 9999; }
 
+.thumbnail {
+  border: 0; }
+
 .youtube-thumbnail img {
   width: 133px;
   height: 100px; }

@@ -21,4 +21,10 @@ defmodule Flashklip.Metavideo do
     |> cast(params, [:url, :title, :created_by])
     |> validate_required([:url])
   end
+
+  def existing_user_video(videos, user_id \\ 0) do
+    Enum.filter(videos, fn(v) -> v.user_id == user_id end)
+    |> Enum.at(0)
+  end
+
 end

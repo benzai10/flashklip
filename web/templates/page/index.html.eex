@@ -2,3 +2,35 @@
   <h2><%= gettext "Welcome to %{name}", name: "Flashklip!" %></h2>
   <p>Create Flashcards based on Videoclips<br />Rewatch for Maximized Learning Effect</p>
 <% end %>
+
+<h5 class="index-title">
+  Explore Videos <span class="badge"><%= Enum.count(@metavideos) %></span>
+</h5>
+
+<hr>
+
+<%= for metavideo <- @metavideos do %>
+  <% user_video = Flashklip.Metavideo.existing_user_video(metavideo.videos, @current_user.id) %>
+  <%= if user_video do %>
+    <a href="<%= watch_path(@conn, :show, user_video) %>">
+  <% else %>
+      <a href="<%= watch_path(@conn, :show, metavideo) %>">
+  <% end %>
+    <div class="callout">
+      <div class="media-object">
+        <div class="media-object-section">
+          <div class="thumbnail youtube-thumbnail">
+            <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/0.jpg">
+          </div>
+        </div>
+        <div class="media-object-section">
+          <h6><%= metavideo.title %></h6>
+          <hr>
+          <p class="video-added">added: <%= metavideo.inserted_at %></p>
+          <p class="video-klips-count">Klips <span class="badge"><%#= Enum.count(video.klips) %></span></p>
+        </div>
+      </div>
+    </div>
+  </a>
+<% end %>
+

@@ -64,4 +64,5 @@ defmodule Flashklip.MetavideoController do
     |> put_flash(:info, "Metavideo deleted successfully.")
     |> redirect(to: metavideo_path(conn, :index))
   end
+
 end

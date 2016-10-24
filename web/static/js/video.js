@@ -7,10 +7,12 @@ let Video = {
   prevKlip: {},
   currentAllKlips: [],
   liveKlipTimer: {},
+  userVideoId: 0,
 
   init(socket, element) { if (!element) { return }
     let playerId = element.getAttribute("data-player-id")
     let videoId = element.getAttribute("data-id")
+    this.userVideoId = element.getAttribute("data-user-video-id")
     socket.connect()
     Player.init(element.id, playerId, () => {
       this.onReady(videoId, socket)
@@ -48,7 +50,7 @@ let Video = {
     })
 
     postButton.addEventListener("click", e => {
-      let payload = {content: klipInput.value, at: saveAt}
+      let payload = {content: klipInput.value, at: saveAt, user_video_id: this.userVideoId}
       vidChannel.push("new_klip", payload)
         .receive("error", e => console.log(e))
       klipInput.value = ""

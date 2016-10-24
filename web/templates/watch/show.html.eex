@@ -1,8 +1,7 @@
 <div class="flex-video widescreen">
-<%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video)] do %>
+<%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video.id] do %>
 <% end %>
 </div>
-
 <ul class="tabs" data-tabs id="klipTabs">
   <li class="tabs-title is-active" id="timeview-tab">
     <a href="#live" aria-selected="true">TIMEVIEW</a>

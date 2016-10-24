@@ -5,18 +5,29 @@ defmodule Flashklip.VideoChannel do
   def join("videos:" <> video_id, params, socket) do
     last_seen_id = params["last_seen_id"] || 0
     video_id = String.to_integer(video_id)
-    video = Repo.get!(Flashklip.Video, video_id)
+    # video = Repo.get!(Flashklip.Video, video_id)
+    metavideo = Repo.get!(Flashklip.Metavideo, video_id)
 
-    klips = Repo.all(
-      from k in assoc(video, :klips),
-        where: k.id > ^last_seen_id,
-        order_by: [asc: k.at, asc: k.id],
-        limit: 200,
-        preload: [:user]
-    )
+    query =
+      from k in Flashklip.Klip,
+      join: v in Flashklip.Video,
+      on: k.video_id == v.id,
+      where: v.metavideo_id == ^metavideo.id,
+      preload: [:user]
+
+    klips = Repo.all(query)
+
+    # klips = Repo.all(
+    #   from k in assoc(video, :klips),
+    #     where: k.id > ^last_seen_id,
+    #     order_by: [asc: k.at, asc: k.id],
+    #     limit: 200,
+    #     preload: [:user]
+    # )
 
     resp = %{klips: Phoenix.View.render_many(klips, KlipView, "klip.json")}
     {:ok, resp, assign(socket, :video_id, video_id)}
+    # {:ok, resp, assign(socket, %{video_id: video_id, user_video_id: 999})
   end
 
   def handle_in(event, params, socket) do
@@ -27,7 +38,8 @@ defmodule Flashklip.VideoChannel do
   def handle_in("new_klip", params, user, socket) do
     changeset =
       user
-      |> build_assoc(:klips, video_id: socket.assigns.video_id)
+      # |> build_assoc(:klips, video_id: socket.assigns.video_id)
+      |> build_assoc(:klips, video_id: String.to_integer(params["user_video_id"]))
       |> Flashklip.Klip.changeset(params)
 
     case Repo.insert(changeset) do
