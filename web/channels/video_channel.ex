@@ -6,16 +6,25 @@ defmodule Flashklip.VideoChannel do
     last_seen_id = params["last_seen_id"] || 0
     video_id = String.to_integer(video_id)
     # video = Repo.get!(Flashklip.Video, video_id)
-    metavideo = Repo.get!(Flashklip.Metavideo, video_id)
+    metavideo =
+      Repo.get!(Flashklip.Metavideo, video_id)
+      |> Repo.preload(:videos)
 
-    query =
-      from k in Flashklip.Klip,
-      join: v in Flashklip.Video,
-      on: k.video_id == v.id,
-      where: v.metavideo_id == ^metavideo.id,
-      preload: [:user]
+      # the following query shows all klips
+      metavideo_klips = metavideo.videos |> Repo.preload(:klips)
 
-    klips = Repo.all(query)
+      klips = Enum.flat_map(metavideo_klips, fn(v) -> v.klips |> Repo.preload(:user) end)
+
+      # the following query shows only the user's klips
+
+      # query =
+      #   from k in Flashklip.Klip,
+      #   join: v in Flashklip.Video,
+      #   on: k.video_id == v.id,
+      #   where: v.metavideo_id == ^metavideo.id,
+      #   preload: [:user]
+
+      # klips = Repo.all(query)
 
     # klips = Repo.all(
     #   from k in assoc(video, :klips),

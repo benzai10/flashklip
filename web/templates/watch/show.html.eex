@@ -51,6 +51,11 @@
   <div class="tabs-panel" id="navi">
     <%#= Enum.map(@video.klips, fn(k) -> render "klip.html", klip: k end) %>
     <div id="all-klips-container">
+      <%= if !@current_user do %>
+        <%= for klip <- @klips do %>
+          <%= render "klip.html", klip: klip %>
+        <% end %>
+      <% end %>
     </div>
   </div>
   <div class="tabs-panel" id="add-klip">

@@ -1,6 +1,12 @@
 defmodule Flashklip.Metavideo do
   use Flashklip.Web, :model
 
+  alias Flashklip.{
+    Repo,
+    Video,
+    Klip
+  }
+
   schema "metavideos" do
     field :url, :string
     field :title, :string
@@ -25,6 +31,16 @@ defmodule Flashklip.Metavideo do
   def existing_user_video(videos, user_id \\ 0) do
     Enum.filter(videos, fn(v) -> v.user_id == user_id end)
     |> Enum.at(0)
+  end
+
+  def klips_count(metavideo) do
+    query =
+      from v in Video,
+      join: k in Klip,
+      on: v.id == k.video_id,
+      where: v.metavideo_id == ^metavideo.id
+
+    Repo.all(query) |> Enum.count()
   end
 
 end

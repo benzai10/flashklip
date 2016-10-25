@@ -11,7 +11,7 @@
       <div class="media-object">
         <div class="media-object-section">
           <div class="thumbnail youtube-thumbnail">
-            <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(video.metavideo)}" %>/0.jpg">
+            <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(video.metavideo)}" %>/mqdefault.jpg">
           </div>
         </div>
         <div class="media-object-section">

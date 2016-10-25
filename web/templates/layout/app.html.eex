@@ -16,7 +16,9 @@
       <header class="header">
         <div class="top-bar">
           <div class="top-bar-left">
-            <a href="#"><img src="/images/flashklip_beta_low_logo_260x35.png"></a>
+            <a href="<%= page_path(@conn, :index) %>">
+              <img src="/images/flashklip_beta_low_logo_260x35.png">
+            </a>
           </div>
           <div class="top-bar-right">
             <ul class="menu">
