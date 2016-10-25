@@ -13,7 +13,10 @@ defmodule Flashklip.VideoChannel do
       # the following query shows all klips
       metavideo_klips = metavideo.videos |> Repo.preload(:klips)
 
-      klips = Enum.flat_map(metavideo_klips, fn(v) -> v.klips |> Repo.preload(:user) end)
+      klips = Enum.flat_map(metavideo_klips, fn(v) ->
+        v.klips
+        |> Repo.preload(:user) end)
+        |> Enum.sort()
 
       # the following query shows only the user's klips
 

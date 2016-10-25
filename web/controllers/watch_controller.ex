@@ -6,7 +6,7 @@ defmodule Flashklip.WatchController do
 
   def show(conn, %{"id" => id}) do
 
-    case is_map(conn.assigns.current_user) do
+    case is_map(conn.assigns.current_user) && @own_video == true do
       true ->
         video =
           Repo.get!(Video, id)
