@@ -1,6 +1,5 @@
 <%= if !@current_user do %>
-  <h2><%= gettext "Welcome to %{name}", name: "Flashklip!" %></h2>
-  <p>Create Flashcards based on Videoclips<br />Rewatch for Maximized Learning Effect</p>
+  <p>Create Flashcards based on Videoclips. Rewatch for Maximized Learning Effect</p>
 <% end %>
 
 <h5 class="index-title">
@@ -12,13 +11,11 @@
 <%= for metavideo <- @metavideos do %>
   <%= if @current_user do %>
     <% user_video = Flashklip.Metavideo.existing_user_video(metavideo.videos, @current_user.id) %>
-  <% else %>
-    <% user_video = nil %>
   <% end %>
   <%= if user_video do %>
-    <a href="<%= watch_path(@conn, :show, user_video, own_video: true) %>">
+    <a href="<%= watch_path(@conn, :show, user_video, v: user_video.id) %>">
   <% else %>
-      <a href="<%= watch_path(@conn, :show, metavideo, own_video: false) %>">
+    <a href="<%= watch_path(@conn, :show, metavideo, v: 0) %>">
   <% end %>
     <div class="callout">
       <div class="media-object">

@@ -6,7 +6,7 @@
 <hr>
 
 <%= for video <- @videos do %>
-  <a href="<%= watch_path(@conn, :show, video) %>">
+  <a href="<%= watch_path(@conn, :show, video, v: video.id) %>">
     <div class="callout">
       <div class="media-object">
         <div class="media-object-section">

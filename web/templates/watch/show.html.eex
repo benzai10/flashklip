@@ -9,18 +9,23 @@
   <li class="tabs-title">
     <a href="#navi">OVERVIEW</a>
   </li>
-  <li class="tabs-title" id="add-klip-tab">
+  <li class="tabs-title <%= @show %>" id="add-klip-tab">
     <a href="#add-klip">ADD KLIP</a>
   </li>
-  <li class="tabs-title" id="add-klip-tab">
+  <li class="tabs-title <%= @show %>" id="add-klip-tab">
     <a href="#edit-video"><i class="fi-widget"></i></a>
   </li>
 </ul>
 <div class="tabs-content" data-tabs-content="klipTabs">
   <div class="tabs-panel is-active" id="live">
     <div id="my-klip-container">
+      <%= if !@current_user do %>
+        <p>Timeview is only available for logged in users.</p>
+        <p>Check the overview for existing klips.</p>
+        <p>Please log in or register an account. You will then be able to add and save your own klips!</p>
+      <% end %>
     </div>
-    <div id="my-edit-container" class="hide">
+    <div id="my-edit-container <% @show %>" class="hide">
       <div class="callout klip-callout">
         <div class="input-group">
           <input id="klip-input-edit" class="input-group-field" type="text">
@@ -40,9 +45,9 @@
         </div>
       </div>
     </div>
-    <button type="button" class="small hollow disabled button" id="klip-prev">Prev Klip</button>
-    <button type="button" class="small hollow button" id="klip-next">Next Klip</button>
-    <span class="float-right">
+    <button type="button" class="small hollow disabled button <%= @show %>" id="klip-prev">Prev Klip</button>
+    <button type="button" class="small hollow button <%= @show %>" id="klip-next">Next Klip</button>
+    <span class="float-right <%= @show %>">
       <button type="button" class="alert small hollow button hide" id="klip-delete">Delete</button>
       <button type="button" class="small hollow button hide" id="klip-edit">Edit</button>
       <button type="button" class="small hollow button hide" id="klip-cancel-edit">Cancel Edit</button>
