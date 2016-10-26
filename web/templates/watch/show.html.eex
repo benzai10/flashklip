@@ -31,7 +31,7 @@
         <p>Please log in or register an account. You will then be able to add and save your own klips!</p>
       <% end %>
     </div>
-    <div id="my-edit-container <% @show %>" class="hide">
+    <div id="my-edit-container" class="hide">
       <div class="callout klip-callout">
         <div class="input-group">
           <input id="klip-input-edit" class="input-group-field" type="text">
