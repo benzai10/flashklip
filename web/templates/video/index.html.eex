@@ -18,7 +18,7 @@
           <h6><%= video.title %></h6>
           <hr>
           <p class="video-added">added: <%= video.inserted_at %></p>
-          <p class="video-klips-count">Klips <span class="badge"><%= Enum.count(video.klips) %></span></p>
+          <p class="video-klips-count">Klips <span class="badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span></p>
         </div>
       </div>
     </div>

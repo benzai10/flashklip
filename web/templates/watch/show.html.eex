@@ -1,5 +1,5 @@
 <div class="flex-video widescreen">
-<%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video.id] do %>
+<%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video_id] do %>
 <% end %>
 </div>
 <ul class="tabs" data-tabs id="klipTabs">
@@ -12,9 +12,15 @@
   <li class="tabs-title <%= @show %>" id="add-klip-tab">
     <a href="#add-klip">ADD KLIP</a>
   </li>
-  <li class="tabs-title <%= @show %>" id="add-klip-tab">
-    <a href="#edit-video"><i class="fi-widget"></i></a>
-  </li>
+  <%= if @user_video_id == 0 do %>
+    <li class="tabs-title hide" id="add-klip-tab">
+      <a href="#edit-video"><i class="fi-widget"></i></a>
+    </li>
+  <% else %>
+    <li class="tabs-title <%= @show %>" id="add-klip-tab">
+      <a href="#edit-video"><i class="fi-widget"></i></a>
+    </li>
+  <% end %>
 </ul>
 <div class="tabs-content" data-tabs-content="klipTabs">
   <div class="tabs-panel is-active" id="live">
@@ -84,12 +90,12 @@
     </div>
   </div>
   <div class="tabs-panel float-right" id="edit-video">
-    <%= link "Delete", to: video_path(@conn, :delete, @video),
+    <%= link "Delete", to: video_path(@conn, :delete, @user_video_id),
     method: :delete,
     data: [confirm: "Are you sure?"],
     class: "alert small hollow button" %>
 
-    <%= link "Edit", to: video_path(@conn, :edit, @video),
+    <%= link "Edit", to: video_path(@conn, :edit, @user_video_id),
     class: "hollow small button" %>
 
   </div>

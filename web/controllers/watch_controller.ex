@@ -9,7 +9,7 @@ defmodule Flashklip.WatchController do
       video =
         Repo.get!(Video, id)
         |> Repo.preload(:metavideo)
-      render conn, "show.html", video: video.metavideo, user_video: video, show: ""
+      render conn, "show.html", video: video.metavideo, user_video_id: video.id, show: ""
     else
       metavideo =
         Repo.get!(Metavideo, id)
@@ -27,7 +27,7 @@ defmodule Flashklip.WatchController do
           _ ->
             "hide"
         end
-      render conn, "show.html", video: metavideo, user_video: metavideo, klips: klips, show: show
+      render conn, "show.html", video: metavideo, user_video_id: 0, klips: klips, show: show
     end
   end
 end

@@ -11635,6 +11635,11 @@ var Video = {
     });
 
     vidChannel.on("new_klip", function (resp) {
+      if (resp.redirect == true) {
+        window.location.replace("/watch/" + resp.video_id + "?v=" + resp.video_id);
+        return;
+      }
+
       vidChannel.params.last_seen_id = resp.id;
       _this2.renderLiveKlip(myKlipContainer, resp);
 

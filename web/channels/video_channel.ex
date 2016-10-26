@@ -1,6 +1,8 @@
 defmodule Flashklip.VideoChannel do
   use Flashklip.Web, :channel
   alias Flashklip.KlipView
+  require IEx
+  require Logger
 
   def join("videos:" <> video_id, params, socket) do
     last_seen_id = params["last_seen_id"] || 0
@@ -39,7 +41,6 @@ defmodule Flashklip.VideoChannel do
 
     resp = %{klips: Phoenix.View.render_many(klips, KlipView, "klip.json")}
     {:ok, resp, assign(socket, :video_id, video_id)}
-    # {:ok, resp, assign(socket, %{video_id: video_id, user_video_id: 999})
   end
 
   def handle_in(event, params, socket) do
@@ -48,24 +49,60 @@ defmodule Flashklip.VideoChannel do
   end
 
   def handle_in("new_klip", params, user, socket) do
-    changeset =
-      user
-      # |> build_assoc(:klips, video_id: socket.assigns.video_id)
-      |> build_assoc(:klips, video_id: String.to_integer(params["user_video_id"]))
-      |> Flashklip.Klip.changeset(params)
+    # first part means there's no user's video to save klips yet
+    if String.to_integer(params["user_video_id"]) == 0 do
+      changeset =
+        user
+        |> build_assoc(:videos, metavideo_id: socket.assigns.video_id)
+        |> Flashklip.Video.changeset(%{"title" => "xxxxxx"})
 
-    case Repo.insert(changeset) do
-      {:ok, klip} ->
-        broadcast! socket, "new_klip", %{
-          id: klip.id,
-          user: Flashklip.UserView.render("user.json", %{user: user}),
-          content: klip.content,
-          at: klip.at
-        }
-        {:reply, :ok, socket}
+      case Repo.insert(changeset) do
+        {:ok, video} ->
+          changeset =
+            user
+            # |> build_assoc(:klips, video_id: socket.assigns.video_id)
+            |> build_assoc(:klips, video: video)
+            |> Flashklip.Klip.changeset(params)
 
-      {:error, changeset} ->
-        {:reply, {:error, %{errors: changeset}}, socket}
+          case Repo.insert(changeset) do
+            {:ok, klip} ->
+              broadcast! socket, "new_klip", %{
+                id: klip.id,
+                user: Flashklip.UserView.render("user.json", %{user: user}),
+                content: klip.content,
+                at: klip.at,
+                video_id: klip.video_id,
+                redirect: true
+              }
+              {:reply, :ok, socket}
+
+            {:error, changeset} ->
+              {:reply, {:error, %{errors: changeset}}, socket}
+          end
+
+        {:error, changeset} ->
+          {:reply, {:error, %{errors: changeset}}, socket}
+      end
+    else
+      changeset =
+        user
+        # |> build_assoc(:klips, video_id: socket.assigns.video_id)
+        |> build_assoc(:klips, video_id: String.to_integer(params["user_video_id"]))
+        |> Flashklip.Klip.changeset(params)
+
+      case Repo.insert(changeset) do
+        {:ok, klip} ->
+          broadcast! socket, "new_klip", %{
+            id: klip.id,
+            user: Flashklip.UserView.render("user.json", %{user: user}),
+            content: klip.content,
+            at: klip.at
+          }
+          {:reply, :ok, socket}
+
+        {:error, changeset} ->
+          {:reply, {:error, %{errors: changeset}}, socket}
+      end
     end
   end
 
