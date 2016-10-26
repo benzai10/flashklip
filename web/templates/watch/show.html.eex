@@ -13,6 +13,9 @@
     <a href="#add-klip">ADD KLIP</a>
   </li>
   <%= if @user_video_id == 0 do %>
+    <li class="tabs-title <%= @show %>" id="save-video-tab">
+      <a href="#save-video"><i class="fi-save"></i> SAVE</a>
+    </li>
     <li class="tabs-title hide" id="add-klip-tab">
       <a href="#edit-video"><i class="fi-widget"></i></a>
     </li>
@@ -87,6 +90,15 @@
           <i class="fi-fast-forward"></i>
         </button>
       </div>
+    </div>
+  </div>
+  <div class="tabs-panel" id="save-video">
+    <div class="callout">
+      <%= link "Save Video",
+            to: video_path(@conn, :create,
+              %{"video" => %{"url" => @video.url, "title" => "this is a title"}}),
+            method: :post,
+            class: "small hollow button" %>
     </div>
   </div>
   <div class="tabs-panel float-right" id="edit-video">
