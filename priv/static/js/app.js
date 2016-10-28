@@ -11452,8 +11452,11 @@ var Video = {
   nextKlip: {},
   prevKlip: {},
   currentAllKlips: [],
+  allKlips: [],
   liveKlipTimer: {},
   userVideoId: 0,
+  overviewAll: true,
+  currentUserId: 0,
 
   init: function init(socket, element) {
     var _this = this;
@@ -11464,6 +11467,7 @@ var Video = {
     var playerId = element.getAttribute("data-player-id");
     var videoId = element.getAttribute("data-id");
     this.userVideoId = element.getAttribute("data-user-video-id");
+    this.currentUserId = element.getAttribute("data-user-id");
     socket.connect();
     _player2.default.init(element.id, playerId, function () {
       _this.onReady(videoId, socket);
@@ -11489,11 +11493,41 @@ var Video = {
     var newTsDisplay = document.getElementById("klip-new-ts-display");
     var nextKlip = document.getElementById("klip-next");
     var prevKlip = document.getElementById("klip-prev");
-
+    var switchOverview = document.getElementById("overview-switch");
     var saveAt = 0;
 
     // maybe later change to aggChannel?
     var vidChannel = socket.channel("videos:" + videoId);
+
+    switchOverview.addEventListener("click", function (e) {
+      if (_this2.overviewAll == true) {
+        _this2.overviewAll = false;
+        // filter only own klips
+        var userKlips = _this2.allKlips.filter(function (klip) {
+          if (klip.user.id == _this2.currentUserId) {
+            return true;
+          }
+        });
+        _this2.currentAllKlips = userKlips;
+        // refresh overview
+        allKlipsContainer.innerHTML = "";
+        // display all klips in the navigator
+        var i = 0;
+        for (i = 0; i < _this2.currentAllKlips.length; i++) {
+          _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
+        }
+      } else {
+        _this2.overviewAll = true;
+        _this2.currentAllKlips = _this2.allKlips;
+        // refresh overview
+        allKlipsContainer.innerHTML = "";
+        // display all klips in the navigator
+        var _i = 0;
+        for (_i = 0; _i < _this2.currentAllKlips.length; _i++) {
+          _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[_i]);
+        }
+      }
+    });
 
     addKlipTab.addEventListener("click", function (e) {
       saveAt = _player2.default.getCurrentTime();
@@ -11711,7 +11745,8 @@ var Video = {
       /* let ids = resp.klips.map(klip => klip.id)*/
       /* if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }*/
 
-      _this2.currentAllKlips = resp.klips;
+      _this2.allKlips = resp.klips;
+      _this2.currentAllKlips = _this2.allKlips;
       _this2.scheduleKlips(myKlipContainer, _this2.currentAllKlips);
 
       // display all klips in the navigator
@@ -11737,9 +11772,17 @@ var Video = {
     var template = document.createElement("div");
 
     myKlipContainer.innerHTML = "\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <div class=\"callout klip-callout\">\n        <p>" + this.esc(content) + "</p>\n        <hr>\n        <span class=\"timestamp\">\n            [" + this.formatTime(at) + "]\n        </span>\n        <span class=\"username float-right\">\n          by " + this.esc(user.username) + "\n        </span>\n      </div>\n    </a>\n    ";
-    document.getElementById("klip-delete").classList.remove("hide");
-    document.getElementById("klip-edit").classList.remove("hide");
-    document.getElementById("klip-input-edit").value = this.esc(content);
+
+    if (user.id == this.currentUserId) {
+      document.getElementById("klip-delete").classList.remove("hide");
+      document.getElementById("klip-edit").classList.remove("hide");
+      document.getElementById("klip-input-edit").value = this.esc(content);
+    } else {
+      document.getElementById("klip-delete").classList.remove("hide");
+      document.getElementById("klip-edit").classList.remove("hide");
+      document.getElementById("klip-delete").className += " hide";
+      document.getElementById("klip-edit").className += " hide";
+    }
 
     var timestampDisplay = document.getElementById("klip-edit-ts-display");
     timestampDisplay.innerHTML = "\n    [" + this.formatTime(at) + "]\n    ";

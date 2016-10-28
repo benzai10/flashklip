@@ -5,11 +5,17 @@ defmodule Flashklip.WatchController do
   alias Flashklip.Video
 
   def show(conn, %{"id" => id, "v" => v}) do
+    user_id =
+      case is_map(conn.assigns.current_user) do
+        true -> conn.assigns.current_user.id
+        _ -> 0
+      end
+
     if String.to_integer(v) > 0 do
       video =
         Repo.get!(Video, id)
         |> Repo.preload(:metavideo)
-      render conn, "show.html", video: video.metavideo, user_video_id: video.id, show: ""
+      render conn, "show.html", user_id: user_id, video: video.metavideo, user_video_id: video.id, show: ""
     else
       metavideo =
         Repo.get!(Metavideo, id)
@@ -27,7 +33,7 @@ defmodule Flashklip.WatchController do
           _ ->
             "hide"
         end
-      render conn, "show.html", video: metavideo, user_video_id: 0, klips: klips, show: show
+      render conn, "show.html", user_id: user_id, video: metavideo, user_video_id: 0, klips: klips, show: show
     end
   end
 end

@@ -1,5 +1,5 @@
 <div class="flex-video widescreen">
-<%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video_id] do %>
+<%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video_id, user_id: @user_id] do %>
 <% end %>
 </div>
 <ul class="tabs" data-tabs id="klipTabs">
@@ -101,14 +101,27 @@
             class: "small hollow button" %>
     </div>
   </div>
-  <div class="tabs-panel float-right" id="edit-video">
+  <div class="tabs-panel" id="edit-video">
+    <p>Display only own klips?</p>
+    <div class="switch large">
+      <input class="switch-input" id="overview-switch" type="checkbox" name="overviewSwitch">
+      <label class="switch-paddle" for="overview-switch">
+        <span class="show-for-sr">Toggle Overview</span>
+        <span class="switch-active" aria-hidden="true">Yes</span>
+        <span class="switch-inactive" aria-hidden="true">No</span>
+      </label>
+    </div>
+
+    <div class="float-right">
+    <%= link "Edit", to: video_path(@conn, :edit, @user_video_id),
+    class: "hollow small button" %>
+
     <%= link "Delete", to: video_path(@conn, :delete, @user_video_id),
     method: :delete,
     data: [confirm: "Are you sure?"],
     class: "alert small hollow button" %>
 
-    <%= link "Edit", to: video_path(@conn, :edit, @user_video_id),
-    class: "hollow small button" %>
+    </div>
 
   </div>
 </div>

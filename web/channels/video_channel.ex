@@ -40,7 +40,7 @@ defmodule Flashklip.VideoChannel do
     # )
 
     resp = %{klips: Phoenix.View.render_many(klips, KlipView, "klip.json")}
-    {:ok, resp, assign(socket, :video_id, video_id)}
+      {:ok, resp, assign(socket, :video_id, video_id)}
   end
 
   def handle_in(event, params, socket) do

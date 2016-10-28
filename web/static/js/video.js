@@ -6,13 +6,17 @@ let Video = {
   nextKlip: {},
   prevKlip: {},
   currentAllKlips: [],
+  allKlips: [],
   liveKlipTimer: {},
   userVideoId: 0,
+  overviewAll: true,
+  currentUserId: 0,
 
   init(socket, element) { if (!element) { return }
     let playerId = element.getAttribute("data-player-id")
     let videoId = element.getAttribute("data-id")
     this.userVideoId = element.getAttribute("data-user-video-id")
+    this.currentUserId = element.getAttribute("data-user-id")
     socket.connect()
     Player.init(element.id, playerId, () => {
       this.onReady(videoId, socket)
@@ -37,12 +41,42 @@ let Video = {
     let newTsDisplay      = document.getElementById("klip-new-ts-display")
     let nextKlip          = document.getElementById("klip-next")
     let prevKlip          = document.getElementById("klip-prev")
-
+    let switchOverview    = document.getElementById("overview-switch")
     let saveAt            = 0
 
 
     // maybe later change to aggChannel?
     let vidChannel        = socket.channel("videos:" + videoId)
+
+
+    switchOverview.addEventListener("click", e => {
+      if (this.overviewAll == true) {
+        this.overviewAll = false
+        // filter only own klips
+        let userKlips = this.allKlips.filter( klip => {
+          if (klip.user.id == this.currentUserId) {
+            return true}
+        })
+        this.currentAllKlips = userKlips
+        // refresh overview
+        allKlipsContainer.innerHTML = ""
+        // display all klips in the navigator
+        let i = 0
+        for (i = 0; i < this.currentAllKlips.length; i++) {
+          this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
+        }
+      } else {
+        this.overviewAll = true
+        this.currentAllKlips = this.allKlips
+        // refresh overview
+        allKlipsContainer.innerHTML = ""
+        // display all klips in the navigator
+        let i = 0
+        for (i = 0; i < this.currentAllKlips.length; i++) {
+          this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
+        }
+      }
+    })
 
     addKlipTab.addEventListener("click", e => {
       saveAt = Player.getCurrentTime()
@@ -256,7 +290,8 @@ let Video = {
         /* let ids = resp.klips.map(klip => klip.id)*/
         /* if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }*/
 
-        this.currentAllKlips = resp.klips
+        this.allKlips = resp.klips
+        this.currentAllKlips = this.allKlips
         this.scheduleKlips(myKlipContainer, this.currentAllKlips)
 
         // display all klips in the navigator
@@ -293,9 +328,17 @@ let Video = {
       </div>
     </a>
     `
-    document.getElementById("klip-delete").classList.remove("hide")
-    document.getElementById("klip-edit").classList.remove("hide")
-    document.getElementById("klip-input-edit").value = this.esc(content)
+
+    if (user.id == this.currentUserId) {
+      document.getElementById("klip-delete").classList.remove("hide")
+      document.getElementById("klip-edit").classList.remove("hide")
+      document.getElementById("klip-input-edit").value = this.esc(content)
+    } else {
+      document.getElementById("klip-delete").classList.remove("hide")
+      document.getElementById("klip-edit").classList.remove("hide")
+      document.getElementById("klip-delete").className += (" hide")
+      document.getElementById("klip-edit").className += (" hide")
+    }
 
     let timestampDisplay = document.getElementById("klip-edit-ts-display")
     timestampDisplay.innerHTML = `
