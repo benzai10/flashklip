@@ -64,6 +64,7 @@ let Video = {
         for (i = 0; i < this.currentAllKlips.length; i++) {
           this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
         }
+        this.addNaviEventListeners(vidChannel)
         overviewTitle.innerHTML = "MY KLIPS"
       } else {
         overviewTitle.innerHTML = "ALL KLIPS"
@@ -90,6 +91,7 @@ let Video = {
         for (i = 0; i < this.currentAllKlips.length; i++) {
           this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
         }
+        this.addNaviEventListeners(vidChannel)
       }
     })
 
@@ -148,6 +150,8 @@ let Video = {
       clearTimeout(this.liveKlipTimer)
       document.getElementById("my-klip-container").className += " hide"
       document.getElementById("klip-edit").className += " hide"
+      nextKlip.classList.remove("invisible")
+      prevKlip.classList.remove("invisible")
       nextKlip.className += " invisible"
       prevKlip.className += " invisible"
       document.getElementById("my-edit-container").classList.remove("hide")
@@ -247,7 +251,8 @@ let Video = {
       // *** quick hack
 
       // sort klips (asc: at) and delete current klipContainer
-      this.currentAllKlips.push(resp)
+      this.allKlips.push(resp)
+      this.currentAllKlips = this.allKlips
 
       // filter out original klips where a copy exists
       let copiedKlips = new Array
@@ -271,6 +276,7 @@ let Video = {
       for (i = 0; i < this.currentAllKlips.length; i++) {
         this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
       }
+      this.addNaviEventListeners(vidChannel)
 
       // *** end quick hack
     })
@@ -290,12 +296,29 @@ let Video = {
       for (i = 0; i < this.currentAllKlips.length; i++) {
         this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
       }
+      this.addNaviEventListeners(vidChannel)
     })
 
     vidChannel.on("delete_klip", (resp) => {
       // remove deleted klip from array
-      this.currentAllKlips = this.currentAllKlips.filter( klip => {
+      this.allKlips = this.allKlips.filter( klip => {
         return klip.id != resp.id
+      })
+
+      this.currentAllKlips = this.allKlips
+
+      // filter out original klips where a copy exists
+      let copiedKlips = new Array
+
+      for(var k in this.currentAllKlips)
+        {if (this.currentAllKlips[k].copy_from > 0) {
+          copiedKlips.push(this.currentAllKlips[k].copy_from)
+        }}
+
+      this.currentAllKlips = this.currentAllKlips.filter(klip => {
+        if(!copiedKlips.includes(klip.id)) {
+          return true
+        }
       })
 
       // remove deleted klip from navi container
@@ -313,12 +336,8 @@ let Video = {
     vidChannel.join()
       .receive("ok", resp => {
 
-        // this is from the phoenix book to prevent rerendering of
-        // already displayed klips after loosing connection
-        // TODO: check if still needed => definitely needed!!!
-
-        /* let ids = resp.klips.map(klip => klip.id)*/
-        /* if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }*/
+        let ids = resp.klips.map(klip => klip.id)
+        if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }
 
         this.allKlips = resp.klips
         // filter out original klips where a copy exists
@@ -345,58 +364,7 @@ let Video = {
           this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
         }
 
-        Array.from(document.getElementsByClassName("navi-button")).forEach(function(element) {
-          element.addEventListener('click', e => {
-            e.preventDefault()
-            let seekAt =
-              e.target.parentNode.firstElementChild.getAttribute("data-seek") ||
-              e.target.parentNode.parentNode.firstElementChild.getAttribute("data-seek") ||
-              e.target.parentNode.parentNode.parentNode.firstElementChild.getAttribute("data-seek")
-
-            let content =
-              e.target.getAttribute("data-klip-content") ||
-              e.target.parentNode.getAttribute("data-klip-content")
-
-            let id =
-              e.target.getAttribute("data-klip-id") ||
-              e.target.parentNode.getAttribute("data-klip-id")
-
-            let userId =
-              e.target.getAttribute("data-user-id") ||
-              e.target.parentNode.getAttribute("data-user-id")
-
-            let videoId =
-              e.target.getAttribute("data-video-id") ||
-              e.target.parentNode.getAttribute("data-video-id")
-
-            let klipAction =
-              e.target.getAttribute("data-klip-action") ||
-              e.target.parentNode.getAttribute("data-klip-action")
-
-            if (klipAction == "copy") {
-              let payload = {content: content, at: seekAt, copy_from: id, user_video_id: videoId}
-
-              vidChannel.push("new_klip", payload)
-                .receive("error", e => console.log(e))
-            } else {
-
-              let conf = confirm("Are you sure?")
-              if (conf == true) {
-                let payload = {
-                  id: id
-                }
-                vidChannel.push("delete_klip", payload)
-                  .receive("error", e => console.log(e) )
-                // restart liveKlipTimer
-              } else
-              {
-                return
-              }
-            }
-
-          })
-        })
-
+        this.addNaviEventListeners(vidChannel)
 
         allKlipsContainer.scrollTop = 0
 
@@ -439,6 +407,9 @@ let Video = {
       document.getElementById("klip-delete").className += (" hide")
       document.getElementById("klip-edit").className += (" hide")
     }
+
+    document.getElementById("klip-prev").classList.remove("hide")
+    document.getElementById("klip-next").classList.remove("hide")
 
     let timestampDisplay = document.getElementById("klip-edit-ts-display")
     timestampDisplay.innerHTML = `
@@ -534,6 +505,61 @@ let Video = {
       }
       this.scheduleKlips(myKlipContainer, this.currentAllKlips)
     }, 500)
+  },
+
+  addNaviEventListeners(vidChannel) {
+
+    Array.from(document.getElementsByClassName("navi-button")).forEach(function(element) {
+      element.addEventListener('click', e => {
+        e.preventDefault()
+        let seekAt =
+          e.target.parentNode.firstElementChild.getAttribute("data-seek") ||
+          e.target.parentNode.parentNode.firstElementChild.getAttribute("data-seek") ||
+          e.target.parentNode.parentNode.parentNode.firstElementChild.getAttribute("data-seek")
+
+        let content =
+          e.target.getAttribute("data-klip-content") ||
+          e.target.parentNode.getAttribute("data-klip-content")
+
+        let id =
+          e.target.getAttribute("data-klip-id") ||
+          e.target.parentNode.getAttribute("data-klip-id")
+
+        let userId =
+          e.target.getAttribute("data-user-id") ||
+          e.target.parentNode.getAttribute("data-user-id")
+
+        let videoId =
+          e.target.getAttribute("data-video-id") ||
+          e.target.parentNode.getAttribute("data-video-id")
+
+        let klipAction =
+          e.target.getAttribute("data-klip-action") ||
+          e.target.parentNode.getAttribute("data-klip-action")
+
+        if (klipAction == "copy") {
+          let payload = {content: content, at: seekAt, copy_from: id, user_video_id: videoId}
+
+          vidChannel.push("new_klip", payload)
+            .receive("error", e => console.log(e))
+        } else {
+
+          let conf = confirm("Are you sure?")
+          if (conf == true) {
+            let payload = {
+              id: id
+            }
+            vidChannel.push("delete_klip", payload)
+              .receive("error", e => console.log(e) )
+            // restart liveKlipTimer
+          } else
+          {
+            return
+          }
+        }
+
+      })
+    })
   },
 
   formatTime(at) {

@@ -14,7 +14,11 @@ defmodule Flashklip.VideoChannel do
 
       # the following query shows all klips
       # TODO: add query to preload of klips (filter copy_from from other users)
-      metavideo_klips = metavideo.videos |> Repo.preload(:klips)
+      klips_query = from k in Flashklip.Klip, where: k.id > ^last_seen_id
+      metavideo_klips =
+        metavideo.videos
+        |> Repo.preload(klips: from(k in Flashklip.Klip,
+                               where: k.id > ^last_seen_id))
 
       klips = Enum.flat_map(metavideo_klips, fn(v) ->
         v.klips

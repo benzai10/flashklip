@@ -11446,6 +11446,8 @@ var _player2 = _interopRequireDefault(_player);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var Video = {
 
   currentLiveKlip: {},
@@ -11516,6 +11518,7 @@ var Video = {
         for (i = 0; i < _this2.currentAllKlips.length; i++) {
           _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
         }
+        _this2.addNaviEventListeners(vidChannel);
         overviewTitle.innerHTML = "MY KLIPS";
       } else {
         var k;
@@ -11546,6 +11549,7 @@ var Video = {
           for (i = 0; i < _this2.currentAllKlips.length; i++) {
             _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
           }
+          _this2.addNaviEventListeners(vidChannel);
         })();
       }
     });
@@ -11606,6 +11610,8 @@ var Video = {
       clearTimeout(_this2.liveKlipTimer);
       document.getElementById("my-klip-container").className += " hide";
       document.getElementById("klip-edit").className += " hide";
+      nextKlip.classList.remove("invisible");
+      prevKlip.classList.remove("invisible");
       nextKlip.className += " invisible";
       prevKlip.className += " invisible";
       document.getElementById("my-edit-container").classList.remove("hide");
@@ -11705,7 +11711,8 @@ var Video = {
       // *** quick hack
 
       // sort klips (asc: at) and delete current klipContainer
-      _this2.currentAllKlips.push(resp);
+      _this2.allKlips.push(resp);
+      _this2.currentAllKlips = _this2.allKlips;
 
       // filter out original klips where a copy exists
       var copiedKlips = new Array();
@@ -11732,6 +11739,7 @@ var Video = {
       for (i = 0; i < _this2.currentAllKlips.length; i++) {
         _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
       }
+      _this2.addNaviEventListeners(vidChannel);
 
       // *** end quick hack
     });
@@ -11753,12 +11761,30 @@ var Video = {
       for (i = 0; i < _this2.currentAllKlips.length; i++) {
         _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
       }
+      _this2.addNaviEventListeners(vidChannel);
     });
 
     vidChannel.on("delete_klip", function (resp) {
       // remove deleted klip from array
-      _this2.currentAllKlips = _this2.currentAllKlips.filter(function (klip) {
+      _this2.allKlips = _this2.allKlips.filter(function (klip) {
         return klip.id != resp.id;
+      });
+
+      _this2.currentAllKlips = _this2.allKlips;
+
+      // filter out original klips where a copy exists
+      var copiedKlips = new Array();
+
+      for (var k in _this2.currentAllKlips) {
+        if (_this2.currentAllKlips[k].copy_from > 0) {
+          copiedKlips.push(_this2.currentAllKlips[k].copy_from);
+        }
+      }
+
+      _this2.currentAllKlips = _this2.currentAllKlips.filter(function (klip) {
+        if (!copiedKlips.includes(klip.id)) {
+          return true;
+        }
       });
 
       // remove deleted klip from navi container
@@ -11775,12 +11801,12 @@ var Video = {
 
     vidChannel.join().receive("ok", function (resp) {
 
-      // this is from the phoenix book to prevent rerendering of
-      // already displayed klips after loosing connection
-      // TODO: check if still needed => definitely needed!!!
-
-      /* let ids = resp.klips.map(klip => klip.id)*/
-      /* if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }*/
+      var ids = resp.klips.map(function (klip) {
+        return klip.id;
+      });
+      if (ids.length > 0) {
+        vidChannel.params.last_seen_id = Math.max.apply(Math, _toConsumableArray(ids));
+      }
 
       _this2.allKlips = resp.klips;
       // filter out original klips where a copy exists
@@ -11807,44 +11833,7 @@ var Video = {
         _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
       }
 
-      Array.from(document.getElementsByClassName("navi-button")).forEach(function (element) {
-        element.addEventListener('click', function (e) {
-          e.preventDefault();
-          var seekAt = e.target.parentNode.firstElementChild.getAttribute("data-seek") || e.target.parentNode.parentNode.firstElementChild.getAttribute("data-seek") || e.target.parentNode.parentNode.parentNode.firstElementChild.getAttribute("data-seek");
-
-          var content = e.target.getAttribute("data-klip-content") || e.target.parentNode.getAttribute("data-klip-content");
-
-          var id = e.target.getAttribute("data-klip-id") || e.target.parentNode.getAttribute("data-klip-id");
-
-          var userId = e.target.getAttribute("data-user-id") || e.target.parentNode.getAttribute("data-user-id");
-
-          var videoId = e.target.getAttribute("data-video-id") || e.target.parentNode.getAttribute("data-video-id");
-
-          var klipAction = e.target.getAttribute("data-klip-action") || e.target.parentNode.getAttribute("data-klip-action");
-
-          if (klipAction == "copy") {
-            var payload = { content: content, at: seekAt, copy_from: id, user_video_id: videoId };
-
-            vidChannel.push("new_klip", payload).receive("error", function (e) {
-              return console.log(e);
-            });
-          } else {
-
-            var conf = confirm("Are you sure?");
-            if (conf == true) {
-              var _payload = {
-                id: id
-              };
-              vidChannel.push("delete_klip", _payload).receive("error", function (e) {
-                return console.log(e);
-              });
-              // restart liveKlipTimer
-            } else {
-              return;
-            }
-          }
-        });
-      });
+      _this2.addNaviEventListeners(vidChannel);
 
       allKlipsContainer.scrollTop = 0;
     }).receive("error", function (reason) {
@@ -11875,6 +11864,9 @@ var Video = {
       document.getElementById("klip-delete").className += " hide";
       document.getElementById("klip-edit").className += " hide";
     }
+
+    document.getElementById("klip-prev").classList.remove("hide");
+    document.getElementById("klip-next").classList.remove("hide");
 
     var timestampDisplay = document.getElementById("klip-edit-ts-display");
     timestampDisplay.innerHTML = "\n    [" + this.formatTime(at) + "]\n    ";
@@ -11956,6 +11948,47 @@ var Video = {
       }
       _this3.scheduleKlips(myKlipContainer, _this3.currentAllKlips);
     }, 500);
+  },
+  addNaviEventListeners: function addNaviEventListeners(vidChannel) {
+
+    Array.from(document.getElementsByClassName("navi-button")).forEach(function (element) {
+      element.addEventListener('click', function (e) {
+        e.preventDefault();
+        var seekAt = e.target.parentNode.firstElementChild.getAttribute("data-seek") || e.target.parentNode.parentNode.firstElementChild.getAttribute("data-seek") || e.target.parentNode.parentNode.parentNode.firstElementChild.getAttribute("data-seek");
+
+        var content = e.target.getAttribute("data-klip-content") || e.target.parentNode.getAttribute("data-klip-content");
+
+        var id = e.target.getAttribute("data-klip-id") || e.target.parentNode.getAttribute("data-klip-id");
+
+        var userId = e.target.getAttribute("data-user-id") || e.target.parentNode.getAttribute("data-user-id");
+
+        var videoId = e.target.getAttribute("data-video-id") || e.target.parentNode.getAttribute("data-video-id");
+
+        var klipAction = e.target.getAttribute("data-klip-action") || e.target.parentNode.getAttribute("data-klip-action");
+
+        if (klipAction == "copy") {
+          var payload = { content: content, at: seekAt, copy_from: id, user_video_id: videoId };
+
+          vidChannel.push("new_klip", payload).receive("error", function (e) {
+            return console.log(e);
+          });
+        } else {
+
+          var conf = confirm("Are you sure?");
+          if (conf == true) {
+            var _payload = {
+              id: id
+            };
+            vidChannel.push("delete_klip", _payload).receive("error", function (e) {
+              return console.log(e);
+            });
+            // restart liveKlipTimer
+          } else {
+            return;
+          }
+        }
+      });
+    });
   },
   formatTime: function formatTime(at) {
     var date = new Date(null);
