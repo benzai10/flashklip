@@ -13,6 +13,7 @@ defmodule Flashklip.VideoChannel do
       |> Repo.preload(:videos)
 
       # the following query shows all klips
+      # TODO: add query to preload of klips (filter copy_from from other users)
       metavideo_klips = metavideo.videos |> Repo.preload(:klips)
 
       klips = Enum.flat_map(metavideo_klips, fn(v) ->
@@ -72,6 +73,7 @@ defmodule Flashklip.VideoChannel do
                 content: klip.content,
                 at: klip.at,
                 video_id: klip.video_id,
+                copy_from: klip.copy_from,
                 redirect: true
               }
               {:reply, :ok, socket}
@@ -96,6 +98,7 @@ defmodule Flashklip.VideoChannel do
             id: klip.id,
             user: Flashklip.UserView.render("user.json", %{user: user}),
             content: klip.content,
+            copy_from: klip.copy_from,
             at: klip.at
           }
           {:reply, :ok, socket}

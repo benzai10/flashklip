@@ -4,7 +4,7 @@ defmodule Flashklip.Klip do
   schema "klips" do
     field :content, :string
     field :at, :integer
-    field :is_copy, :boolean
+    field :copy_from, :integer
     field :in_timeview, :boolean
     belongs_to :user, Flashklip.User
     belongs_to :video, Flashklip.Video
@@ -17,7 +17,7 @@ defmodule Flashklip.Klip do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:content, :at])
+    |> cast(params, [:content, :at, :copy_from])
     |> validate_required([:content, :at])
   end
 end

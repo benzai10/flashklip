@@ -6,7 +6,9 @@ defmodule Flashklip.KlipView do
       id: klip.id,
       content: klip.content,
       at: klip.at,
-      user: render_one(klip.user, Flashklip.UserView, "user.json")
+      user: render_one(klip.user, Flashklip.UserView, "user.json"),
+      copy_from: klip.copy_from,
+      in_timeview: klip.in_timeview
     }
   end
 end

@@ -7,7 +7,7 @@
     <a href="#live" aria-selected="true">TIMEVIEW</a>
   </li>
   <li class="tabs-title">
-    <a href="#navi">OVERVIEW</a>
+    <a href="#navi" id="overview-title">ALL KLIPS</a>
   </li>
   <li class="tabs-title <%= @show %>" id="add-klip-tab">
     <a href="#add-klip">ADD KLIP</a>
@@ -16,11 +16,11 @@
     <li class="tabs-title <%= @show %>" id="save-video-tab">
       <a href="#save-video"><i class="fi-save"></i> SAVE</a>
     </li>
-    <li class="tabs-title hide" id="add-klip-tab">
+    <li class="tabs-title hide float-right" id="add-klip-tab">
       <a href="#edit-video"><i class="fi-widget"></i></a>
     </li>
   <% else %>
-    <li class="tabs-title <%= @show %>" id="add-klip-tab">
+    <li class="tabs-title <%= @show %> float-right" id="add-klip-tab">
       <a href="#edit-video"><i class="fi-widget"></i></a>
     </li>
   <% end %>
@@ -111,6 +111,7 @@
         <span class="switch-inactive" aria-hidden="true">No</span>
       </label>
     </div>
+
 
     <div class="float-right">
     <%= link "Edit", to: video_path(@conn, :edit, @user_video_id),

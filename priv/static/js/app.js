@@ -11494,14 +11494,14 @@ var Video = {
     var nextKlip = document.getElementById("klip-next");
     var prevKlip = document.getElementById("klip-prev");
     var switchOverview = document.getElementById("overview-switch");
+    var overviewTitle = document.getElementById("overview-title");
     var saveAt = 0;
 
     // maybe later change to aggChannel?
     var vidChannel = socket.channel("videos:" + videoId);
 
     switchOverview.addEventListener("click", function (e) {
-      if (_this2.overviewAll == true) {
-        _this2.overviewAll = false;
+      if (overviewTitle.innerHTML == "ALL KLIPS") {
         // filter only own klips
         var userKlips = _this2.allKlips.filter(function (klip) {
           if (klip.user.id == _this2.currentUserId) {
@@ -11516,16 +11516,37 @@ var Video = {
         for (i = 0; i < _this2.currentAllKlips.length; i++) {
           _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
         }
+        overviewTitle.innerHTML = "MY KLIPS";
       } else {
-        _this2.overviewAll = true;
-        _this2.currentAllKlips = _this2.allKlips;
-        // refresh overview
-        allKlipsContainer.innerHTML = "";
-        // display all klips in the navigator
-        var _i = 0;
-        for (_i = 0; _i < _this2.currentAllKlips.length; _i++) {
-          _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[_i]);
-        }
+        var k;
+
+        (function () {
+          overviewTitle.innerHTML = "ALL KLIPS";
+          _this2.currentAllKlips = _this2.allKlips;
+
+          // filter out original klips where a copy exists
+          var copiedKlips = new Array();
+
+          for (k in _this2.currentAllKlips) {
+            if (_this2.currentAllKlips[k].copy_from > 0) {
+              copiedKlips.push(_this2.currentAllKlips[k].copy_from);
+            }
+          }
+
+          _this2.currentAllKlips = _this2.currentAllKlips.filter(function (klip) {
+            if (!copiedKlips.includes(klip.id)) {
+              return true;
+            }
+          });
+
+          // refresh overview
+          allKlipsContainer.innerHTML = "";
+          // display all klips in the navigator
+          var i = 0;
+          for (i = 0; i < _this2.currentAllKlips.length; i++) {
+            _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
+          }
+        })();
       }
     });
 
@@ -11685,6 +11706,22 @@ var Video = {
 
       // sort klips (asc: at) and delete current klipContainer
       _this2.currentAllKlips.push(resp);
+
+      // filter out original klips where a copy exists
+      var copiedKlips = new Array();
+
+      for (var k in _this2.currentAllKlips) {
+        if (_this2.currentAllKlips[k].copy_from > 0) {
+          copiedKlips.push(_this2.currentAllKlips[k].copy_from);
+        }
+      }
+
+      _this2.currentAllKlips = _this2.currentAllKlips.filter(function (klip) {
+        if (!copiedKlips.includes(klip.id)) {
+          return true;
+        }
+      });
+
       _this2.currentAllKlips.sort(function (a, b) {
         return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
       });
@@ -11740,13 +11777,28 @@ var Video = {
 
       // this is from the phoenix book to prevent rerendering of
       // already displayed klips after loosing connection
-      // TODO: check if still needed
+      // TODO: check if still needed => definitely needed!!!
 
       /* let ids = resp.klips.map(klip => klip.id)*/
       /* if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }*/
 
       _this2.allKlips = resp.klips;
-      _this2.currentAllKlips = _this2.allKlips;
+      // filter out original klips where a copy exists
+      var copiedKlips = new Array();
+
+      for (var k in _this2.allKlips) {
+        if (_this2.allKlips[k].copy_from > 0) {
+          copiedKlips.push(_this2.allKlips[k].copy_from);
+        }
+      }
+
+      _this2.currentAllKlips = _this2.allKlips.filter(function (klip) {
+        if (!copiedKlips.includes(klip.id)) {
+          return true;
+        }
+      });
+
+      /* this.currentAllKlips = this.allKlips*/
       _this2.scheduleKlips(myKlipContainer, _this2.currentAllKlips);
 
       // display all klips in the navigator
@@ -11754,6 +11806,46 @@ var Video = {
       for (i = 0; i < _this2.currentAllKlips.length; i++) {
         _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
       }
+
+      Array.from(document.getElementsByClassName("navi-button")).forEach(function (element) {
+        element.addEventListener('click', function (e) {
+          e.preventDefault();
+          var seekAt = e.target.parentNode.firstElementChild.getAttribute("data-seek") || e.target.parentNode.parentNode.firstElementChild.getAttribute("data-seek") || e.target.parentNode.parentNode.parentNode.firstElementChild.getAttribute("data-seek");
+
+          var content = e.target.getAttribute("data-klip-content") || e.target.parentNode.getAttribute("data-klip-content");
+
+          var id = e.target.getAttribute("data-klip-id") || e.target.parentNode.getAttribute("data-klip-id");
+
+          var userId = e.target.getAttribute("data-user-id") || e.target.parentNode.getAttribute("data-user-id");
+
+          var videoId = e.target.getAttribute("data-video-id") || e.target.parentNode.getAttribute("data-video-id");
+
+          var klipAction = e.target.getAttribute("data-klip-action") || e.target.parentNode.getAttribute("data-klip-action");
+
+          if (klipAction == "copy") {
+            var payload = { content: content, at: seekAt, copy_from: id, user_video_id: videoId };
+
+            vidChannel.push("new_klip", payload).receive("error", function (e) {
+              return console.log(e);
+            });
+          } else {
+
+            var conf = confirm("Are you sure?");
+            if (conf == true) {
+              var _payload = {
+                id: id
+              };
+              vidChannel.push("delete_klip", _payload).receive("error", function (e) {
+                return console.log(e);
+              });
+              // restart liveKlipTimer
+            } else {
+              return;
+            }
+          }
+        });
+      });
+
       allKlipsContainer.scrollTop = 0;
     }).receive("error", function (reason) {
       return console.log("join failed", reason);
@@ -11792,11 +11884,27 @@ var Video = {
     var user = _ref2.user;
     var content = _ref2.content;
     var at = _ref2.at;
+    var in_timeview = _ref2.in_timeview;
 
     var template = document.createElement("div");
+
     template.setAttribute("id", "klip-id-" + id);
 
-    template.innerHTML = "\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <div class=\"callout klip-callout\">\n        <p>" + this.esc(content) + "</p>\n        <hr>\n        <span class=\"timestamp\">\n            [" + this.formatTime(at) + "]\n        </span>\n        <span class=\"username float-right\">\n          by " + this.esc(user.username) + "\n        </span>\n      </div>\n    </a>\n    ";
+    var btnIcon = "";
+    var btnAction = "";
+    var btnCaption = "";
+
+    if (user.id == this.currentUserId) {
+      btnIcon = "fi-minus";
+      btnCaption = "Delete";
+      btnAction = "delete";
+    } else {
+      btnIcon = "fi-plus";
+      btnCaption = "Copy";
+      btnAction = "copy";
+    }
+
+    template.innerHTML = "\n  <div class=\"callout klip-callout navi-callout\">\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <p>" + this.esc(content) + "</p>\n      <hr>\n    </a>\n    <span class=\"timestamp\">\n        [" + this.formatTime(at) + "]\n    </span>\n    <span class=\"username\">\n      by " + this.esc(user.username) + "\n    </span>\n    <span class=\"float-right\">\n    <button type=\"button\" class=\"tiny hollow button navi-button\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnAction) + "\">\n      " + this.esc(btnCaption) + "\n    </button>\n    </span>\n  </div>\n    ";
     allKlipsContainer.appendChild(template);
     allKlipsContainer.scrollTop = allKlipsContainer.scrollHeight;
   },
@@ -11841,6 +11949,8 @@ var Video = {
         _this3.renderLiveKlip(myKlipContainer, liveKlip);
       } else {
         document.getElementById("my-klip-container").innerHTML = "";
+        document.getElementById("klip-edit").classList.remove("hide");
+        document.getElementById("klip-delete").classList.remove("hide");
         document.getElementById("klip-edit").className += " hide";
         document.getElementById("klip-delete").className += " hide";
       }

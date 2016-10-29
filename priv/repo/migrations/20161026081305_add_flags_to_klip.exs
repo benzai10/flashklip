@@ -3,7 +3,7 @@ defmodule Flashklip.Repo.Migrations.AddFlagsToKlip do
 
   def change do
     alter table(:klips) do
-      add :is_copy, :boolean, default: :false
+      add :copy_from, :integer, default: 0
       add :in_timeview, :boolean, default: :true
     end
   end
