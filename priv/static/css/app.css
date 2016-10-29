@@ -4548,6 +4548,13 @@ table.hover tbody tr:nth-of-type(even):hover {
 .long-delay {
   transition-delay: 700ms !important; }
 
+body {
+  font-family: 'Lato', sans-serif; }
+
+.top-bar {
+  padding-left: 0px;
+  padding-right: 0px; }
+
 .column, .columns {
   max-width: 680px; }
 

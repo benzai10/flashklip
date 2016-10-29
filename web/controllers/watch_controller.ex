@@ -20,7 +20,10 @@ defmodule Flashklip.WatchController do
       metavideo =
         Repo.get!(Metavideo, id)
         |> Repo.preload(:videos)
-      metavideo_klips = metavideo.videos |> Repo.preload(:klips)
+      metavideo_klips =
+        metavideo.videos
+        |> Repo.preload(klips: from(k in Flashklip.Klip,
+                               where: k.copy_from == 0))
       klips =
         Enum.flat_map(metavideo_klips, fn(v) ->
           v.klips

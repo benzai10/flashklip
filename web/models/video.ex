@@ -17,8 +17,8 @@ defmodule Flashklip.Video do
     timestamps()
   end
 
-  @required_fields ~w(title)
-  @optional_fields ~w(user_id metavideo_id category_id)
+  @required_fields ~w()
+  @optional_fields ~w(title user_id metavideo_id category_id)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.

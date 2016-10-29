@@ -12,9 +12,9 @@
       <%= error_tag f, :url %>
       <br>
     <% end %>
-    <%= label f, :title, class: "control-label" %>
-    <%= text_input f, :title, class: "form-control" %>
-    <%= error_tag f, :title %>
+    <%#= label f, :title, class: "control-label" %>
+    <%#= text_input f, :title, class: "form-control" %>
+    <%#= error_tag f, :title %>
   </div>
 
   <div class="form-group">

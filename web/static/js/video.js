@@ -3,6 +3,7 @@ import Player from "./player"
 let Video = {
 
   currentLiveKlip: {},
+  jumpedKlip: false,
   nextKlip: {},
   prevKlip: {},
   currentAllKlips: [],
@@ -57,6 +58,7 @@ let Video = {
             return true}
         })
         this.currentAllKlips = userKlips
+        this.currentAllKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
         // refresh overview
         allKlipsContainer.innerHTML = ""
         // display all klips in the navigator
@@ -83,6 +85,7 @@ let Video = {
             return true
           }
         })
+        this.currentAllKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
 
         // refresh overview
         allKlipsContainer.innerHTML = ""
@@ -209,10 +212,12 @@ let Video = {
     })
 
     nextKlip.addEventListener("click", e => {
+      /* this.jumpedKlip = true*/
       Player.seekTo(this.nextKlip.at)
     })
 
     prevKlip.addEventListener("click", e => {
+      this.jumpedKlip = true
       Player.seekTo(this.prevKlip.at)
     })
 
@@ -244,9 +249,9 @@ let Video = {
       vidChannel.params.last_seen_id = resp.id
       this.renderLiveKlip(myKlipContainer, resp)
 
-      // switch to timeview tab
-      /* $('#live').foundation('selectTab', live)*/
-      $('#timeview-tab').trigger("click");
+      // switch to timeview tab (but not after copy)
+      // for the time being, switch to overview
+      $('#overview-tab').trigger("click");
 
       // *** quick hack
 
@@ -380,6 +385,13 @@ let Video = {
   },
 
   renderLiveKlip(myKlipContainer, {user, content, at}) {
+    // following code was to prevent flashing of previous klip
+    // didn't work... revisit later to solve
+    /* if (this.jumpedKlip) {
+     *   this.jumpedKlip = false
+     *   return
+     * }
+     */
     let template = document.createElement("div")
 
     myKlipContainer.innerHTML = `
@@ -389,9 +401,6 @@ let Video = {
         <hr>
         <span class="timestamp">
             [${this.formatTime(at)}]
-        </span>
-        <span class="username float-right">
-          by ${this.esc(user.username)}
         </span>
       </div>
     </a>

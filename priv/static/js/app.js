@@ -11451,6 +11451,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var Video = {
 
   currentLiveKlip: {},
+  jumpedKlip: false,
   nextKlip: {},
   prevKlip: {},
   currentAllKlips: [],
@@ -11511,6 +11512,9 @@ var Video = {
           }
         });
         _this2.currentAllKlips = userKlips;
+        _this2.currentAllKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
         // refresh overview
         allKlipsContainer.innerHTML = "";
         // display all klips in the navigator
@@ -11540,6 +11544,9 @@ var Video = {
             if (!copiedKlips.includes(klip.id)) {
               return true;
             }
+          });
+          _this2.currentAllKlips.sort(function (a, b) {
+            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
           });
 
           // refresh overview
@@ -11669,10 +11676,12 @@ var Video = {
     });
 
     nextKlip.addEventListener("click", function (e) {
+      /* this.jumpedKlip = true*/
       _player2.default.seekTo(_this2.nextKlip.at);
     });
 
     prevKlip.addEventListener("click", function (e) {
+      _this2.jumpedKlip = true;
       _player2.default.seekTo(_this2.prevKlip.at);
     });
 
@@ -11704,9 +11713,9 @@ var Video = {
       vidChannel.params.last_seen_id = resp.id;
       _this2.renderLiveKlip(myKlipContainer, resp);
 
-      // switch to timeview tab
-      /* $('#live').foundation('selectTab', live)*/
-      $('#timeview-tab').trigger("click");
+      // switch to timeview tab (but not after copy)
+      // for the time being, switch to overview
+      $('#overview-tab').trigger("click");
 
       // *** quick hack
 
@@ -11850,9 +11859,16 @@ var Video = {
     var content = _ref.content;
     var at = _ref.at;
 
+    // following code was to prevent flashing of previous klip
+    // didn't work... revisit later to solve
+    /* if (this.jumpedKlip) {
+     *   this.jumpedKlip = false
+     *   return
+     * }
+     */
     var template = document.createElement("div");
 
-    myKlipContainer.innerHTML = "\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <div class=\"callout klip-callout\">\n        <p>" + this.esc(content) + "</p>\n        <hr>\n        <span class=\"timestamp\">\n            [" + this.formatTime(at) + "]\n        </span>\n        <span class=\"username float-right\">\n          by " + this.esc(user.username) + "\n        </span>\n      </div>\n    </a>\n    ";
+    myKlipContainer.innerHTML = "\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <div class=\"callout klip-callout\">\n        <p>" + this.esc(content) + "</p>\n        <hr>\n        <span class=\"timestamp\">\n            [" + this.formatTime(at) + "]\n        </span>\n      </div>\n    </a>\n    ";
 
     if (user.id == this.currentUserId) {
       document.getElementById("klip-delete").classList.remove("hide");

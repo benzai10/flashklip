@@ -9,6 +9,7 @@
 
     <title>Flashklip</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
   </head>
 
   <body>
@@ -17,7 +18,7 @@
         <div class="top-bar">
           <div class="top-bar-left">
             <a href="<%= page_path(@conn, :index) %>">
-              <img src="/images/flashklip_beta_low_logo_260x35.png">
+              <img src="/images/flashklip_color_logo_260x35.png">
             </a>
           </div>
           <div class="top-bar-right">

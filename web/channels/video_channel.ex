@@ -59,7 +59,7 @@ defmodule Flashklip.VideoChannel do
       changeset =
         user
         |> build_assoc(:videos, metavideo_id: socket.assigns.video_id)
-        |> Flashklip.Video.changeset(%{"title" => "xxxxxx"})
+        |> Flashklip.Video.changeset(%{})
 
       case Repo.insert(changeset) do
         {:ok, video} ->
