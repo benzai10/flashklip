@@ -5,6 +5,8 @@ defmodule Flashklip.UserController do
 
 	alias Flashklip.User
 
+  plug :authorize_admin when action in [:index]
+
   def index(conn, _params) do
     users = Repo.all(User)
     render conn, "index.html", users: users
@@ -32,5 +34,16 @@ defmodule Flashklip.UserController do
 				render(conn, "new.html", changeset: changeset)
 		end
 	end
+
+  defp authorize_admin(conn, _opts) do
+    if conn.assigns.current_user.role == "admin" do
+      conn
+    else
+      conn
+      |> put_flash(:error, "Access restricted to admins")
+      |> redirect(to: page_path(conn, :index))
+      |> halt()
+    end
+  end
 
 end
