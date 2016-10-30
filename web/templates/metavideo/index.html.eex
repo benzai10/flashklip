@@ -1,32 +1,23 @@
 <h2>Listing Metavideos</h2>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Metavideo</th>
-      <th>Created by</th>
-      <th>URL</th>
-      <th>Title</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
 <%= for metavideo <- @metavideos do %>
-    <tr>
-      <td><%= metavideo.id %></td>
-      <td><%= metavideo.created_by %></td>
-      <td><%= metavideo.url %></td>
-      <td><%= metavideo.title %></td>
-
-      <td class="text-right">
-        <%= link "Show", to: metavideo_path(@conn, :show, metavideo), class: "btn btn-default btn-xs" %>
-        <%= link "Edit", to: metavideo_path(@conn, :edit, metavideo), class: "btn btn-default btn-xs" %>
-        <%= link "Delete", to: metavideo_path(@conn, :delete, metavideo), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
-      </td>
-    </tr>
+  <div class="callout">
+    <div class="media-object">
+      <div class="media-object-section">
+        <div class="thumbnail youtube-thumbnail">
+          <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
+        </div>
+      </div>
+      <div class="media-object-section">
+        <h6><%= metavideo.title %></h6>
+        <hr>
+        <p class="video-added">added: <%= metavideo.inserted_at %></p>
+        <p class="video=count">Video <span class="badge"><%= Enum.count(metavideo.videos) %></span></p>
+        <p class="video-klips-count">Klips <span class="badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span></p>
+        <%= link "Show", to: metavideo_path(@conn, :show, metavideo) %>
+        <%= link "Edit", to: metavideo_path(@conn, :edit, metavideo) %>
+        <%= link "Delete", to: metavideo_path(@conn, :delete, metavideo), method: :delete, data: [confirm: "Are you sure?"] %>
+      </div>
+    </div>
+  </div>
 <% end %>
-  </tbody>
-</table>
-
-<%= link "New Metavideo", to: metavideo_path(@conn, :new) %>

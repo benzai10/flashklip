@@ -11,7 +11,7 @@ defmodule Flashklip.Metavideo do
     field :url, :string
     field :title, :string
     field :created_by, :integer
-    has_many :videos, Video
+    has_many :videos, Video, on_delete: :delete_all
 
     timestamps()
   end

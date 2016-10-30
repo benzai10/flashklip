@@ -12,7 +12,7 @@ defmodule Flashklip.MetavideoController do
     #   |> put_flash(:error, "Access restricted")
     #   |> redirect(to: page_path(conn, :index))
     # else
-      metavideos = Repo.all(Metavideo)
+      metavideos = Repo.all(Metavideo) |> Repo.preload(:videos)
       render(conn, "index.html", metavideos: metavideos)
     # end
   end
