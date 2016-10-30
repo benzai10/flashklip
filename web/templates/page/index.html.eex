@@ -3,7 +3,7 @@
 <% end %>
 
 <h5 class="index-title">
-  Explore Videos <span class="badge"><%= Enum.count(@metavideos) %></span>
+  Explore Videos <span class="video-klips-count badge"><%= Enum.count(@metavideos) %></span>
 </h5>
 
 <hr>
@@ -25,8 +25,8 @@
         <div class="media-object-section">
           <h6><%= metavideo.title %></h6>
           <hr>
-          <p class="video-added">added: <%= metavideo.inserted_at %></p>
-          <p class="video-klips-count">Klips <span class="badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span></p>
+          <p class="video-added">added: <%= Ecto.DateTime.to_date(metavideo.inserted_at) %></p>
+          <p><span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span> Klips</p>
         </div>
       </div>
     </div>

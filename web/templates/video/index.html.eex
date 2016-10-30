@@ -1,5 +1,5 @@
 <h5 class="index-title">
-  Video List <span class="badge"><%= Enum.count(@videos) %></span>
+  Video List <span class="video-klips-count badge"><%= Enum.count(@videos) %></span>
   <%= link "New video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
 </h5>
 
@@ -15,10 +15,10 @@
           </div>
         </div>
         <div class="media-object-section">
-          <h6><%= video.title %></h6>
+          <h6><%= video.metavideo.title %></h6>
           <hr>
-          <p class="video-added">added: <%= video.inserted_at %></p>
-          <p class="video-klips-count">Klips <span class="badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span></p>
+          <p class="video-added">added: <%= Ecto.DateTime.to_date(video.inserted_at) %></p>
+          <p><span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span> Klips</p>
         </div>
       </div>
     </div>
