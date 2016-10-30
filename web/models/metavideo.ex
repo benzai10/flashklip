@@ -29,8 +29,12 @@ defmodule Flashklip.Metavideo do
   end
 
   def existing_user_video(videos, user) do
-    Enum.filter(videos, fn(v) -> v.user_id == user.id end)
-    |> Enum.at(0)
+    if user do
+      Enum.filter(videos, fn(v) -> v.user_id == user.id end)
+      |> Enum.at(0)
+    else
+      nil
+    end
   end
 
   def klips_count(metavideo) do

@@ -1,13 +1,20 @@
 defmodule Flashklip.MetavideoController do
+  require IEx
   use Flashklip.Web, :controller
 
   alias Flashklip.Metavideo
 
-  # plug :scrub_params, "video" when action in [:create, :update]
+  # plug :authorize_admin, when action: [:index]
 
   def index(conn, _params) do
-    metavideos = Repo.all(Metavideo)
-    render(conn, "index.html", metavideos: metavideos)
+    if conn.assigns.current_user.role != "admin" do
+      conn
+      |> put_flash(:error, "Access restricted")
+      |> redirect(to: page_path(conn, :index))
+    else
+      metavideos = Repo.all(Metavideo)
+      render(conn, "index.html", metavideos: metavideos)
+    end
   end
 
   def new(conn, _params) do
@@ -65,4 +72,19 @@ defmodule Flashklip.MetavideoController do
     |> redirect(to: metavideo_path(conn, :index))
   end
 
+  defp authorize_admin(conn, _opts) do
+    case conn.assigns.current_user.role do
+      "admin" ->
+        conn
+        |> put_flash(:error, "You are an admin!")
+        |> redirect(to: page_path(conn, :index))
+      _ ->
+        conn
+        |> put_flash(:error, "Access restricted to admins")
+        |> redirect(to: page_path(conn, :index))
+    end
+
+  end
+
 end
+
