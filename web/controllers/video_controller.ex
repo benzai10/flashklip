@@ -45,10 +45,10 @@ defmodule Flashklip.VideoController do
       |> Video.changeset(video_params)
 
     case Repo.insert(changeset) do
-      {:ok, _video} ->
+      {:ok, video} ->
         conn
         |> put_flash(:info, "Video created successfully.")
-        |> redirect(to: video_path(conn, :index))
+        |> redirect(to: watch_path(conn, :show, video, v: video.id))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end

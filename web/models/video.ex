@@ -1,7 +1,13 @@
 defmodule Flashklip.Video do
   use Flashklip.Web, :model
 
-  # alias Flashklip.Metavideo
+  alias Flashklip.{
+    User,
+    Metavideo,
+    Video,
+    Category,
+    Klip
+  }
 
   @primary_key {:id, Flashklip.Permalink, autogenerate: true}
 
@@ -9,10 +15,10 @@ defmodule Flashklip.Video do
     field :url, :string, virtual: true
     field :title, :string
     field :slug, :string
-    belongs_to :user, Flashklip.User
-    belongs_to :metavideo, Flashklip.Metavideo
-    belongs_to :category, Flashklip.Category
-    has_many :klips, Flashklip.Klip, on_delete: :delete_all
+    belongs_to :user, User
+    belongs_to :metavideo, Metavideo
+    belongs_to :category, Category
+    has_many :klips, Klip, on_delete: :delete_all
 
     timestamps()
   end
@@ -45,7 +51,7 @@ defmodule Flashklip.Video do
   end
 end
 
-defimpl Phoenix.Param, for: Flashklip.Video do
+defimpl Phoenix.Param, for: Video do
   def to_param(%{slug: slug, id: id}) do
     "#{id}-#{slug}"
   end

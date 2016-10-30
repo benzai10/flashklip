@@ -100,6 +100,12 @@ let Video = {
 
     addKlipTab.addEventListener("click", e => {
       saveAt = Player.getCurrentTime()
+      if (saveAt < 1000) {
+        newTsBack.className += " disabled"
+      } else {
+        newTsBack.classList.remove("disabled")
+      }
+
       newTsDisplay.innerHTML = `[${this.formatTime(saveAt)}]`
     })
 
@@ -176,6 +182,9 @@ let Video = {
     editTsBack.addEventListener("click", e => {
       e.preventDefault()
       this.currentLiveKlip.at -= 1000
+      if (this.currentLiveKlip.at < 1000) {
+        editTsBack.className += " disabled"
+      }
       Player.seekTo(this.currentLiveKlip.at)
       editTsDisplay.innerHTML = `[${this.formatTime(this.currentLiveKlip.at)}]`
     })
@@ -183,6 +192,9 @@ let Video = {
     editTsForward.addEventListener("click", e => {
       e.preventDefault()
       this.currentLiveKlip.at -= -1000
+      if (this.currentLiveKlip.at > 999) {
+        editTsBack.classList.remove("disabled")
+      }
       Player.seekTo(this.currentLiveKlip.at)
       editTsDisplay.innerHTML = `[${this.formatTime(this.currentLiveKlip.at)}]`
     })
@@ -195,6 +207,9 @@ let Video = {
     newTsBack.addEventListener("click", e => {
       e.preventDefault()
       saveAt -= 1000
+      if (saveAt < 1000) {
+        newTsBack.className += " disabled"
+      }
       Player.seekTo(saveAt)
       newTsDisplay.innerHTML = `[${this.formatTime(saveAt)}]`
     })
@@ -202,6 +217,9 @@ let Video = {
     newTsForward.addEventListener("click", e => {
       e.preventDefault()
       saveAt -= -1000
+      if (saveAt > 999) {
+        newTsBack.classList.remove("disabled")
+      }
       Player.seekTo(saveAt)
       newTsDisplay.innerHTML = `[${this.formatTime(saveAt)}]`
     })
@@ -417,8 +435,12 @@ let Video = {
       document.getElementById("klip-edit").className += (" hide")
     }
 
-    document.getElementById("klip-prev").classList.remove("hide")
-    document.getElementById("klip-next").classList.remove("hide")
+    document.getElementById("klip-prev").classList.remove("invisible")
+    document.getElementById("klip-next").classList.remove("invisible")
+
+    if (at < 1000) {
+      document.getElementById("klip-edit-ts-back").className += " disabled"
+    }
 
     let timestampDisplay = document.getElementById("klip-edit-ts-display")
     timestampDisplay.innerHTML = `

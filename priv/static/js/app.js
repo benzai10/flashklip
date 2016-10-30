@@ -11563,6 +11563,12 @@ var Video = {
 
     addKlipTab.addEventListener("click", function (e) {
       saveAt = _player2.default.getCurrentTime();
+      if (saveAt < 1000) {
+        newTsBack.className += " disabled";
+      } else {
+        newTsBack.classList.remove("disabled");
+      }
+
       newTsDisplay.innerHTML = "[" + _this2.formatTime(saveAt) + "]";
     });
 
@@ -11640,6 +11646,9 @@ var Video = {
     editTsBack.addEventListener("click", function (e) {
       e.preventDefault();
       _this2.currentLiveKlip.at -= 1000;
+      if (_this2.currentLiveKlip.at < 1000) {
+        editTsBack.className += " disabled";
+      }
       _player2.default.seekTo(_this2.currentLiveKlip.at);
       editTsDisplay.innerHTML = "[" + _this2.formatTime(_this2.currentLiveKlip.at) + "]";
     });
@@ -11647,6 +11656,9 @@ var Video = {
     editTsForward.addEventListener("click", function (e) {
       e.preventDefault();
       _this2.currentLiveKlip.at -= -1000;
+      if (_this2.currentLiveKlip.at > 999) {
+        editTsBack.classList.remove("disabled");
+      }
       _player2.default.seekTo(_this2.currentLiveKlip.at);
       editTsDisplay.innerHTML = "[" + _this2.formatTime(_this2.currentLiveKlip.at) + "]";
     });
@@ -11659,6 +11671,9 @@ var Video = {
     newTsBack.addEventListener("click", function (e) {
       e.preventDefault();
       saveAt -= 1000;
+      if (saveAt < 1000) {
+        newTsBack.className += " disabled";
+      }
       _player2.default.seekTo(saveAt);
       newTsDisplay.innerHTML = "[" + _this2.formatTime(saveAt) + "]";
     });
@@ -11666,6 +11681,9 @@ var Video = {
     newTsForward.addEventListener("click", function (e) {
       e.preventDefault();
       saveAt -= -1000;
+      if (saveAt > 999) {
+        newTsBack.classList.remove("disabled");
+      }
       _player2.default.seekTo(saveAt);
       newTsDisplay.innerHTML = "[" + _this2.formatTime(saveAt) + "]";
     });
@@ -11881,8 +11899,12 @@ var Video = {
       document.getElementById("klip-edit").className += " hide";
     }
 
-    document.getElementById("klip-prev").classList.remove("hide");
-    document.getElementById("klip-next").classList.remove("hide");
+    document.getElementById("klip-prev").classList.remove("invisible");
+    document.getElementById("klip-next").classList.remove("invisible");
+
+    if (at < 1000) {
+      document.getElementById("klip-edit-ts-back").className += " disabled";
+    }
 
     var timestampDisplay = document.getElementById("klip-edit-ts-display");
     timestampDisplay.innerHTML = "\n    [" + this.formatTime(at) + "]\n    ";
