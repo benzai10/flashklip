@@ -7,6 +7,7 @@ defmodule Flashklip.VideoChannel do
   def join("videos:" <> video_id, params, socket) do
     last_seen_id = params["last_seen_id"] || 0
     video_id = String.to_integer(video_id)
+    user_id = socket.assigns.user_id || 0
     # video = Repo.get!(Flashklip.Video, video_id)
     metavideo =
       Repo.get!(Flashklip.Metavideo, video_id)
@@ -18,7 +19,10 @@ defmodule Flashklip.VideoChannel do
       metavideo_klips =
         metavideo.videos
         |> Repo.preload(klips: from(k in Flashklip.Klip,
-                               where: k.id > ^last_seen_id))
+          where: k.id > ^last_seen_id and
+          (k.copy_from == 0 or
+          (k.user_id == ^user_id and k.copy_from > 0))
+        ))
 
       klips = Enum.flat_map(metavideo_klips, fn(v) ->
         v.klips

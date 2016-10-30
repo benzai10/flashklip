@@ -38,7 +38,7 @@ defmodule Flashklip.Metavideo do
       from v in Video,
       join: k in Klip,
       on: v.id == k.video_id,
-      where: v.metavideo_id == ^metavideo.id
+      where: v.metavideo_id == ^metavideo.id and k.copy_from == 0
 
     Repo.all(query) |> Enum.count()
   end
