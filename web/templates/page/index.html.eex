@@ -9,10 +9,8 @@
 <hr>
 
 <%= for metavideo <- @metavideos do %>
-  <%= if @current_user do %>
-    <% user_video = Flashklip.Metavideo.existing_user_video(metavideo.videos, @current_user.id) %>
-  <% end %>
-  <%= if user_video do %>
+  <% user_video = Flashklip.Metavideo.existing_user_video(metavideo.videos, @current_user) %>
+  <%= if is_map(user_video) do %>
     <a href="<%= watch_path(@conn, :show, user_video, v: user_video.id) %>">
   <% else %>
     <a href="<%= watch_path(@conn, :show, metavideo, v: 0) %>">

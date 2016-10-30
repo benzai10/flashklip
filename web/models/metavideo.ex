@@ -28,8 +28,8 @@ defmodule Flashklip.Metavideo do
     |> validate_required([:url])
   end
 
-  def existing_user_video(videos, user_id \\ 0) do
-    Enum.filter(videos, fn(v) -> v.user_id == user_id end)
+  def existing_user_video(videos, user) do
+    Enum.filter(videos, fn(v) -> v.user_id == user.id end)
     |> Enum.at(0)
   end
 
