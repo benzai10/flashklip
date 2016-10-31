@@ -11835,7 +11835,13 @@ var Video = {
         vidChannel.params.last_seen_id = Math.max.apply(Math, _toConsumableArray(ids));
       }
 
-      _this2.allKlips = resp.klips;
+      // if allKlips is not empty, add newly added klips
+      if (_this2.allKlips.length == 0) {
+        _this2.allKlips = resp.klips;
+      } else {
+        _this2.allKlips.push.apply(_this2.allKlips, resp.klips);
+      }
+
       // filter out original klips where a copy exists
       var copiedKlips = new Array();
 

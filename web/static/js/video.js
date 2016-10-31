@@ -362,7 +362,13 @@ let Video = {
         let ids = resp.klips.map(klip => klip.id)
         if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }
 
-        this.allKlips = resp.klips
+        // if allKlips is not empty, add newly added klips
+        if (this.allKlips.length == 0) {
+          this.allKlips = resp.klips
+        } else {
+          this.allKlips.push.apply(this.allKlips, resp.klips)
+        }
+
         // filter out original klips where a copy exists
         let copiedKlips = new Array
 
