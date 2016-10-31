@@ -7,14 +7,8 @@ defmodule Flashklip.MetavideoController do
   plug :authorize_admin when action in [:index, :new, :create, :show, :update, :delete]
 
   def index(conn, _params) do
-    # if conn.assigns.current_user.role != "admin" do
-    #   conn
-    #   |> put_flash(:error, "Access restricted")
-    #   |> redirect(to: page_path(conn, :index))
-    # else
-      metavideos = Repo.all(Metavideo) |> Repo.preload(:videos)
-      render(conn, "index.html", metavideos: metavideos)
-    # end
+    metavideos = Repo.all(Metavideo) |> Repo.preload(:videos)
+    render(conn, "index.html", metavideos: metavideos)
   end
 
   def new(conn, _params) do
@@ -46,9 +40,11 @@ defmodule Flashklip.MetavideoController do
     render(conn, "edit.html", metavideo: metavideo, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "metavideo" => metavideo_params}) do
+  def update(conn, %{"id" => id, "metavideo" => metavideo_params, "taggles" => tags_params}) do
     metavideo = Repo.get!(Metavideo, id)
-    changeset = Metavideo.changeset(metavideo, metavideo_params)
+    changeset =
+      Metavideo.changeset(metavideo,
+        Map.merge(metavideo_params, %{"tags" => tags_params}))
 
     case Repo.update(changeset) do
       {:ok, metavideo} ->

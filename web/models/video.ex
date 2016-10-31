@@ -13,6 +13,7 @@ defmodule Flashklip.Video do
 
   schema "videos" do
     field :url, :string, virtual: true
+    field :tags, :string, virtual: true
     field :title, :string
     field :slug, :string
     belongs_to :user, User

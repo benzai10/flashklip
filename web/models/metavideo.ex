@@ -11,20 +11,21 @@ defmodule Flashklip.Metavideo do
     field :url, :string
     field :title, :string
     field :created_by, :integer
+    field :tags, {:array, :string}
     has_many :videos, Video, on_delete: :delete_all
 
     timestamps()
   end
 
   @required_fields ~w(url)
-  @optional_fields ~w(title created_by)
+  @optional_fields ~w(title tags created_by)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:url, :title, :created_by])
+    |> cast(params, [:url, :title, :tags, :created_by])
     |> validate_required([:url])
   end
 

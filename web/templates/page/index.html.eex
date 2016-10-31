@@ -26,7 +26,17 @@
           <h6><%= metavideo.title %></h6>
           <hr>
           <p class="video-added">added: <%= Ecto.DateTime.to_date(metavideo.inserted_at) %></p>
-          <p><span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span> Klips</p>
+          <p>
+            <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span> Klips &nbsp;&nbsp;
+            <%= if Enum.count(metavideo.tags) > 0 do %>
+              <span>
+                <%= for tag <-
+                Enum.join(metavideo.tags, ",") |> String.split(",") do %>
+                  <span class="label"><%= tag %></span>
+                <% end %>
+              </span>
+            <% end %>
+          </p>
         </div>
       </div>
     </div>

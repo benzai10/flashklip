@@ -10,11 +10,18 @@
       <%= label f, :url, class: "control-label" %>
       <%= text_input f, :url, class: "form-control" %>
       <%= error_tag f, :url %>
-      <br>
     <% end %>
-    <%#= label f, :title, class: "control-label" %>
-    <%#= text_input f, :title, class: "form-control" %>
-    <%#= error_tag f, :title %>
+    <%#= label f, :tag, class: "control-label" %>
+    <%#= text_input f, :tag, class: "form-control", id: "example1" %>
+    <%#= error_tag f, :tag %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :tags, class: "control-label" do %>
+      Tags
+    <% end %>
+    <div class="input textarea clearfix" id="tags-input">
+    </div>
   </div>
 
   <div class="form-group">

@@ -20,7 +20,6 @@ defmodule Flashklip.VideoController do
   end
 
   def new(conn, _params, user) do
-    # changeset = Video.changeset(%Video{})
     changeset =
       user
       |> build_assoc(:videos)
@@ -29,10 +28,13 @@ defmodule Flashklip.VideoController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"video" => video_params}, user) do
+  def create(conn, %{"video" => video_params, "taggles" => tags_params}, user) do
     metavideo = case Repo.get_by(Metavideo, url: video_params["url"]) do
-                  nil -> %Metavideo{url: video_params["url"]}
-                  metavideo -> metavideo
+                  nil ->
+                    %Metavideo{url: video_params["url"],
+                               tags: tags_params}
+                  metavideo ->
+                    metavideo
     end
 
     metavideo_changeset = Metavideo.changeset(metavideo)
