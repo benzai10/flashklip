@@ -22,7 +22,7 @@ defmodule Flashklip.VideoChannel do
         ))
 
       klips = Enum.flat_map(metavideo_klips, fn(v) ->
-        v.klip
+        v.klips
         |> Repo.preload(:user) end)
         |> Enum.sort()
 
