@@ -1,9 +1,9 @@
 <h5 class="index-title">
   <%=  if @conn.params["search"] do %>
-    My Videos for '<%= @conn.params["search"] %>' <span class="video-klips-count badge"><%= Enum.count(@videos) %></span>
+    My Playlist for '<%= @conn.params["search"] %>' <span class="video-klips-count badge"><%= Enum.count(@videos) %></span>
   <% else %>
-    My Video List <span class="video-klips-count badge"><%= Enum.count(@videos) %></span>
-    <%= link "New video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
+    My Video Playlist <span class="video-klips-count badge"><%= Enum.count(@videos) %></span>
+    <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
   <% end %>
 </h5>
 

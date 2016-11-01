@@ -71,7 +71,9 @@ defmodule Flashklip.VideoController do
   end
 
   def edit(conn, %{"id" => id}, user) do
-    video = Repo.get!(user_videos(user), id)
+    video =
+      Repo.get!(user_videos(user), id)
+      |> Repo.preload(:metavideo)
     changeset = Video.changeset(video)
     render(conn, "edit.html", video: video, changeset: changeset)
   end
@@ -85,6 +87,21 @@ defmodule Flashklip.VideoController do
         conn
         |> put_flash(:info, "Video updated successfully.")
         |> redirect(to: video_path(conn, :show, video))
+      {:error, changeset} ->
+        render(conn, "edit.html", video: video, changeset: changeset)
+    end
+  end
+
+  def update(conn, %{"id" => id, "taggles" => tags_params}, user) do
+    video = Repo.get!(user_videos(user), id) |> Repo.preload(:metavideo)
+    metavideo = video.metavideo
+    changeset = Metavideo.changeset(metavideo, %{"tags" => tags_params})
+
+    case Repo.update(changeset) do
+      {:ok, _metavideo} ->
+        conn
+        |> put_flash(:info, "Tags updated successfully.")
+        |> redirect(to: watch_path(conn, :show, video, v: video.id))
       {:error, changeset} ->
         render(conn, "edit.html", video: video, changeset: changeset)
     end

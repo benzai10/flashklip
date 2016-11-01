@@ -30,7 +30,7 @@
     <div id="my-klip-container">
       <%= if !@current_user do %>
         <p>Timeview is only available for logged in users.</p>
-        <p>Check the overview for existing klips.</p>
+        <p>Check the 'ALL KLIPS' to see klips. Click a klip to jump directly to the timestamp.</p>
         <p>Please log in or register an account. You will then be able to add and save your own klips!</p>
       <% end %>
     </div>
@@ -102,27 +102,45 @@
     </div>
   </div>
   <div class="tabs-panel" id="edit-video">
-    <p>Display only own klips?</p>
-    <div class="switch large">
-      <input class="switch-input" id="overview-switch" type="checkbox" name="overviewSwitch">
-      <label class="switch-paddle" for="overview-switch">
-        <span class="show-for-sr">Toggle Overview</span>
-        <span class="switch-active" aria-hidden="true">Yes</span>
-        <span class="switch-inactive" aria-hidden="true">No</span>
-      </label>
+    <div class="row">
+      <div class="small-8 columns">
+        <h6>Display only own klips?</h6>
+      </div>
+      <div class="small-4 columns">
+        <div class="switch large float-right">
+          <input class="switch-input" id="overview-switch" type="checkbox" name="overviewSwitch">
+          <label class="switch-paddle" for="overview-switch">
+            <span class="show-for-sr">Toggle Overview</span>
+            <span class="switch-active" aria-hidden="true">Yes</span>
+            <span class="switch-inactive" aria-hidden="true">No</span>
+          </label>
+        </div>
+      </div>
     </div>
-
-
-    <div class="float-right">
-    <%= link "Edit", to: video_path(@conn, :edit, @user_video_id),
-    class: "hollow small button" %>
-
-    <%= link "Delete", to: video_path(@conn, :delete, @user_video_id),
-    method: :delete,
-    data: [confirm: "Are you sure?"],
-    class: "alert small hollow button" %>
-
+    <hr>
+    <div class="row">
+      <div class="small-8 columns">
+        <%= for tag <-
+        Enum.join(@video.tags, ",") |> String.split(",") do %>
+          <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+        <% end %>
+      </div>
+      <div class="small-4 columns">
+        <%= link "Edit Tags", to: video_path(@conn, :edit, @user_video_id),
+        class: "hollow small button float-right" %>
+      </div>
     </div>
-
+    <hr>
+    <div class="row">
+      <div class="small-8 columns small-text">
+        <p>Delete will remove the video from your playlist. All klips will be deleted.</p>
+      </div>
+      <div class="small-2 columns">
+        <%= link "Delete", to: video_path(@conn, :delete, @user_video_id),
+        method: :delete,
+        data: [confirm: "Are you sure?"],
+        class: "alert small hollow button float-right" %>
+      </div>
+    </div>
   </div>
 </div>

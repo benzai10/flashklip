@@ -20,8 +20,8 @@
     <%= label f, :tags, class: "control-label" do %>
       Tags
     <% end %>
-    <%= if @changeset.data.tags do %>
-      <div class="input textarea clearfix" id="tags-input" data-tags="<%#= Enum.join(@changeset.data.tags, ",") %>">
+    <%= if @changeset.data.metavideo.tags do %>
+      <div class="input textarea clearfix" id="tags-input" data-tags="<%= Enum.join(@changeset.data.metavideo.tags, ",") %>">
     <% else %>
       <div class="input textarea clearfix" id="tags-input" data-tags="">
     <% end %>

@@ -1,5 +1,5 @@
 <%= if !@current_user do %>
-  <p>Klips are time-stamped notes for YouTube videos. Re-watch important content in a flash!</p>
+  <p>Klips are timestamped notes for YouTube videos. Easy re-watch content in a flash!</p>
 <% end %>
 
 <h5 class="index-title">

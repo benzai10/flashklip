@@ -1,14 +1,6 @@
 defmodule Flashklip.Video do
   use Flashklip.Web, :model
 
-  alias Flashklip.{
-    User,
-    Metavideo,
-    Video,
-    Category,
-    Klip
-  }
-
   @primary_key {:id, Flashklip.Permalink, autogenerate: true}
 
   schema "videos" do
@@ -17,9 +9,9 @@ defmodule Flashklip.Video do
     field :title, :string
     field :slug, :string
     belongs_to :user, User
-    belongs_to :metavideo, Metavideo
-    belongs_to :category, Category
-    has_many :klips, Klip, on_delete: :delete_all
+    belongs_to :metavideo, Flashklip.Metavideo
+    belongs_to :category, Flashklip.Category
+    has_many :klips, Flashklip.Klip, on_delete: :delete_all
 
     timestamps()
   end
@@ -34,6 +26,7 @@ defmodule Flashklip.Video do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @required_fields, @optional_fields)
+    |> cast_assoc(:metavideo)
     |> slugify_title()
   end
 
