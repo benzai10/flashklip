@@ -23,7 +23,14 @@ import Video from "./video"
 
 Video.init(socket, document.getElementById("video"))
 
-new Taggle('tags-input', {
-  placeholder: 'Type some tags, hit <Enter> to add a tag',
-  tags: document.getElementById("tags-input").getAttribute("data-tags").split(",")
-})
+let tagList = document.getElementById("tags-input").getAttribute("data-tags")
+if (tagList.length > 0) {
+  new Taggle('tags-input', {
+    placeholder: 'Type some tags, hit <Enter> to add a tag',
+    tags: tagList.split(",")
+  })
+} else {
+  new Taggle('tags-input', {
+    placeholder: 'Type some tags, hit <Enter> to add a tag'
+  })
+}

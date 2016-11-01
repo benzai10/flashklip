@@ -12,7 +12,7 @@ defmodule Flashklip.VideoChannel do
       Repo.get!(Flashklip.Metavideo, video_id)
       |> Repo.preload(:videos)
 
-      klips_query = from k in Flashklip.Klip, where: k.id > ^last_seen_id
+      # klips_query = from k in Flashklip.Klip, where: k.id > ^last_seen_id
       metavideo_klips =
         metavideo.videos
         |> Repo.preload(klips: from(k in Flashklip.Klip,

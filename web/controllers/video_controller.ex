@@ -11,12 +11,21 @@ defmodule Flashklip.VideoController do
       [conn, conn.params, conn.assigns.current_user])
   end
 
-  def index(conn, _params, user) do
-    videos =
-      Repo.all(user_videos(user))
-      |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
+  def index(conn, params, user) do
+    search_tag = params["search"]
+    if is_nil(search_tag) do
+      videos =
+        Repo.all(user_videos(user))
+        |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
 
-    render(conn, "index.html", videos: videos)
+      render(conn, "index.html", videos: videos)
+    else
+      videos =
+        Repo.all(user_videos_filtered(user, search_tag))
+        |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
+
+      render(conn, "index.html", videos: videos)
+    end
   end
 
   def new(conn, _params, user) do
@@ -95,5 +104,11 @@ defmodule Flashklip.VideoController do
 
   defp user_videos(user) do
     assoc(user, :videos)
+  end
+
+  defp user_videos_filtered(user, search_tag) do
+    query = from v in Video,
+      join: m in Metavideo, on: v.metavideo_id == m.id and ^search_tag in m.tags,
+      where: v.user_id == ^user.id
   end
 end

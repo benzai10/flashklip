@@ -13,7 +13,7 @@ defmodule Flashklip.Video do
 
   schema "videos" do
     field :url, :string, virtual: true
-    field :tags, :string, virtual: true
+    field :tags, {:array, :string}, virtual: true
     field :title, :string
     field :slug, :string
     belongs_to :user, User
@@ -25,7 +25,7 @@ defmodule Flashklip.Video do
   end
 
   @required_fields ~w()
-  @optional_fields ~w(title user_id metavideo_id category_id)
+  @optional_fields ~w(title tags user_id metavideo_id category_id)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.

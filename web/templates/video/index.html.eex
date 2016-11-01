@@ -1,13 +1,17 @@
 <h5 class="index-title">
-  Video List <span class="video-klips-count badge"><%= Enum.count(@videos) %></span>
-  <%= link "New video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
+  <%=  if @conn.params["search"] do %>
+    My Videos for '<%= @conn.params["search"] %>' <span class="video-klips-count badge"><%= Enum.count(@videos) %></span>
+  <% else %>
+    My Video List <span class="video-klips-count badge"><%= Enum.count(@videos) %></span>
+    <%= link "New video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
+  <% end %>
 </h5>
 
 <hr>
 
 <%= for video <- @videos do %>
-  <a href="<%= watch_path(@conn, :show, video, v: video.id) %>">
-    <div class="callout">
+  <div class="callout">
+    <a href="<%= watch_path(@conn, :show, video, v: video.id) %>">
       <div class="media-object">
         <div class="media-object-section">
           <div class="thumbnail youtube-thumbnail">
@@ -21,7 +25,19 @@
           <p><span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span> Klips</p>
         </div>
       </div>
-    </div>
-  </a>
+    </a>
+    <hr>
+    <p>
+      <%= if Enum.count(video.metavideo.tags) > 0 do %>
+        <span>
+          <%= for tag <-
+          Enum.join(video.metavideo.tags, ",") |> String.split(",") do %>
+            <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+          <% end %>
+        </span>
+      <% end %>
+    </p>
+
+  </div>
 <% end %>
 

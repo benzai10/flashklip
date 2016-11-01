@@ -11316,10 +11316,17 @@ _video2.default.init(_socket2.default, document.getElementById("video")); // Bru
 // to also remove its path from "config.paths.watched".
 
 
-new Taggle('tags-input', {
-  placeholder: 'Type some tags, hit <Enter> to add a tag',
-  tags: document.getElementById("tags-input").getAttribute("data-tags").split(",")
-});
+var tagList = document.getElementById("tags-input").getAttribute("data-tags");
+if (tagList.length > 0) {
+  new Taggle('tags-input', {
+    placeholder: 'Type some tags, hit <Enter> to add a tag',
+    tags: tagList.split(",")
+  });
+} else {
+  new Taggle('tags-input', {
+    placeholder: 'Type some tags, hit <Enter> to add a tag'
+  });
+}
 });
 
 ;require.register("web/static/js/player.js", function(exports, require, module) {
@@ -12050,8 +12057,8 @@ exports.default = Video;
 });
 
 ;require.alias("jquery/dist/jquery.js", "jquery");
-require.alias("phoenix/priv/static/phoenix.js", "phoenix");
-require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");require.register("___globals___", function(exports, require, module) {
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
   
 
 // Auto-loaded modules from config.npm.globals.

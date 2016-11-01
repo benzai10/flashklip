@@ -56,6 +56,20 @@ defmodule Flashklip.MetavideoController do
     end
   end
 
+  def update(conn, %{"id" => id, "metavideo" => metavideo_params}) do
+    metavideo = Repo.get!(Metavideo, id)
+    changeset = Metavideo.changeset(metavideo)
+
+    case Repo.update(changeset) do
+      {:ok, metavideo} ->
+        conn
+        |> put_flash(:info, "Metavideo updated successfully.")
+        |> redirect(to: metavideo_path(conn, :show, metavideo))
+      {:error, changeset} ->
+        render(conn, "edit.html", metavideo: metavideo, changeset: changeset)
+    end
+  end
+
   def delete(conn, %{"id" => id}) do
     metavideo = Repo.get!(Metavideo, id)
 
