@@ -107,6 +107,22 @@ defmodule Flashklip.VideoController do
     end
   end
 
+  # this update action is for deleting all tags
+  def update(conn, %{"id" => id}, user) do
+    video = Repo.get!(user_videos(user), id) |> Repo.preload(:metavideo)
+    metavideo = video.metavideo
+    changeset = Metavideo.changeset(metavideo, %{"tags" => []})
+
+    case Repo.update(changeset) do
+      {:ok, _metavideo} ->
+        conn
+        |> put_flash(:info, "Tags deleted successfully.")
+        |> redirect(to: watch_path(conn, :show, video, v: video.id))
+      {:error, changeset} ->
+        render(conn, "edit.html", video: video, changeset: changeset)
+    end
+  end
+
   def delete(conn, %{"id" => id}, user) do
     video = Repo.get!(user_videos(user), id)
 
