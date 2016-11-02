@@ -1,7 +1,10 @@
 defmodule Flashklip.PageController do
   use Flashklip.Web, :controller
 
-  alias Flashklip.Metavideo
+  alias Flashklip.{
+    Metavideo,
+    Klip
+  }
 
   def index(conn, params) do
     search_tag = params["search"]
@@ -10,10 +13,14 @@ defmodule Flashklip.PageController do
         Repo.all(Metavideo)
         |> Repo.preload(:videos)
 
-      render(conn, "index.html", metavideos: metavideos)
+      klips =
+        Repo.all(Klip)
+        |> Repo.preload([:user, :video])
+
+      render(conn, "index.html", metavideos: metavideos, klips: klips)
     else
         query = from m in Metavideo,
-        where: ^search_tag in m.tags
+          where: ^search_tag in m.tags
       metavideos =
         Repo.all(query)
         |> Repo.preload(:videos)

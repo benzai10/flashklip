@@ -4,49 +4,72 @@
 
 <h5 class="index-title">
   <%= if @conn.params["search"] do %>
-    Explore Videos for '<%= @conn.params["search"] %>' <span class="video-klips-count badge"><%= Enum.count(@metavideos) %></span>
+    Search Results for '<%= @conn.params["search"] %>'
   <% else %>
-    Explore Videos <span class="video-klips-count badge"><%= Enum.count(@metavideos) %></span>
+    Startpage
   <% end %>
 </h5>
 
 <hr>
 
-<%= for metavideo <- @metavideos do %>
-  <% user_video = Flashklip.Metavideo.existing_user_video(metavideo.videos, @current_user) %>
-  <div class="callout">
-    <%= if is_map(user_video) do %>
-      <a href="<%= watch_path(@conn, :show, user_video, v: user_video.id) %>">
-    <% else %>
-        <a href="<%= watch_path(@conn, :show, metavideo, v: 0) %>">
-    <% end %>
-    <div class="media-object">
-      <div class="media-object-section">
-        <div class="thumbnail youtube-thumbnail">
-          <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
-        </div>
-      </div>
-      <div class="media-object-section">
-        <h6><%= metavideo.title %></h6>
-        <hr>
-        <p class="video-added">added: <%= Ecto.DateTime.to_date(metavideo.inserted_at) %></p>
-        <p>
-          <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span> Klips &nbsp;&nbsp;
-        </p>
+<ul class="accordion" data-accordion data-multi-expand="true">
+  <li class="accordion-item is-active" data-accordion-item>
+    <a href="#" class="accordion-title">Klips Ticker</a>
+    <div class="accordion-content" data-tab-content>
+      <div class="klips-ticker">
+        <%= for klip <- @klips do %>
+          <%= render "klip.html",
+          conn: @conn,
+          current_user: @current_user,
+          klip: klip,
+          metavideo: Enum.find(@metavideos, fn(m) -> m.id == klip.video.metavideo_id end) %>
+        <% end %>
       </div>
     </div>
-    </a>
-    <hr>
-    <p>
-      <%= if Enum.count(metavideo.tags) > 0 do %>
-        <span>
-          <%= for tag <-
-          Enum.join(metavideo.tags, ",") |> String.split(",") do %>
-            <%=  link tag, to: page_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+  </li>
+  <li class="accordion-item is-active" data-accordion-item>
+    <a href="#" class="accordion-title">Explore Videos <span class="video-klips-count badge"><%= Enum.count(@metavideos) %></span>
+</a>
+    <div class="accordion-content" data-tab-content>
+      <%= for metavideo <- @metavideos do %>
+        <% user_video = Flashklip.Metavideo.existing_user_video(metavideo.videos, @current_user) %>
+        <div class="callout">
+          <%= if is_map(user_video) do %>
+            <a href="<%= watch_path(@conn, :show, user_video, v: user_video.id) %>">
+          <% else %>
+              <a href="<%= watch_path(@conn, :show, metavideo, v: 0) %>">
           <% end %>
-        </span>
+          <div class="media-object">
+            <div class="media-object-section">
+              <div class="thumbnail youtube-thumbnail">
+                <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
+              </div>
+            </div>
+            <div class="media-object-section">
+              <h6><%= metavideo.title %></h6>
+              <hr>
+              <p class="video-added">added: <%= Ecto.DateTime.to_date(metavideo.inserted_at) %></p>
+              <p>
+                <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span> Klips &nbsp;&nbsp;
+              </p>
+            </div>
+          </div>
+              </a>
+              <hr>
+              <p>
+                <%= if Enum.count(metavideo.tags) > 0 do %>
+                  <span>
+                    <%= for tag <-
+                    Enum.join(metavideo.tags, ",") |> String.split(",") do %>
+                      <%=  link tag, to: page_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+                    <% end %>
+                  </span>
+                <% end %>
+              </p>
+        </div>
       <% end %>
-    </p>
-  </div>
-<% end %>
+    </div>
+  </li>
+</ul>
+
 

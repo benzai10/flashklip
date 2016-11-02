@@ -1,6 +1,6 @@
 // Put custom styles here
 body {
-  font-family: 'Lato', sans-serif
+  font-family: 'Lato', sans-serif;
 }
 
 .small-text {
@@ -26,6 +26,16 @@ body {
   margin-bottom: 0;
 }
 
+.accordion-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+}
+
+.klips-ticker {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
 .video-menu {
   z-index: 9999;
 }
@@ -39,6 +49,19 @@ body {
     width: 177px;
     height: 100px;
   }
+}
+
+.klips-thumbnail {
+  img {
+    width: 88px;
+    height: 50px;
+  }
+}
+
+.klip-ticker-content {
+  padding-left: 8px;
+  font-size: 18px;
+  font-weight: 700;
 }
 
 .video-added {

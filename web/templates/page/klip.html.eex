@@ -1,0 +1,20 @@
+<%= if @klip.user_id == @current_user.id do %>
+  <a href="<%= watch_path(@conn, :show, @klip.video, v: @klip.video_id) %>" data-seek="<%= @klip.at %>">
+<% else %>
+  <a href="<%= watch_path(@conn, :show, @metavideo, v: 0) %>" data-seek="<%= @klip.at %>">
+<% end %>
+
+  <div class="callout klip-callout">
+    <div class="thumbnail klips-thumbnail">
+      <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(@metavideo)}" %>/mqdefault.jpg">
+    </div>
+    <span class="klip-ticker-content"><%= @klip.content %></span>
+    <hr>
+    <span class="timestamp">
+      [<%= Flashklip.Helpers.convert_to_min_sec(@klip.at) %>]
+    </span>
+    <span class="username float-right">
+      by <%= @klip.user.username %>
+    </span>
+  </div>
+</a>
