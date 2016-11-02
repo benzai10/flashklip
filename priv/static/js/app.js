@@ -11855,7 +11855,10 @@ var Video = {
         _this2.allKlips.push.apply(_this2.allKlips, resp.klips);
       }
 
+      _this2.currentAllKlips = _this2.allKlips;
+
       // filter out original klips where a copy exists
+      // not needed anymore?
       var copiedKlips = new Array();
 
       for (var k in _this2.allKlips) {
@@ -11870,10 +11873,24 @@ var Video = {
         }
       });
 
-      /* this.currentAllKlips = this.allKlips*/
+      // filter only own klips if "MY KLIPS" is active
+      if (overviewTitle.innerHTML == "MY KLIPS") {
+        var userKlips = _this2.allKlips.filter(function (klip) {
+          if (klip.user.id == _this2.currentUserId) {
+            return true;
+          }
+        });
+        _this2.currentAllKlips = userKlips;
+      }
+
+      _this2.currentAllKlips.sort(function (a, b) {
+        return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+      });
+
       _this2.scheduleKlips(myKlipContainer, _this2.currentAllKlips);
 
-      // display all klips in the navigator
+      // display all klips in the navigator tabs
+      allKlipsContainer.innerHTML = "";
       var i = 0;
       for (i = 0; i < _this2.currentAllKlips.length; i++) {
         _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);

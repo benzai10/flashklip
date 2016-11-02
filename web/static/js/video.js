@@ -369,7 +369,10 @@ let Video = {
           this.allKlips.push.apply(this.allKlips, resp.klips)
         }
 
+        this.currentAllKlips = this.allKlips
+
         // filter out original klips where a copy exists
+        // not needed anymore?
         let copiedKlips = new Array
 
         for(var k in this.allKlips)
@@ -383,11 +386,22 @@ let Video = {
           }
         })
 
-        /* this.currentAllKlips = this.allKlips*/
+        // filter only own klips if "MY KLIPS" is active
+        if (overviewTitle.innerHTML == "MY KLIPS") {
+          let userKlips = this.allKlips.filter( klip => {
+            if (klip.user.id == this.currentUserId) {
+              return true}
+          })
+          this.currentAllKlips = userKlips
+        }
+
+        this.currentAllKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
+
+
         this.scheduleKlips(myKlipContainer, this.currentAllKlips)
 
-
-        // display all klips in the navigator
+        // display all klips in the navigator tabs
+        allKlipsContainer.innerHTML = ""
         let i = 0
         for (i = 0; i < this.currentAllKlips.length; i++) {
           this.renderNaviKlip(allKlipsContainer, this.currentAllKlips[i])
