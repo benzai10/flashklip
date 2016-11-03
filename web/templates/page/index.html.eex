@@ -17,6 +17,9 @@
     <a href="#" class="accordion-title">Klips Ticker</a>
     <div class="accordion-content" data-tab-content>
       <div class="klips-ticker">
+        <%= if !@current_user do %>
+          <p>Sign-in to jump directly to the timestamp in the video!</p>
+        <% end %>
         <%= for klip <- @klips do %>
           <%= render "klip.html",
           conn: @conn,
