@@ -4574,7 +4574,7 @@ body {
   font-size: 18px; }
 
 .klips-ticker {
-  max-height: 300px;
+  max-height: 340px;
   overflow-y: scroll; }
 
 .video-menu {
@@ -4648,7 +4648,10 @@ body {
   .callout {
     padding: 4px; }
   .klip-ticker {
-    max-height: 180px; }
+    max-height: 160px; }
+  .youtube-thumbnail img {
+    width: 88px;
+    height: 50px; }
   .tabs-title a {
     padding-left: 20px;
     padding-right: 20px; }

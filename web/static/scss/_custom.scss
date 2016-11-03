@@ -32,7 +32,7 @@ body {
 }
 
 .klips-ticker {
-  max-height: 300px;
+  max-height: 340px;
   overflow-y: scroll;
 }
 
@@ -144,7 +144,14 @@ body {
   }
 
   .klip-ticker {
-    max-height: 180px;
+    max-height: 160px;
+  }
+
+  .youtube-thumbnail {
+    img {
+      width: 88px;
+      height: 50px;
+    }
   }
 
   .tabs-title {
