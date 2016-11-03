@@ -35,9 +35,9 @@
         <% user_video = Flashklip.Metavideo.existing_user_video(metavideo.videos, @current_user) %>
         <div class="callout">
           <%= if is_map(user_video) do %>
-            <a href="<%= watch_path(@conn, :show, user_video, v: user_video.id) %>">
+            <a href="<%= watch_path(@conn, :show, user_video, v: user_video.id, at: 0) %>">
           <% else %>
-              <a href="<%= watch_path(@conn, :show, metavideo, v: 0) %>">
+              <a href="<%= watch_path(@conn, :show, metavideo, v: 0, at: 0) %>">
           <% end %>
           <div class="media-object">
             <div class="media-object-section">

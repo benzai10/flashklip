@@ -5,6 +5,8 @@ defmodule Flashklip.VideoChannel do
   require Logger
 
   def join("videos:" <> video_id, params, socket) do
+    # at = params["at"] || 0
+    socket = assign(socket, :at, params["at"])
     last_seen_id = params["last_seen_id"] || 0
     video_id = String.to_integer(video_id)
     user_id = socket.assigns.user_id || 0

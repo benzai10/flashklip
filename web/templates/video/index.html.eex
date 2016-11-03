@@ -11,7 +11,7 @@
 
 <%= for video <- @videos do %>
   <div class="callout">
-    <a href="<%= watch_path(@conn, :show, video, v: video.id) %>">
+    <a href="<%= watch_path(@conn, :show, video, v: video.id, at: 0) %>">
       <div class="media-object">
         <div class="media-object-section">
           <div class="thumbnail youtube-thumbnail">

@@ -4647,6 +4647,8 @@ body {
     padding-bottom: 2px; }
   .callout {
     padding: 4px; }
+  .klip-ticker {
+    max-height: 220px; }
   .tabs-title a {
     padding-left: 20px;
     padding-right: 20px; }

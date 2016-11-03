@@ -11473,6 +11473,7 @@ var Video = {
   userVideoId: 0,
   overviewAll: true,
   currentUserId: 0,
+  at: 0,
 
   init: function init(socket, element) {
     var _this = this;
@@ -11484,6 +11485,7 @@ var Video = {
     var videoId = element.getAttribute("data-id");
     this.userVideoId = element.getAttribute("data-user-video-id");
     this.currentUserId = element.getAttribute("data-user-id");
+    this.at = element.getAttribute("data-at");
     socket.connect();
     _player2.default.init(element.id, playerId, function () {
       _this.onReady(videoId, socket);
@@ -11899,6 +11901,10 @@ var Video = {
       _this2.addNaviEventListeners(vidChannel);
 
       allKlipsContainer.scrollTop = 0;
+
+      if (_this2.at > 0) {
+        _player2.default.seekTo(_this2.at);
+      }
     }).receive("error", function (reason) {
       return console.log("join failed", reason);
     });

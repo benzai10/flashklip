@@ -12,12 +12,14 @@ let Video = {
   userVideoId: 0,
   overviewAll: true,
   currentUserId: 0,
+  at: 0,
 
   init(socket, element) { if (!element) { return }
     let playerId = element.getAttribute("data-player-id")
     let videoId = element.getAttribute("data-id")
     this.userVideoId = element.getAttribute("data-user-video-id")
     this.currentUserId = element.getAttribute("data-user-id")
+    this.at = element.getAttribute("data-at")
     socket.connect()
     Player.init(element.id, playerId, () => {
       this.onReady(videoId, socket)
@@ -410,6 +412,10 @@ let Video = {
         this.addNaviEventListeners(vidChannel)
 
         allKlipsContainer.scrollTop = 0
+
+        if (this.at > 0) {
+          Player.seekTo(this.at)
+        }
 
       })
       .receive("error", reason => console.log("join failed", reason))
