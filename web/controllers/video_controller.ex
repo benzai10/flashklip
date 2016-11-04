@@ -100,7 +100,7 @@ defmodule Flashklip.VideoController do
       {:ok, _metavideo} ->
         conn
         |> put_flash(:info, "Tags updated successfully.")
-        |> redirect(to: watch_path(conn, :show, video, v: video.id))
+        |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
       {:error, changeset} ->
         render(conn, "edit.html", video: video, changeset: changeset)
     end

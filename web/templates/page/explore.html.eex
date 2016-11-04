@@ -7,13 +7,13 @@
 <%= if @conn.params["search"] do %>
   <% video_tab_title = "Filter on '" <> @conn.params["search"] <> "'" %>
 <% else %>
-  <% video_tab_title = "Videos and Klips" %>
+  <% video_tab_title = "Resources" %>
 <% end %>
 
 
 <div class="row">
   <div class="callout">
-    <h4>Featured Categories</h4>
+    <h6>Featured Categories</h6>
     <p>Coming soon...</p>
   </div>
 </div>
@@ -25,6 +25,6 @@
   metavideos: @metavideos,
   klips: @klips,
   panel_title: video_tab_title,
-  video_tab_title: "Videos",
-  klips_tab_title: "Klips" %>
+  video_tab_title: "VIDEOS",
+  klips_tab_title: "KLIPS" %>
 </div>

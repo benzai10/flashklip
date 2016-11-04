@@ -22,9 +22,9 @@
   current_user: @current_user,
   metavideos: @metavideos,
   klips: @klips,
-  panel_title: "Explore Flashklip",
-  video_tab_title: "Latest Videos",
-  klips_tab_title: "Latest Klips" %>
+  panel_title: "Discover Flashklip",
+  video_tab_title: "LATEST VIDEOS",
+  klips_tab_title: "LATEST KLIPS" %>
 </div>
 
 <div class="row cta-button">

@@ -85,7 +85,8 @@ defmodule Flashklip.VideoChannel do
             user: Flashklip.UserView.render("user.json", %{user: user}),
             content: klip.content,
             copy_from: klip.copy_from,
-            at: klip.at
+            at: klip.at,
+            copy_from_timeview: params["copy_from_timeview"]
           }
           {:reply, :ok, socket}
 

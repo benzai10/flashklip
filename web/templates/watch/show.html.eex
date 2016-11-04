@@ -1,147 +1,154 @@
-<div class="flex-video widescreen">
-<%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video_id, user_id: @user_id, at: @at] do %>
-<% end %>
+<div class="row">
+  <div class="flex-video widescreen">
+    <%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video_id, user_id: @user_id, at: @at] do %>
+    <% end %>
+  </div>
 </div>
-<ul class="tabs" data-tabs id="klipTabs">
-  <li class="tabs-title is-active" id="timeview-tab">
-    <a href="#live" aria-selected="true">TIMEVIEW</a>
-  </li>
-  <li class="tabs-title" id="overview-tab">
-    <a href="#navi" id="overview-title">ALL KLIPS</a>
-  </li>
-  <li class="tabs-title <%= @show %>" id="add-klip-tab">
-    <a href="#add-klip">ADD KLIP</a>
-  </li>
-  <%= if @user_video_id == 0 do %>
-    <li class="tabs-title <%= @show %>" id="save-video-tab">
-      <a href="#save-video"><i class="fi-save"></i> SAVE</a>
+<div class="row">
+  <ul class="tabs" data-tabs id="klipTabs">
+    <li class="tabs-title is-active" id="timeview-tab">
+      <a href="#live" aria-selected="true">TIMEVIEW</a>
     </li>
-    <li class="tabs-title hide float-right" id="add-klip-tab">
-      <a href="#edit-video"><i class="fi-widget"></i></a>
+    <li class="tabs-title" id="overview-tab">
+      <a href="#navi" id="overview-title">ALL KLIPS</a>
     </li>
-  <% else %>
-    <li class="tabs-title <%= @show %> float-right" id="add-klip-tab">
-      <a href="#edit-video"><i class="fi-widget"></i></a>
+    <li class="tabs-title <%= @show %>" id="add-klip-tab">
+      <a href="#add-klip">ADD KLIP</a>
     </li>
-  <% end %>
-</ul>
-<div class="tabs-content" data-tabs-content="klipTabs">
-  <div class="tabs-panel is-active" id="live">
-    <div id="my-klip-container">
-      <%= if !@current_user do %>
-        <p>Timeview is only available for logged in users.</p>
-        <p>Check the 'ALL KLIPS' to see klips. Click a klip to jump directly to the timestamp.</p>
-        <p>Please log in or register an account. You will then be able to add and save your own klips!</p>
-      <% end %>
+    <%= if @user_video_id == 0 do %>
+      <li class="tabs-title <%= @show %>" id="save-video-tab">
+        <a href="#save-video"><i class="fi-save"></i> SAVE</a>
+      </li>
+      <li class="tabs-title hide float-right" id="add-klip-tab">
+        <a href="#edit-video"><i class="fi-widget"></i></a>
+      </li>
+    <% else %>
+      <li class="tabs-title <%= @show %> float-right" id="add-klip-tab">
+        <a href="#edit-video"><i class="fi-widget"></i></a>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<div class="row">
+  <div class="tabs-content" data-tabs-content="klipTabs">
+    <div class="tabs-panel is-active" id="live">
+      <div id="my-klip-container">
+        <%= if !@current_user do %>
+          <p>Timeview is only available for logged in users.</p>
+          <p>Check the 'ALL KLIPS' to see klips. Click a klip to jump directly to the timestamp.</p>
+          <p>Please log in or register an account. You will then be able to add and save your own klips!</p>
+        <% end %>
+      </div>
+      <div id="my-edit-container" class="hide">
+        <div class="callout klip-callout">
+          <div class="input-group">
+            <input id="klip-input-edit" class="input-group-field" type="text">
+            <div class="input-group-button">
+              <input id="klip-update" type="submit" class="hollow button" value="Update">
+            </div>
+          </div>
+          <div class="timestamp-edit small button-group">
+            <button type="button" class="tiny hollow button" id="klip-edit-ts-back">
+              <i class="fi-rewind"></i>
+            </button>
+            <button type="button" class="tiny hollow button" id="klip-edit-ts-display">
+            </button>
+            <button type="button" class="tiny hollow button" id="klip-edit-ts-forward">
+              <i class="fi-fast-forward"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="small hollow disabled button <%= @show %>" id="klip-prev">Prev Klip</button>
+      <button type="button" class="small hollow button <%= @show %>" id="klip-next">Next Klip</button>
+      <span class="float-right <%= @show %>">
+        <button type="button" class="alert small hollow button hide" id="klip-delete">Delete</button>
+        <button type="button" class="small hollow button hide" id="klip-edit">Edit</button>
+        <button type="button" class="small hollow button hide" id="klip-cancel-edit">Cancel Edit</button>
+        <button type="button" class="small hollow button hide" id="klip-copy">Copy</button>
+      </span>
     </div>
-    <div id="my-edit-container" class="hide">
+    <div class="tabs-panel" id="navi">
+      <%#= Enum.map(@video.klips, fn(k) -> render "klip.html", klip: k end) %>
+      <div id="all-klips-container">
+        <%= if !@current_user do %>
+          <%= for klip <- @klips do %>
+            <%= render "klip.html", klip: klip %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    <div class="tabs-panel" id="add-klip">
       <div class="callout klip-callout">
         <div class="input-group">
-          <input id="klip-input-edit" class="input-group-field" type="text">
+          <input id="klip-input" class="input-group-field" type="text">
           <div class="input-group-button">
-            <input id="klip-update" type="submit" class="hollow button" value="Update">
+            <input id="klip-submit" type="submit" class="hollow button" value="Save">
           </div>
         </div>
         <div class="timestamp-edit small button-group">
-          <button type="button" class="tiny hollow button" id="klip-edit-ts-back">
+          <button type="button" class="tiny hollow button" id="klip-new-ts-back">
             <i class="fi-rewind"></i>
           </button>
-          <button type="button" class="tiny hollow button" id="klip-edit-ts-display">
+          <button type="button" class="tiny hollow button" id="klip-new-ts-display">
           </button>
-          <button type="button" class="tiny hollow button" id="klip-edit-ts-forward">
+          <button type="button" class="tiny hollow button" id="klip-new-ts-forward">
             <i class="fi-fast-forward"></i>
           </button>
         </div>
       </div>
     </div>
-    <button type="button" class="small hollow disabled button <%= @show %>" id="klip-prev">Prev Klip</button>
-    <button type="button" class="small hollow button <%= @show %>" id="klip-next">Next Klip</button>
-    <span class="float-right <%= @show %>">
-      <button type="button" class="alert small hollow button hide" id="klip-delete">Delete</button>
-      <button type="button" class="small hollow button hide" id="klip-edit">Edit</button>
-      <button type="button" class="small hollow button hide" id="klip-cancel-edit">Cancel Edit</button>
-    </span>
-  </div>
-  <div class="tabs-panel" id="navi">
-    <%#= Enum.map(@video.klips, fn(k) -> render "klip.html", klip: k end) %>
-    <div id="all-klips-container">
-      <%= if !@current_user do %>
-        <%= for klip <- @klips do %>
-          <%= render "klip.html", klip: klip %>
-        <% end %>
-      <% end %>
+    <div class="tabs-panel" id="save-video">
+      <div class="callout">
+        <%= link "Save Video",
+        to: video_path(@conn, :create,
+          %{"video" => %{"url" => @video.url, "title" => "this is a title"}}),
+        method: :post,
+        class: "small hollow button" %>
+      </div>
     </div>
-  </div>
-  <div class="tabs-panel" id="add-klip">
-    <div class="callout klip-callout">
-      <div class="input-group">
-        <input id="klip-input" class="input-group-field" type="text">
-        <div class="input-group-button">
-          <input id="klip-submit" type="submit" class="hollow button" value="Save">
+    <div class="tabs-panel" id="edit-video">
+      <div class="row">
+        <div class="small-8 columns">
+          <h6>Display only own klips?</h6>
+        </div>
+        <div class="small-4 columns">
+          <div class="switch large float-right">
+            <input class="switch-input" id="overview-switch" type="checkbox" name="overviewSwitch">
+            <label class="switch-paddle" for="overview-switch">
+              <span class="show-for-sr">Toggle Overview</span>
+              <span class="switch-active" aria-hidden="true">Yes</span>
+              <span class="switch-inactive" aria-hidden="true">No</span>
+            </label>
+          </div>
         </div>
       </div>
-      <div class="timestamp-edit small button-group">
-        <button type="button" class="tiny hollow button" id="klip-new-ts-back">
-          <i class="fi-rewind"></i>
-        </button>
-        <button type="button" class="tiny hollow button" id="klip-new-ts-display">
-        </button>
-        <button type="button" class="tiny hollow button" id="klip-new-ts-forward">
-          <i class="fi-fast-forward"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="tabs-panel" id="save-video">
-    <div class="callout">
-      <%= link "Save Video",
-            to: video_path(@conn, :create,
-              %{"video" => %{"url" => @video.url, "title" => "this is a title"}}),
-            method: :post,
-            class: "small hollow button" %>
-    </div>
-  </div>
-  <div class="tabs-panel" id="edit-video">
-    <div class="row">
-      <div class="small-8 columns">
-        <h6>Display only own klips?</h6>
-      </div>
-      <div class="small-4 columns">
-        <div class="switch large float-right">
-          <input class="switch-input" id="overview-switch" type="checkbox" name="overviewSwitch">
-          <label class="switch-paddle" for="overview-switch">
-            <span class="show-for-sr">Toggle Overview</span>
-            <span class="switch-active" aria-hidden="true">Yes</span>
-            <span class="switch-inactive" aria-hidden="true">No</span>
-          </label>
-        </div>
-      </div>
-    </div>
-    <hr>
-    <div class="row">
-      <div class="small-8 columns">
-        <%= if Enum.count(@video.tags) > 0 do %>
-          <%= for tag <-
-          Enum.join(@video.tags, ",") |> String.split(",") do %>
-            <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+      <hr>
+      <div class="row">
+        <div class="small-8 columns">
+          <%= if Enum.count(@video.tags) > 0 do %>
+            <%= for tag <-
+            Enum.join(@video.tags, ",") |> String.split(",") do %>
+              <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
+        <div class="small-4 columns">
+          <%= link "Edit Tags", to: video_path(@conn, :edit, @user_video_id),
+          class: "hollow small button float-right" %>
+        </div>
       </div>
-      <div class="small-4 columns">
-        <%= link "Edit Tags", to: video_path(@conn, :edit, @user_video_id),
-        class: "hollow small button float-right" %>
-      </div>
-    </div>
-    <hr>
-    <div class="row">
-      <div class="small-8 columns small-text">
-        <p>Delete will remove the video from your playlist. All klips will be deleted.</p>
-      </div>
-      <div class="small-2 columns">
-        <%= link "Delete", to: video_path(@conn, :delete, @user_video_id),
-        method: :delete,
-        data: [confirm: "Are you sure?"],
-        class: "alert small hollow button float-right" %>
+      <hr>
+      <div class="row">
+        <div class="small-8 columns small-text">
+          <p>Delete will remove the video from your playlist. All klips will be deleted.</p>
+        </div>
+        <div class="small-2 columns">
+          <%= link "Delete", to: video_path(@conn, :delete, @user_video_id),
+          method: :delete,
+          data: [confirm: "Are you sure?"],
+          class: "alert small hollow button float-right" %>
+        </div>
       </div>
     </div>
   </div>

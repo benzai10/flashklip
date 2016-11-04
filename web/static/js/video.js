@@ -34,6 +34,7 @@ let Video = {
     let postButton        = document.getElementById("klip-submit")
     let deleteButton      = document.getElementById("klip-delete")
     let editButton        = document.getElementById("klip-edit")
+    let copyButton        = document.getElementById("klip-copy")
     let cancelEditButton  = document.getElementById("klip-cancel-edit")
     let updateButton      = document.getElementById("klip-update")
     let editTsBack        = document.getElementById("klip-edit-ts-back")
@@ -116,6 +117,18 @@ let Video = {
       vidChannel.push("new_klip", payload)
         .receive("error", e => console.log(e))
       klipInput.value = ""
+    })
+
+    copyButton.addEventListener("click", e => {
+      let payload = {
+        content: this.currentLiveKlip.content,
+        at: this.currentLiveKlip.at,
+        copy_from: this.currentLiveKlip.id,
+        user_video_id: this.userVideoId,
+        copy_from_timeview: true
+      }
+      vidChannel.push("new_klip", payload)
+        .receive("error", e => console.log(e))
     })
 
     deleteButton.addEventListener("click", e => {
@@ -271,7 +284,10 @@ let Video = {
 
       // switch to timeview tab (but not after copy)
       // for the time being, switch to overview
-      $('#overview-tab').trigger("click");
+      if (resp.copy_from_timeview != true) {
+        $('#overview-tab').trigger("click");
+      }
+
 
       // *** quick hack
 
@@ -453,12 +469,15 @@ let Video = {
     if (user.id == this.currentUserId) {
       document.getElementById("klip-delete").classList.remove("hide")
       document.getElementById("klip-edit").classList.remove("hide")
+      document.getElementById("klip-copy").classList.remove("hide")
+      document.getElementById("klip-copy").className += (" hide")
       document.getElementById("klip-input-edit").value = this.esc(content)
     } else {
       document.getElementById("klip-delete").classList.remove("hide")
       document.getElementById("klip-edit").classList.remove("hide")
       document.getElementById("klip-delete").className += (" hide")
       document.getElementById("klip-edit").className += (" hide")
+      document.getElementById("klip-copy").classList.remove("hide")
     }
 
     document.getElementById("klip-prev").classList.remove("invisible")
@@ -557,8 +576,10 @@ let Video = {
         document.getElementById("my-klip-container").innerHTML = ""
         document.getElementById("klip-edit").classList.remove("hide")
         document.getElementById("klip-delete").classList.remove("hide")
+        document.getElementById("klip-copy").classList.remove("hide")
         document.getElementById("klip-edit").className += " hide"
         document.getElementById("klip-delete").className += " hide"
+        document.getElementById("klip-copy").className += " hide"
       }
       this.scheduleKlips(myKlipContainer, this.currentAllKlips)
     }, 500)
