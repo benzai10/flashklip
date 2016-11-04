@@ -8,16 +8,16 @@ defmodule Flashklip.PageController do
 
   def index(conn, _params) do
     metavideo_query = from m in Metavideo,
-      order_by: [desc: :updated_at],
-      limit: 10
+      order_by: [desc: :updated_at]
+      # limit: 10
 
     metavideos =
       Repo.all(metavideo_query)
       |> Repo.preload(:videos)
 
     klips_query = from k in Klip,
-      order_by: [desc: :updated_at],
-      limit: 10
+      order_by: [desc: :updated_at]
+      # limit: 10
 
     klips =
       Repo.all(klips_query)
