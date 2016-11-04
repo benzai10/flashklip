@@ -6,7 +6,7 @@ defmodule Flashklip.PageController do
     Klip
   }
 
-  def index(conn, params) do
+  def index(conn, _params) do
     metavideo_query = from m in Metavideo,
       order_by: [desc: :updated_at],
       limit: 10
