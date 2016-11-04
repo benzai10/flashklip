@@ -102,7 +102,7 @@
       <div class="callout">
         <%= link "Save Video",
         to: video_path(@conn, :create,
-          %{"video" => %{"url" => @video.url, "title" => "this is a title"}}),
+          %{"video" => %{"url" => @video.url, "title" => ""}}),
         method: :post,
         class: "small hollow button" %>
       </div>

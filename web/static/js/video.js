@@ -275,7 +275,7 @@ let Video = {
 
     vidChannel.on("new_klip", (resp) => {
       if (resp.redirect == true) {
-        window.location.replace("/watch/" + resp.video_id + "?v=" + resp.video_id)
+        window.location.replace("/watch/" + resp.video_id + "?v=" + resp.video_id + "&at=" + resp.at)
         return
       }
 

@@ -1,7 +1,10 @@
 <h5 class="index-title">
   <%= @panel_title %>
   <%= if String.at(@panel_title, 0) == "F" do %>
-    <%= link "Reset Filter", to: page_path(@conn, :explore), class: "float-right small button" %>
+    <%= link "Reset Filter", to: page_path(@conn, :explore), class: "float-right button reset-filter-button" %>
+  <% end %>
+  <%= if @current_user do %>
+    <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
   <% end %>
 </h5>
 <ul class="tabs" data-tabs id="latest-tabs">

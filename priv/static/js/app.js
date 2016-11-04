@@ -11753,7 +11753,7 @@ var Video = {
 
     vidChannel.on("new_klip", function (resp) {
       if (resp.redirect == true) {
-        window.location.replace("/watch/" + resp.video_id + "?v=" + resp.video_id);
+        window.location.replace("/watch/" + resp.video_id + "?v=" + resp.video_id + "&at=" + resp.at);
         return;
       }
 

@@ -1,15 +1,11 @@
 <div class="row">
   <h5 class="index-title">
     My Flashklip
-    <%= if @conn.params["search"] do %>
-      <%= link "Reset Filter", to: page_path(@conn, :explore), class: "float-right small button" %>
-    <% end %>
-    <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
   </h5>
 </div>
 
 <div class="row">
-  <div class="callout">
+  <div class="callout dashboard-callout">
     <h6>Dashboard</h6>
     <p>Coming soon...</p>
   </div>
@@ -22,8 +18,13 @@
 <% end %>
 
 <div class="row">
-  <h5><%= panel_title %></h5>
-
+  <h5>
+    <%= panel_title %>
+    <%= if @conn.params["search"] do %>
+      <%= link "Reset Filter", to: page_path(@conn, :explore), class: "float-right button reset-filter-button" %>
+    <% end %>
+    <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
+  </h5>
   <ul class="tabs" data-tabs id="my-tabs">
     <li class="tabs-title is-active"><a href="#videos" aria-selected="true">My Videos</a></li>
     <li class="tabs-title"><a href="#klips">My Klips</a></li>

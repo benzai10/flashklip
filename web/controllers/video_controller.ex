@@ -36,6 +36,33 @@ defmodule Flashklip.VideoController do
     render(conn, "new.html", changeset: changeset)
   end
 
+  def create(conn, %{"video" => video_params}, user) do
+    metavideo = case Repo.get_by(Metavideo, url: video_params["url"]) do
+                  nil ->
+                    %Metavideo{url: video_params["url"]}
+                  metavideo ->
+                    metavideo
+                end
+
+    metavideo_changeset = Metavideo.changeset(metavideo)
+
+    metavideo = Repo.insert_or_update!(metavideo_changeset)
+
+    changeset =
+      user
+      |> build_assoc(:videos, metavideo_id: metavideo.id)
+      |> Video.changeset(video_params)
+
+    case Repo.insert(changeset) do
+      {:ok, video} ->
+        conn
+        |> put_flash(:info, "Video created successfully.")
+        |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
+      {:error, changeset} ->
+        render(conn, "new.html", changeset: changeset)
+    end
+  end
+
   def create(conn, %{"video" => video_params, "taggles" => tags_params}, user) do
     metavideo = case Repo.get_by(Metavideo, url: video_params["url"]) do
                   nil ->
@@ -58,7 +85,7 @@ defmodule Flashklip.VideoController do
       {:ok, video} ->
         conn
         |> put_flash(:info, "Video created successfully.")
-        |> redirect(to: watch_path(conn, :show, video, v: video.id))
+        |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -116,7 +143,7 @@ defmodule Flashklip.VideoController do
       {:ok, _metavideo} ->
         conn
         |> put_flash(:info, "Tags deleted successfully.")
-        |> redirect(to: watch_path(conn, :show, video, v: video.id))
+        |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
       {:error, changeset} ->
         render(conn, "edit.html", video: video, changeset: changeset)
     end
