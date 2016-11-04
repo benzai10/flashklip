@@ -15,7 +15,19 @@ defmodule Flashklip.WatchController do
       video =
         Repo.get!(Video, id)
         |> Repo.preload(:metavideo)
-      render conn, "show.html", user_id: user_id, video: video.metavideo, user_video_id: video.id, show: "", at: at
+      metavideo =
+        Repo.get!(Metavideo, video.metavideo_id)
+        |> Repo.preload(:videos)
+      metavideo_klips =
+        metavideo.videos
+        |> Repo.preload(klips: from(k in Flashklip.Klip,
+          where: k.copy_from == 0))
+      klips =
+        Enum.flat_map(metavideo_klips, fn(v) ->
+          v.klips
+          |> Repo.preload(:user) end)
+          |> Enum.sort()
+      render conn, "show.html", user_id: user_id, video: video.metavideo, user_video_id: video.id, klips: klips, show: "", at: at
     else
       metavideo =
         Repo.get!(Metavideo, id)
