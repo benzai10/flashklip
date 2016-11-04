@@ -17,15 +17,14 @@ defmodule Flashklip.VideoController do
       videos =
         Repo.all(user_videos(user))
         |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
-
-      render(conn, "index.html", videos: videos)
     else
       videos =
         Repo.all(user_videos_filtered(user, search_tag))
         |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
-
-      render(conn, "index.html", videos: videos)
     end
+    klips = Enum.flat_map(videos, fn(v) -> v.klips end)
+    metavideos = Enum.map(videos, fn(v) -> v.metavideo end)
+    render(conn, "index.html", videos: videos, klips: klips, metavideos: metavideos)
   end
 
   def new(conn, _params, user) do

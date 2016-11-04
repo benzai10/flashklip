@@ -1,19 +1,21 @@
-<div class="alerts">
-  <%= if flash = get_flash(@conn, :info) do %>
-    <div class="success callout alert-info" role="alert" data-closable>
-      <%= flash %>
-      <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  <% end %>
+<div class="row">
+  <div class="alerts">
+    <%= if flash = get_flash(@conn, :info) do %>
+      <div class="success callout alert-info" role="alert" data-closable>
+        <%= flash %>
+        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% end %>
 
-  <%= if flash = get_flash(@conn, :error) do %>
-    <div class="alert callout alert-error" role="alert" data-closable="slide-out-right">
-      <%= flash %>
-      <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  <% end %>
+    <%= if flash = get_flash(@conn, :error) do %>
+      <div class="alert callout alert-error" role="alert" data-closable="slide-out-right">
+        <%= flash %>
+        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% end %>
+  </div>
 </div>

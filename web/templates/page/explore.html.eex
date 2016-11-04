@@ -1,0 +1,30 @@
+<div class="row">
+  <h5 class="index-title">
+    Explore Flashklip
+  </h5>
+</div>
+
+<%= if @conn.params["search"] do %>
+  <% video_tab_title = "Filter on '" <> @conn.params["search"] <> "'" %>
+<% else %>
+  <% video_tab_title = "Videos and Klips" %>
+<% end %>
+
+
+<div class="row">
+  <div class="callout">
+    <h4>Featured Categories</h4>
+    <p>Coming soon...</p>
+  </div>
+</div>
+
+<div class="row">
+  <%= render "panel.html",
+  conn: @conn,
+  current_user: @current_user,
+  metavideos: @metavideos,
+  klips: @klips,
+  panel_title: video_tab_title,
+  video_tab_title: "Videos",
+  klips_tab_title: "Klips" %>
+</div>

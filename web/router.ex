@@ -18,6 +18,7 @@ defmodule Flashklip.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/explore", PageController, :explore
 		resources "/users", UserController, only: [:index, :show, :new, :create]
     resources "/sessions", SessionController, only: [:new, :create, :delete]
     get "/watch/:id", WatchController, :show

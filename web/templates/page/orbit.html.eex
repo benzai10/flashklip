@@ -1,0 +1,40 @@
+<div class="orbit" role="region" aria-label="Flashklip Features" data-orbit>
+  <ul class="orbit-container">
+    <button class="orbit-previous"><span class="show-for-sr">Previous Slide</span>&#9664;&#xFE0E;</button>
+    <button class="orbit-next"><span class="show-for-sr">Next Slide</span>&#9654;&#xFE0E;</button>
+    <li class="orbit-slide is-active">
+      <img class="orbit-image" src="images/orbit_add_klip_teal_640x360.jpg" alt="Add Klip">
+      <!-- <figcaption class="orbit-caption">Add timestamped Klips</figcaption> -->
+      <div class="orbit-text">
+        <h1>Klips -- Timestamped Notes for Videos</h1>
+        <p>Klips show up like subtitles</p>
+        <p>Very easy to move and check timestamps before saving a klip.</p>
+        <p>Use the created klips for repetition and learning. Share your contribution with others.</p>
+      </div>
+    </li>
+    <li class="orbit-slide">
+      <img class="orbit-image" src="images/orbit_timeview_purple_640x360.jpg" alt="Timeview">
+      <!-- <figcaption class="orbit-caption">Add timestamped Klips</figcaption> -->
+      <div class="orbit-text">
+        <h1>Timeview -- Skip to previous or next Klip</h1>
+        <p>Jump directly to the next saved timestamp when re-watching a video.</p>
+        <p>Klick on a klip to immediately repeat the klip. Awesome for language learning!</p>
+      </div>
+    </li>
+    <li class="orbit-slide">
+      <img class="orbit-image" src="images/orbit_all_klips_olive_640x360.jpg" alt="Klip Collection">
+      <!-- <figcaption class="orbit-caption">Add timestamped Klips</figcaption> -->
+      <div class="orbit-text">
+        <h1>Maintain your own Klip Collections</h1>
+        <p>Choose and edit your Klips individually for your own purposes.</p>
+        <p>Discover klip contributions from other users and copy them in your collection.</p>
+      </div>
+    </li>
+    <!-- More slides... -->
+  </ul>
+  <nav class="orbit-bullets">
+    <button class="is-active" data-slide="0"><span class="show-for-sr">Add Klips</span><span class="show-for-sr">Add Klips</span></button>
+    <button data-slide="1"><span class="show-for-sr">Timeview</span></button>
+    <button data-slide="2"><span class="show-for-sr">Klip Collection</span></button>
+  </nav>
+</div>

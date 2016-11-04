@@ -1,0 +1,98 @@
+<h5 class="index-title">
+  <%= @panel_title %>
+  <%= if String.at(@panel_title, 0) == "F" do %>
+    <%= link "Reset Filter", to: page_path(@conn, :explore), class: "float-right small button" %>
+  <% end %>
+</h5>
+<ul class="tabs" data-tabs id="latest-tabs">
+  <li class="tabs-title is-active">
+    <a href="#videos" aria-selected="true"><%= @video_tab_title %></a>
+  </li>
+  <li class="tabs-title"><a href="#klips"><%= @klips_tab_title %></a></li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="latest-tabs">
+  <div class="tabs-panel is-active" id="videos">
+    <%= for metavideo <- @metavideos do %>
+      <% user_video = Flashklip.Metavideo.existing_user_video(metavideo.videos, @current_user) %>
+      <div class="callout video-callout">
+        <%= if is_map(user_video) do %>
+          <a href="<%= watch_path(@conn, :show, user_video, v: user_video.id, at: 0) %>">
+            <div class="media-object">
+              <div class="media-object-section">
+                <div class="thumbnail youtube-thumbnail">
+                  <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
+                </div>
+              </div>
+              <div class="media-object-section">
+                <h6><%= metavideo.title %></h6>
+                <hr>
+                <p class="video-added">added: <%= Ecto.DateTime.to_date(metavideo.inserted_at) %></p>
+                <p>
+                  <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span> Klips &nbsp;&nbsp;
+                </p>
+              </div>
+            </div>
+            <hr>
+            <p>
+              <%= if Enum.count(metavideo.tags) > 0 do %>
+                <span>
+                  <%= for tag <-
+                  Enum.join(metavideo.tags, ",") |> String.split(",") do %>
+                    <%=  link tag, to: page_path(@conn, :explore, search: tag), class: "hollow small button tag-button" %>
+                  <% end %>
+                </span>
+              <% end %>
+            </p>
+          </a>
+        <% else %>
+          <a href="<%= watch_path(@conn, :show, metavideo, v: 0, at: 0) %>">
+            <div class="media-object">
+              <div class="media-object-section">
+                <div class="thumbnail youtube-thumbnail">
+                  <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
+                </div>
+              </div>
+              <div class="media-object-section">
+                <h6><%= metavideo.title %></h6>
+                <hr>
+                <p class="video-added">added: <%= Ecto.DateTime.to_date(metavideo.inserted_at) %></p>
+                <p>
+                  <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span> Klips &nbsp;&nbsp;
+                </p>
+              </div>
+            </div>
+            <hr>
+            <p>
+              <%= if Enum.count(metavideo.tags) > 0 do %>
+                <span>
+                  <%= for tag <-
+                  Enum.join(metavideo.tags, ",") |> String.split(",") do %>
+                    <%=  link tag, to: page_path(@conn, :explore, search: tag), class: "hollow small button tag-button" %>
+                  <% end %>
+                </span>
+              <% end %>
+            </p>
+          </a>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <div class="tabs-panel" id="klips">
+    <div class="klips-ticker">
+      <%= if is_nil(@klips) do %>
+        <div class="callout">
+          Filter for Klips is not implemented yet. Coming soon...
+        </div>
+      <% else %>
+        <%= for klip <- @klips do %>
+          <%= render "klip.html",
+          conn: @conn,
+          current_user: @current_user,
+          klip: klip,
+          metavideo: Enum.find(@metavideos, fn(m) -> m.id == klip.video.metavideo_id end) %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

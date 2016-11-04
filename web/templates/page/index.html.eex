@@ -1,78 +1,34 @@
-<%= if !@current_user do %>
-  <p>Klips are timestamped notes for YouTube videos. Easy re-watch content in a flash!</p>
-<% end %>
+<div class="row">
+  <h5 class="index-title">
+    Watch YouTube Videos with Personal Klips
+  </h5>
+</div>
 
-<h5 class="index-title">
-  <%= if @conn.params["search"] do %>
-    Search Results for '<%= @conn.params["search"] %>'
-  <% else %>
-    Startpage
-  <% end %>
-</h5>
+<div class="row">
+  <%= render "orbit.html" %>
+</div>
 
-<hr>
+<div class="row cta-button">
+  <div class="large-6 small-centered text-center columns">
+    <%= if !@current_user do %>
+    <%= link "Sign up", to: user_path(@conn, :new), class: "large success button" %>
+    <% end %>
+  </div>
+</div>
 
-<ul class="accordion" data-accordion data-multi-expand="true">
-  <li class="accordion-item is-active" data-accordion-item>
-    <a href="#" class="accordion-title">Klips Ticker</a>
-    <div class="accordion-content" data-tab-content>
-      <div class="klips-ticker">
-        <%= if !@current_user do %>
-          <p>Sign-in to jump directly to the timestamp in the video!</p>
-        <% end %>
-        <%= for klip <- @klips do %>
-          <%= render "klip.html",
-          conn: @conn,
-          current_user: @current_user,
-          klip: klip,
-          metavideo: Enum.find(@metavideos, fn(m) -> m.id == klip.video.metavideo_id end) %>
-        <% end %>
-      </div>
-    </div>
-  </li>
-  <li class="accordion-item is-active" data-accordion-item>
-    <a href="#" class="accordion-title">Explore Videos <span class="video-klips-count badge"><%= Enum.count(@metavideos) %></span>
-</a>
-    <div class="accordion-content" data-tab-content>
-      <%= for metavideo <- @metavideos do %>
-        <% user_video = Flashklip.Metavideo.existing_user_video(metavideo.videos, @current_user) %>
-        <div class="callout">
-          <%= if is_map(user_video) do %>
-            <a href="<%= watch_path(@conn, :show, user_video, v: user_video.id, at: 0) %>">
-          <% else %>
-              <a href="<%= watch_path(@conn, :show, metavideo, v: 0, at: 0) %>">
-          <% end %>
-          <div class="media-object">
-            <div class="media-object-section">
-              <div class="thumbnail youtube-thumbnail">
-                <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
-              </div>
-            </div>
-            <div class="media-object-section">
-              <h6><%= metavideo.title %></h6>
-              <hr>
-              <p class="video-added">added: <%= Ecto.DateTime.to_date(metavideo.inserted_at) %></p>
-              <p>
-                <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(metavideo) %></span> Klips &nbsp;&nbsp;
-              </p>
-            </div>
-          </div>
-              </a>
-              <hr>
-              <p>
-                <%= if Enum.count(metavideo.tags) > 0 do %>
-                  <span>
-                    <%= for tag <-
-                    Enum.join(metavideo.tags, ",") |> String.split(",") do %>
-                      <%=  link tag, to: page_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
-                    <% end %>
-                  </span>
-                <% end %>
-              </p>
-        </div>
-      <% end %>
-    </div>
-  </li>
-</ul>
+<div class="row">
+  <%= render "panel.html",
+  conn: @conn,
+  current_user: @current_user,
+  metavideos: @metavideos,
+  klips: @klips,
+  panel_title: "Explore Flashklip",
+  video_tab_title: "Latest Videos",
+  klips_tab_title: "Latest Klips" %>
+</div>
 
-
+<div class="row cta-button">
+  <div class="large-6 small-centered text-center columns">
+    <%= link "More Videos and Klips", to: page_path(@conn, :explore), class: "large button" %>
+  </div>
+</div>

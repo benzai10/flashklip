@@ -3,6 +3,38 @@ body {
   font-family: 'Lato', sans-serif;
 }
 
+.index-title {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.orbit-text {
+  position: absolute;
+  top: 30px;
+  left: 45%;
+  padding-right: 35px;
+  h1 {
+    font-size: 20px;
+    color: #ffffff;
+    margin-bottom: 30px;
+  }
+  p {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 100;
+    color: #ffffff;
+  }
+}
+
+.cta-button {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-family: 'Oswald', sans-serif;
+}
+
+#latest-tabs {
+  margin-top: 12px;
+}
+
 .small-text {
   padding-top: 4px;
   font-size: 13px;
@@ -18,10 +50,6 @@ body {
   max-width: 680px;
 }
 
-/* .index-title { */
-/*   margin-bottom: 16px; */
-/* } */
-
 #new-video-button {
   margin-bottom: 0;
 }
@@ -31,10 +59,10 @@ body {
   font-size: 18px;
 }
 
-.klips-ticker {
-  max-height: 340px;
-  overflow-y: scroll;
-}
+/* .klips-ticker { */
+/*   max-height: 340px; */
+/*   overflow-y: scroll; */
+/* } */
 
 .video-menu {
   z-index: 9999;
@@ -53,8 +81,8 @@ body {
 
 .klips-thumbnail {
   img {
-    width: 88px;
-    height: 50px;
+    width: 177px;
+    height: 100px;
   }
 }
 
@@ -101,6 +129,10 @@ body {
   }
 }
 
+.video-callout {
+  padding: 8px;
+}
+
 .klip-callout {
   padding: 8px;
 
@@ -134,9 +166,45 @@ body {
 /* Responsive: Portrait tablets and up */
 /* @media screen and (min-width: 768px) { */
 @media screen and (max-width: 480px) {
+  .menu {
+    li {
+      a {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
+  }
+
   p {
     padding-top: 2px;
     padding-bottom: 2px;
+  }
+
+  .orbit-container {
+    max-height: 220px;
+  }
+
+  .orbit-text {
+    position: absolute;
+    top: 20px;
+    left: 45%;
+    padding-right: 30px;
+    h1 {
+      font-size: 14px;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    p {
+      font-family: 'Oswald', sans-serif;
+      font-size: 11px;
+      font-weight: 100;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+  }
+
+  #latest-tabs {
+    margin-top: 23px;
   }
 
   .callout {
@@ -148,6 +216,13 @@ body {
   }
 
   .youtube-thumbnail {
+    img {
+      width: 88px;
+      height: 50px;
+    }
+  }
+
+  .klips-thumbnail {
     img {
       width: 88px;
       height: 50px;
