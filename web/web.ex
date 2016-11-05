@@ -36,7 +36,7 @@ defmodule Flashklip.Web do
 
       import Flashklip.Router.Helpers
       import Flashklip.Gettext
-      import Flashklip.Auth, only: [authenticate_user: 2]
+      # import Flashklip.Auth, only: [authenticate_user: 2]
     end
   end
 
@@ -60,7 +60,7 @@ defmodule Flashklip.Web do
     quote do
       use Phoenix.Router
 
-      import Flashklip.Auth, only: [authenticate_user: 2]
+      # import Flashklip.Auth, only: [authenticate_user: 2]
     end
   end
 

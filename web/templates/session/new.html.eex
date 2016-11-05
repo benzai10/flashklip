@@ -1,11 +1,28 @@
-<h1>Login</h1>
+<!-- <h1>Login</h1>
 
-<%= form_for @conn, session_path(@conn, :create), [as: :session], fn f -> %>
-  <div class="form-group">
-    <%= text_input f, :username, placeholder: "Username", class: "form-control" %>
+     <%#= form_for @conn, session_path(@conn, :create), [as: :session], fn f -> %>
+     <div class="form-group">
+     <%#= text_input f, :username, placeholder: "Username", class: "form-control" %>
+     </div>
+     <div class="form-group">
+     <%#= password_input f, :password, placeholder: "Password", class: "form-control" %>
+     </div>
+     <%#= submit "Log in", class: "button" %>
+     <%# end %>
+   -->
+<h3>Enter your email address to sign in or create an account</h3>
+
+<%= form_for @changeset, session_path(@conn, :create), fn f -> %>
+<%= if @changeset.action do %>
+  <div class="alerts">
+    <div class="alert callout alert-error" role="alert">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
   </div>
-  <div class="form-group">
-    <%= password_input f, :password, placeholder: "Password", class: "form-control" %>
-  </div>
-  <%= submit "Log in", class: "button" %>
+<% end %>
+<div class="form-group">
+  <%= email_input f, :email, placeholder: "Email", class: "form-control" %>
+  <%= error_tag f, :email %>
+</div>
+<%= submit "Email me a link to sign in", class: "button" %>
 <% end %>

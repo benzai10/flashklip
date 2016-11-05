@@ -7,7 +7,8 @@ defmodule Flashklip.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug Flashklip.Auth, repo: Flashklip.Repo
+    # plug Flashklip.Auth, repo: Flashklip.Repo
+    plug Flashklip.Auth
   end
 
   pipeline :api do
@@ -20,7 +21,9 @@ defmodule Flashklip.Router do
     get "/", PageController, :index
     get "/explore", PageController, :explore
 		resources "/users", UserController, only: [:index, :show, :new, :create]
-    resources "/sessions", SessionController, only: [:new, :create, :delete]
+    # resources "/sessions", SessionController, only: [:new, :create, :delete]
+    resources "/sessions", SessionController, only: [:new, :create, :show]
+    resources "/session", SessionController, only: [:delete], singleton: true
     get "/watch/:id", WatchController, :show
   end
 
@@ -30,13 +33,15 @@ defmodule Flashklip.Router do
   # end
 
   scope "/my", Flashklip do
-    pipe_through [:browser, :authenticate_user]
+    # pipe_through [:browser, :authenticate_user]
+    pipe_through [:browser]
 
     resources "/videos", VideoController
   end
 
   scope "/manage", Flashklip do
-    pipe_through [:browser, :authenticate_user]
+    # pipe_through [:browser, :authenticate_user]
+    pipe_through [:browser]
 
     resources "/metavideos", MetavideoController
   end

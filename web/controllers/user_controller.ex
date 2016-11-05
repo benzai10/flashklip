@@ -1,11 +1,11 @@
 defmodule Flashklip.UserController do
   use Flashklip.Web, :controller
 
-  plug :authenticate_user when action in [:index, :show]
+  # plug :authenticate_user when action in [:index, :show]
 
 	alias Flashklip.User
 
-  plug :authorize_admin when action in [:index]
+  # plug :authorize_admin when action in [:index]
 
   def index(conn, _params) do
     users = Repo.all(User)
@@ -23,16 +23,16 @@ defmodule Flashklip.UserController do
 	end
 
 	def create(conn, %{"user" => user_params}) do
-		changeset = User.registration_changeset(%User{}, user_params)
-		case Repo.insert(changeset) do
-		  {:ok, user} ->
-				conn
-        |> Flashklip.Auth.login(user)
-				|> put_flash(:info, "#{user.username} created!")
-				|> redirect(to: page_path(conn, :index))
-			{:error, changeset} ->
-				render(conn, "new.html", changeset: changeset)
-		end
+		# changeset = User.registration_changeset(%User{}, user_params)
+		# case Repo.insert(changeset) do
+		#   {:ok, user} ->
+		# 		conn
+    #     |> Flashklip.Auth.login(user)
+		# 		|> put_flash(:info, "#{user.username} created!")
+		# 		|> redirect(to: page_path(conn, :index))
+		# 	{:error, changeset} ->
+		# 		render(conn, "new.html", changeset: changeset)
+		# end
 	end
 
   defp authorize_admin(conn, _opts) do
