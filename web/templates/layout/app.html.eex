@@ -32,7 +32,8 @@
                   <% else %>
                     <li><%= link "My Flashklip", to: video_path(@conn, :index) %></li>
                   <% end %>
-                  <li><%= link "Log out", to: session_path(@conn, :delete, @current_user), method: "delete" %></li>
+                  <!-- <li><%#= link "Log out", to: session_path(@conn, :delete, @current_user), method: "delete" %></li> -->
+                  <li><%= link "Logout", to: session_path(@conn, :delete), method: "delete" %></li>
                 <% else %>
                   <li>Visitor</li>
                   <li><%= link "Register", to: user_path(@conn, :new) %></li>
