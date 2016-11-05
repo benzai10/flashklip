@@ -140,6 +140,7 @@ let Video = {
         }
         vidChannel.push("delete_klip", payload)
           .receive("error", e => console.log(e) )
+
         // restart liveKlipTimer
         this.scheduleKlips(myKlipContainer, this.currentAllKlips)
       } else
@@ -361,6 +362,16 @@ let Video = {
           return true
         }
       })
+
+      // filter only own klips when my klips view is active
+      if (overviewTitle.innerHTML == "MY KLIPS") {
+        let userKlips = this.allKlips.filter( klip => {
+          if (klip.user.id == this.currentUserId) {
+            return true}
+        })
+        this.currentAllKlips = userKlips
+        this.currentAllKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
+      }
 
       // remove deleted klip from navi container
       let deletedKlip = document.getElementById("klip-id-" + resp.id)

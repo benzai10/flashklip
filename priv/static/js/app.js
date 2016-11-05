@@ -11619,6 +11619,7 @@ var Video = {
         vidChannel.push("delete_klip", payload).receive("error", function (e) {
           return console.log(e);
         });
+
         // restart liveKlipTimer
         _this2.scheduleKlips(myKlipContainer, _this2.currentAllKlips);
       } else {
@@ -11844,6 +11845,19 @@ var Video = {
           return true;
         }
       });
+
+      // filter only own klips when my klips view is active
+      if (overviewTitle.innerHTML == "MY KLIPS") {
+        var userKlips = _this2.allKlips.filter(function (klip) {
+          if (klip.user.id == _this2.currentUserId) {
+            return true;
+          }
+        });
+        _this2.currentAllKlips = userKlips;
+        _this2.currentAllKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+      }
 
       // remove deleted klip from navi container
       var deletedKlip = document.getElementById("klip-id-" + resp.id);

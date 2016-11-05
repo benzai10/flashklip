@@ -14,7 +14,7 @@
 <%= if @conn.params["search"] do %>
   <% panel_title = "Filter on '" <> @conn.params["search"] <> "'" %>
 <% else %>
-  <% panel_title = "Videos and Klips" %>
+  <% panel_title = "Resources" %>
 <% end %>
 
 <div class="row">
@@ -26,8 +26,8 @@
     <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
   </h5>
   <ul class="tabs" data-tabs id="my-tabs">
-    <li class="tabs-title is-active"><a href="#videos" aria-selected="true">My Videos</a></li>
-    <li class="tabs-title"><a href="#klips">My Klips</a></li>
+    <li class="tabs-title is-active"><a href="#videos" aria-selected="true">MY VIDEOS</a></li>
+    <li class="tabs-title"><a href="#klips">MY KLIPS</a></li>
   </ul>
 
   <div class="tabs-content" data-tabs-content="my-tabs">
