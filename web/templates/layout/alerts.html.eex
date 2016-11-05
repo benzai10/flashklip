@@ -10,7 +10,7 @@
     <% end %>
 
     <%= if flash = get_flash(@conn, :error) do %>
-      <div class="alert callout alert-error" role="alert" data-closable="slide-out-right">
+      <div class="alert callout alert-error" role="alert" data-closable>
         <%= flash %>
         <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
           <span aria-hidden="true">&times;</span>
