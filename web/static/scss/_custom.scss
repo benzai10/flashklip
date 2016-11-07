@@ -3,6 +3,17 @@ body {
   font-family: 'Lato', sans-serif;
 }
 
+.page-footer {
+  margin-top: 60px;
+  min-height: 100px;
+
+  .copyright-info {
+    padding-top: 40px;
+    color: #0074D9;
+    font-size: 12px;
+  }
+}
+
 h1, h2, h3, h4, h5, h6, p {
   color: dimgray;
 }

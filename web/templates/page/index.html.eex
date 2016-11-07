@@ -44,3 +44,5 @@
     <%= link "Logout", to: session_path(@conn, :delete), method: "delete" %>
   </div>
 <% end %>
+
+<%= render Flashklip.LayoutView, "footer.html" %>
