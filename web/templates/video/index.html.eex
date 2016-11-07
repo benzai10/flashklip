@@ -59,7 +59,7 @@
                 </div>
               </a>
               <p>
-                <%= if Enum.count(video.metavideo.tags) > 0 do %>
+                <%= if video.metavideo.tags && Enum.count(video.metavideo.tags) > 0 do %>
                   <span>
                     <%= for tag <-
                     Enum.join(video.metavideo.tags, ",") |> String.split(",") do %>

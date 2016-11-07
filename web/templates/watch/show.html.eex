@@ -131,7 +131,7 @@
       </div>
       <div class="row">
         <div class="small-8 columns">
-          <%= if Enum.count(@video.tags) > 0 do %>
+          <%= if @video.tags && Enum.count(@video.tags) > 0 do %>
             <%= for tag <-
             Enum.join(@video.tags, ",") |> String.split(",") do %>
               <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>

@@ -38,9 +38,15 @@ defmodule Flashklip.VideoController do
   end
 
   def create(conn, %{"video" => video_params}, user) do
-    metavideo = case Repo.get_by(Metavideo, url: video_params["url"]) do
+    # strip the id from the url
+    youtube_video_id =
+      ~r{^.*(?:youtu\.be/|\w+/|v=)(?<id>[^#&?]*)}
+    |> Regex.named_captures(video_params["url"])
+    |> get_in(["id"])
+
+    metavideo = case Repo.get_by(Metavideo, youtube_video_id: youtube_video_id) do
                   nil ->
-                    %Metavideo{url: video_params["url"]}
+                    %Metavideo{url: video_params["url"], youtube_video_id: youtube_video_id}
                   metavideo ->
                     metavideo
                 end

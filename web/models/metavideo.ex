@@ -1,6 +1,5 @@
 defmodule Flashklip.Metavideo do
   use Flashklip.Web, :model
-  require IEx
 
   alias Flashklip.{
     Repo,
@@ -11,6 +10,7 @@ defmodule Flashklip.Metavideo do
   schema "metavideos" do
     field :url, :string
     field :title, :string
+    field :youtube_video_id, :string
     field :created_by, :integer
     field :tags, {:array, :string}
     has_many :videos, Video, on_delete: :delete_all
@@ -18,7 +18,7 @@ defmodule Flashklip.Metavideo do
     timestamps()
   end
 
-  @required_fields ~w(url)
+  @required_fields ~w(url youtube_video_id)
   @optional_fields ~w(title tags created_by)
 
   @doc """
@@ -27,9 +27,10 @@ defmodule Flashklip.Metavideo do
   def changeset(struct, params \\ %{}) do
     struct
     |> get_title()
-    |> cast(params, [:url, :title, :tags, :created_by])
+    |> cast(params, [:url, :title, :youtube_video_id, :tags, :created_by])
     |> validate_required([:url])
     |> validate_required([:title])
+    |> unique_constraint(:youtube_video_id)
   end
 
   def existing_user_video(videos, user) do
