@@ -4572,10 +4572,17 @@ h1, h2, h3, h4, h5, h6, p {
     font-weight: 100;
     color: #ffffff; }
 
+.menu .vertical {
+  text-align: center;
+  padding: 12px; }
+
 .cta-button {
   margin-top: 30px;
   margin-bottom: 20px;
   font-family: 'Oswald', sans-serif; }
+
+.alert-message {
+  color: #FF4136; }
 
 .reset-filter-button {
   margin-left: 8px; }
@@ -4606,6 +4613,12 @@ h1, h2, h3, h4, h5, h6, p {
 .column, .columns {
   max-width: 680px; }
 
+.tabs-panel .columns {
+  padding: 4px; }
+
+.tag-button {
+  margin-bottom: 0px; }
+
 #new-video-button {
   margin-bottom: 0; }
 
@@ -4627,12 +4640,14 @@ h1, h2, h3, h4, h5, h6, p {
   width: 177px;
   height: 100px; }
 
+.klip-thumbnail-column {
+  padding-left: 0px; }
+
 .klips-thumbnail img {
-  width: 177px;
-  height: 100px; }
+  width: 100%;
+  height: auto; }
 
 .klip-ticker-content {
-  padding-left: 8px;
   font-size: 18px;
   color: dimgray;
   font-weight: 700; }
@@ -4653,7 +4668,8 @@ h1, h2, h3, h4, h5, h6, p {
   margin-bottom: 0; }
 
 #my-klip-container {
-  min-height: 60px; }
+  min-height: 60px;
+  margin-bottom: 12px; }
 
 #all-klips-container {
   max-height: 230px;
@@ -4664,16 +4680,20 @@ h1, h2, h3, h4, h5, h6, p {
   padding-bottom: 8px; }
 
 .video-callout {
-  padding: 8px; }
+  padding: 8px;
+  margin-bottom: 2px; }
 
 .klip-callout {
-  padding: 8px; }
+  padding: 8px;
+  margin-bottom: 8px; }
   .klip-callout p {
     color: black;
     font-size: 18px;
     color: dimgray;
     font-weight: 700;
     margin-bottom: 4px; }
+  .klip-callout .white-font {
+    color: white !important; }
   .klip-callout hr {
     margin-bottom: 0;
     margin-top: 0; }
@@ -4684,6 +4704,9 @@ h1, h2, h3, h4, h5, h6, p {
     color: darkgrey;
     padding-top: 4px; }
 
+.navi-callout {
+  margin-bottom: 10px; }
+
 /* Responsive: Portrait tablets and up */
 /* @media screen and (min-width: 768px) { */
 @media screen and (max-width: 480px) {
@@ -4693,6 +4716,8 @@ h1, h2, h3, h4, h5, h6, p {
   .menu li a {
     padding-left: 10px;
     padding-right: 10px; }
+  .menu li .nav-home {
+    padding-left: 0px; }
   p {
     padding-top: 2px;
     padding-bottom: 2px; }
@@ -4715,19 +4740,43 @@ h1, h2, h3, h4, h5, h6, p {
       margin-bottom: 2px; }
   #latest-tabs {
     margin-top: 23px; }
+  #my-tabs {
+    margin-top: 23px; }
+  #klipTabs {
+    margin-bottom: 8px; }
   .callout {
     padding: 4px; }
+  /* .video-callout { */
+  /*   margin-left: 0px; */
+  /*   margin-right: 0px; */
+  /* } */
+  .klip-callout {
+    padding: 2px; }
+    .klip-callout .column, .klip-callout .columns {
+      padding: 0px; }
   .klip-ticker {
     max-height: 160px; }
   .youtube-thumbnail img {
-    width: 88px;
-    height: 50px; }
-  .klips-thumbnail img {
-    width: 88px;
-    height: 50px; }
+    width: 123px;
+    height: 70px; }
+  .username {
+    margin-right: 4px; }
+  .klips-thumbnail {
+    margin-bottom: 0px; }
+    .klips-thumbnail img {
+      width: 100%;
+      height: auto; }
+  .tabs-panel {
+    padding: 4px;
+    padding-left: 0px;
+    padding-right: 0px; }
+    .tabs-panel .columns {
+      padding: 4px;
+      padding-left: 0px;
+      padding-right: 0px; }
   .tabs-title a {
-    padding-left: 20px;
-    padding-right: 20px; }
+    padding-left: 16px;
+    padding-right: 16px; }
   .video-added {
     margin-bottom: 0px; } }
 

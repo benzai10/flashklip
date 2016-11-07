@@ -1,7 +1,13 @@
-<h2>Edit video</h2>
+<div class="row">
+  <h2>Edit video</h2>
+</div>
 
-<%= render "form.html", changeset: @changeset,
-                        action: video_path(@conn, :update, @video),
-                        with_url: false %>
+<div class="row">
+  <%= render "form.html", changeset: @changeset,
+                          action: video_path(@conn, :update, @video),
+                          with_url: false %>
+</div>
 
-<%= link "Videos", to: video_path(@conn, :index) %>
+<div class="row">
+  <%= link "Videos", to: video_path(@conn, :index) %>
+</div>

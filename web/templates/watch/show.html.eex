@@ -15,9 +15,9 @@
     <li class="tabs-title <%= @show %>" id="add-klip-tab">
       <a href="#add-klip">ADD KLIP</a>
     </li>
-    <%= if @user_video_id == 0 do %>
+    <%= if is_nil(@user_video) do %>
       <li class="tabs-title <%= @show %>" id="save-video-tab">
-        <a href="#save-video"><i class="fi-save"></i> SAVE</a>
+        <a href="#save-video">SAVE</a>
       </li>
       <li class="tabs-title hide float-right" id="add-klip-tab">
         <a href="#edit-video"><i class="fi-widget"></i></a>
@@ -35,7 +35,7 @@
       <div id="my-klip-container">
         <%= if !@current_user do %>
           <p>Timeview is only available for logged in users.</p>
-          <p>Check the 'ALL KLIPS' to see klips. Click a klip to jump directly to the timestamp.</p>
+          <p>Choose 'ALL KLIPS' to see klips. Click a klip to jump directly to the timestamp.</p>
           <p>Please log in or register an account. You will then be able to add and save your own klips!</p>
         <% end %>
       </div>
@@ -65,7 +65,7 @@
         <button type="button" class="alert small hollow button hide" id="klip-delete">Delete</button>
         <button type="button" class="small hollow button hide" id="klip-edit">Edit</button>
         <button type="button" class="small hollow button hide" id="klip-cancel-edit">Cancel Edit</button>
-        <button type="button" class="small hollow button hide" id="klip-copy">Copy</button>
+        <button type="button" class="small hollow button hide" id="klip-copy">Save</button>
       </span>
     </div>
     <div class="tabs-panel" id="navi">
@@ -83,7 +83,7 @@
         <div class="input-group">
           <input id="klip-input" class="input-group-field" type="text">
           <div class="input-group-button">
-            <input id="klip-submit" type="submit" class="hollow button" value="Save">
+            <input id="klip-submit" type="submit" class="hollow button" value="Add">
           </div>
         </div>
         <div class="timestamp-edit small button-group">
@@ -100,11 +100,16 @@
     </div>
     <div class="tabs-panel" id="save-video">
       <div class="callout">
+        <p>
+          Save video to your own Flashklip collection for individual Klips management.
+        </p>
+        <p>
         <%= link "Save Video",
         to: video_path(@conn, :create,
           %{"video" => %{"url" => @video.url, "title" => ""}}),
         method: :post,
-        class: "small hollow button" %>
+        class: "hollow button" %>
+        </p>
       </div>
     </div>
     <div class="tabs-panel" id="edit-video">
@@ -122,8 +127,8 @@
             </label>
           </div>
         </div>
+        <hr>
       </div>
-      <hr>
       <div class="row">
         <div class="small-8 columns">
           <%= if Enum.count(@video.tags) > 0 do %>
@@ -133,23 +138,27 @@
             <% end %>
           <% end %>
         </div>
-        <div class="small-4 columns">
-          <%= link "Edit Tags", to: video_path(@conn, :edit, @user_video_id),
-          class: "hollow small button float-right" %>
-        </div>
-      </div>
+        <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
+          <div class="small-4 columns">
+            <%= link "Edit Tags", to: video_path(@conn, :edit, @user_video),
+            class: "hollow small button float-right" %>
+          </div>
+        <% end %>
       <hr>
-      <div class="row">
-        <div class="small-8 columns small-text">
-          <p>Delete will remove the video from your playlist. All klips will be deleted.</p>
-        </div>
-        <div class="small-2 columns">
-          <%= link "Delete", to: video_path(@conn, :delete, @user_video_id),
-          method: :delete,
-          data: [confirm: "Are you sure?"],
-          class: "alert small hollow button float-right" %>
-        </div>
       </div>
+      <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
+        <div class="row">
+          <div class="small-8 columns small-text">
+            <p>Delete will remove the video from your playlist. All klips will be deleted.</p>
+          </div>
+          <div class="small-2 columns">
+            <%= link "Delete", to: video_path(@conn, :delete, @user_video),
+            method: :delete,
+            data: [confirm: "Are you sure?"],
+            class: "alert small hollow button float-right" %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

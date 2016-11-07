@@ -12,7 +12,7 @@ defmodule Flashklip.SessionController do
   def create(conn, %{"user" => user_params}) do
     user_struct =
       case Repo.get_by(User, email: user_params["email"]) do
-        nil -> %User{email: user_params["email"]}
+        nil -> %User{email: user_params["email"], username: user_params["username"]}
         user -> user
       end
       |> User.registration_changeset(user_params)
@@ -21,7 +21,7 @@ defmodule Flashklip.SessionController do
       {:ok, user} ->
         Task.async(fn -> Flashklip.Mailer.send_login_token(user) end)
         conn
-        |> put_flash(:info, "We sent you a link to create an account. Please check your inbox.")
+        |> put_flash(:info, "Please check your email inbox and click the link to sign in")
         |> redirect(to: page_path(conn, :index))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -32,13 +32,19 @@ defmodule Flashklip.SessionController do
     case Repo.get_by(User, access_token: access_token) do
       nil ->
         conn
-        |> put_flash(:error, "Access token not found or expired")
+        |> put_flash(:error, "Access token not found or expired.")
         |> redirect(to: page_path(conn, :index))
       user ->
-        conn
-        |> Auth.login(user)
-        |> put_flash(:info, "Welcome #{user.email}")
-        |> redirect(to: video_path(conn, :index))
+        if is_nil(user.username) do
+          conn
+          |> Auth.login(user)
+          |> redirect(to: page_path(conn, :index))
+        else
+          conn
+          |> Auth.login(user)
+          |> put_flash(:info, "Welcome #{user.username}")
+          |> redirect(to: video_path(conn, :index))
+        end
     end
   end
 

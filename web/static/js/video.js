@@ -246,12 +246,13 @@ let Video = {
     })
 
     nextKlip.addEventListener("click", e => {
-      /* this.jumpedKlip = true*/
       Player.seekTo(this.nextKlip.at)
     })
 
     prevKlip.addEventListener("click", e => {
-      this.jumpedKlip = true
+      /* myKlipContainer.innerHTML = ``*/
+      document.getElementById("klip-content-display").className += " white-font"
+      document.getElementById("klip-ts-display").className += " white-font"
       Player.seekTo(this.prevKlip.at)
     })
 
@@ -262,6 +263,8 @@ let Video = {
                     e.target.parentNode.parentNode.getAttribute("data-seek")
       if (!seconds) { return }
       Player.seekTo(seconds)
+      document.getElementById("klip-content-display").className += " white-font"
+      document.getElementById("klip-ts-display").className += " white-font"
     })
 
     allKlipsContainer.addEventListener("click", e => {
@@ -426,9 +429,6 @@ let Video = {
 
         this.currentAllKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
 
-
-        this.scheduleKlips(myKlipContainer, this.currentAllKlips)
-
         // display all klips in the navigator tabs
         allKlipsContainer.innerHTML = ""
         let i = 0
@@ -441,8 +441,11 @@ let Video = {
         allKlipsContainer.scrollTop = 0
 
         if (this.at > 0) {
+          this.jumpedKlip = true
           Player.seekTo(this.at)
         }
+
+        this.scheduleKlips(myKlipContainer, this.currentAllKlips)
 
       })
       .receive("error", reason => console.log("join failed", reason))
@@ -456,26 +459,32 @@ let Video = {
   },
 
   renderLiveKlip(myKlipContainer, {user, content, at}) {
-    // following code was to prevent flashing of previous klip
-    // didn't work... revisit later to solve
-    /* if (this.jumpedKlip) {
-     *   this.jumpedKlip = false
-     *   return
-     * }
-     */
+
     let template = document.createElement("div")
 
     myKlipContainer.innerHTML = `
     <a href="#" data-seek="${this.esc(at)}">
       <div class="callout klip-callout">
-        <p>${this.esc(content)}</p>
+        <p id="klip-content-display">${this.esc(content)}</p>
         <hr>
-        <span class="timestamp">
+        <span class="timestamp" id="klip-ts-display">
             [${this.formatTime(at)}]
         </span>
       </div>
     </a>
     `
+
+    if (this.jumpedKlip == true) {
+      if (this.at > at) {
+        document.getElementById("klip-content-display").className += " white-font"
+        document.getElementById("klip-ts-display").className += " white-font"
+      } else {
+        this.jumpedKlip = false
+      }
+    } else {
+      document.getElementById("klip-content-display").classList.remove("white-font")
+      document.getElementById("klip-ts-display").classList.remove("white-font")
+    }
 
     if (user.id == this.currentUserId) {
       document.getElementById("klip-delete").classList.remove("hide")
@@ -519,7 +528,7 @@ let Video = {
       btnAction = "delete"
     } else {
       btnIcon = "fi-plus"
-      btnCaption = "Copy"
+      btnCaption = "Save"
       btnAction = "copy"
     }
 

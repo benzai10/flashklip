@@ -1,7 +1,7 @@
 <div class="row">
-  <h5 class="index-title">
+  <h4 class="index-title">
     My Flashklip
-  </h5>
+  </h4>
 </div>
 
 <div class="row">
@@ -18,13 +18,13 @@
 <% end %>
 
 <div class="row">
-  <h5>
+  <h4>
     <%= panel_title %>
     <%= if @conn.params["search"] do %>
       <%= link "Reset Filter", to: page_path(@conn, :explore), class: "float-right button reset-filter-button" %>
     <% end %>
     <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
-  </h5>
+  </h4>
   <ul class="tabs" data-tabs id="my-tabs">
     <li class="tabs-title is-active"><a href="#videos" aria-selected="true">MY VIDEOS</a></li>
     <li class="tabs-title"><a href="#klips">MY KLIPS</a></li>
@@ -32,38 +32,38 @@
 
   <div class="tabs-content" data-tabs-content="my-tabs">
     <div class="tabs-panel is-active" id="videos">
-
-      <%= for video <- @videos do %>
-        <div class="callout video-callout">
-          <a href="<%= watch_path(@conn, :show, video, v: video.id, at: 0) %>">
-            <div class="media-object">
-              <div class="media-object-section">
-                <div class="thumbnail youtube-thumbnail">
-                  <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(video.metavideo)}" %>/mqdefault.jpg">
+      <div class="row small-up-1 medium-up-2 large-up-2">
+        <%= for video <- @videos do %>
+          <div class="columns">
+            <div class="callout video-callout">
+              <a href="<%= watch_path(@conn, :show, video, v: video.id, at: 0) %>">
+                <div class="media-object">
+                  <h6><%= video.metavideo.title %></h6>
+                  <div class="media-object-section">
+                    <div class="thumbnail youtube-thumbnail">
+                      <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(video.metavideo)}" %>/mqdefault.jpg">
+                    </div>
+                  </div>
+                  <div class="media-object-section">
+                    <p class="video-added">added: <%= Ecto.DateTime.to_date(video.inserted_at) %></p>
+                    <p><span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span> Klips</p>
+                  </div>
                 </div>
-              </div>
-              <div class="media-object-section">
-                <h6><%= video.metavideo.title %></h6>
-                <hr>
-                <p class="video-added">added: <%= Ecto.DateTime.to_date(video.inserted_at) %></p>
-                <p><span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span> Klips</p>
-              </div>
-            </div>
-          </a>
-          <hr>
-          <p>
-            <%= if Enum.count(video.metavideo.tags) > 0 do %>
-              <span>
-                <%= for tag <-
-                Enum.join(video.metavideo.tags, ",") |> String.split(",") do %>
-                  <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+              </a>
+              <p>
+                <%= if Enum.count(video.metavideo.tags) > 0 do %>
+                  <span>
+                    <%= for tag <-
+                    Enum.join(video.metavideo.tags, ",") |> String.split(",") do %>
+                      <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow tiny button tag-button" %>
+                    <% end %>
+                  </span>
                 <% end %>
-              </span>
-            <% end %>
-          </p>
-
-        </div>
-      <% end %>
+              </p>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </div>
     <div class="tabs-panel" id="klips">
       <%= if @conn.params["search"] do %>
@@ -71,24 +71,38 @@
           Search for Klips is not implemented yet. Coming soon...
         </div>
       <% else %>
+        <div class="row small-up-1 medium-up-2 large-up-2">
         <%= for klip <- @klips do %>
           <% video = Enum.find(@videos, fn(v) -> v.id == klip.video_id end) %>
+          <div class="columns">
           <a href="<%= watch_path(@conn, :show, video, v: klip.video_id, at: klip.at) %>">
             <div class="callout klip-callout">
-              <div class="thumbnail klips-thumbnail">
-                <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(Enum.find(@metavideos, fn(m) -> m.id == video.metavideo_id end))}" %>/mqdefault.jpg">
+              <div class="row">
+                <div class="small-12 column">
+                  <span class="klip-ticker-content"><%= klip.content %></span>
+                  <hr>
+                </div>
               </div>
-              <span class="klip-ticker-content"><%= klip.content %></span>
-              <hr>
-              <span class="timestamp">
-                [<%= Flashklip.Helpers.convert_to_min_sec(klip.at) %>]
-              </span>
-              <span class="username float-right">
-                by <%= @conn.assigns.current_user.username %>
-              </span>
+              <div class="row">
+                <div class="small-10 column">
+                  <span class="timestamp">
+                    [<%= Flashklip.Helpers.convert_to_min_sec(klip.at) %>]
+                  </span>
+                  <span class="username float-right">
+                    by <%= @conn.assigns.current_user.username %>
+                  </span>
+                </div>
+                <div class="small-2 column klip-thumbnail-column">
+                  <div class="thumbnail klips-thumbnail">
+                    <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(Enum.find(@metavideos, fn(m) -> m.id == video.metavideo_id end))}" %>/mqdefault.jpg">
+                  </div>
+                </div>
+              </div>
             </div>
           </a>
+          </div>
         <% end %>
+        </div>
       <% end %>
     </div>
   </div>

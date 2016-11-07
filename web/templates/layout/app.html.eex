@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
   </head>
 
-  <body>
+  <body data-js-view-name="<%= js_view_name(@conn, @view_template) %>">
     <div class="column row centered">
       <header class="header">
         <div class="row">
@@ -24,22 +24,32 @@
               </a>
             </div>
             <div class="top-bar-right">
-              <ul class="menu">
-                <%= if @current_user do %>
-                  <li><%= @current_user.username %></li>
+              <%= if @current_user do %>
+                <ul class="dropdown menu" data-dropdown-menu>
+                  <li><%= link "Home", to: page_path(@conn, :index), class: "nav-home" %></li>
+                  <li>
+                    <a href="#">
+                      <span id="nav-username">
+                        <%= @current_user.username %>
+                      </span>
+                    </a>
+                    <ul class="menu vertical">
+                      <li><%= link "Sign out", to: session_path(@conn, :delete), method: "delete" %></li>
+                    </ul>
+                  </li>
                   <%= if Enum.at(@conn.path_info, 0) == "my" do %>
-                    <li><%= link "All Flashklip", to: page_path(@conn, :explore) %></li>
+                    <li><%= link "All Flashklips", to: page_path(@conn, :explore) %></li>
                   <% else %>
-                    <li><%= link "My Flashklip", to: video_path(@conn, :index) %></li>
+                    <li><%= link "My Flashklips", to: video_path(@conn, :index) %></li>
                   <% end %>
-                  <!-- <li><%#= link "Log out", to: session_path(@conn, :delete, @current_user), method: "delete" %></li> -->
-                  <li><%= link "Logout", to: session_path(@conn, :delete), method: "delete" %></li>
-                <% else %>
+                </ul>
+              <% else %>
+                <ul class="menu">
+                  <li><%= link "Home", to: page_path(@conn, :index), class: "nav-home" %></li>
                   <li>Visitor</li>
-                  <li><%= link "Register", to: user_path(@conn, :new) %></li>
-                  <li><%= link "Log in", to: session_path(@conn, :new) %></li>
-                <% end %>
-              </ul>
+                  <li><%= link "Sign in", to: session_path(@conn, :new) %></li>
+                </ul>
+              <% end %>
             </div>
           </div>
         </div>

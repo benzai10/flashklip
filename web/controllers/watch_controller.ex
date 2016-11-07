@@ -27,7 +27,7 @@ defmodule Flashklip.WatchController do
           v.klips
           |> Repo.preload(:user) end)
           |> Enum.sort()
-      render conn, "show.html", user_id: user_id, video: video.metavideo, user_video_id: video.id, klips: klips, show: "", at: at
+      render conn, "show.html", user_id: user_id, video: video.metavideo, user_video: video, user_video_id: video.id, klips: klips, show: "", at: at
     else
       metavideo =
         Repo.get!(Metavideo, id)
@@ -48,7 +48,7 @@ defmodule Flashklip.WatchController do
           _ ->
             "hide"
         end
-      render conn, "show.html", user_id: user_id, video: metavideo, user_video_id: 0, klips: klips, show: show, at: at
+      render conn, "show.html", user_id: user_id, video: metavideo, user_video: nil, user_video_id: 0, klips: klips, show: show, at: at
     end
   end
 end

@@ -13,9 +13,6 @@
       <%= text_input f, :url, class: "form-control" %>
       <%= error_tag f, :url %>
     <% end %>
-    <%#= label f, :tag, class: "control-label" %>
-    <%#= text_input f, :tag, class: "form-control", id: "example1" %>
-    <%#= error_tag f, :tag %>
   </div>
 
   <div class="form-group">

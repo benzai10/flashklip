@@ -1,7 +1,7 @@
 <div class="row">
-  <h5 class="index-title">
+  <h4 class="index-title">
     Explore Flashklip
-  </h5>
+  </h4>
 </div>
 
 <%= if @conn.params["search"] do %>

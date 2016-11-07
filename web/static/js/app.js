@@ -18,19 +18,28 @@ import "phoenix_html"
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 
+import loadView from './views/loader'
+
+function handleDOMContentLoaded() {
+  // Get the current view name
+  const viewName = document.getElementsByTagName('body')[0].dataset.jsViewName
+
+  // Load view class and mount it
+  const ViewClass = loadView(viewName)
+  const view = new ViewClass()
+  view.mount()
+
+  window.currentView = view
+}
+
+function handleDocumentUnload() {
+  window.currentView.unmount()
+}
+
+window.addEventListener('DOMContentLoaded', handleDOMContentLoaded, false)
+window.addEventListener('unload', handleDocumentUnload, false)
+
 import socket from "./socket"
 import Video from "./video"
 
 Video.init(socket, document.getElementById("video"))
-
-let tagList = document.getElementById("tags-input").getAttribute("data-tags")
-if (tagList.length > 0) {
-  new Taggle('tags-input', {
-    placeholder: 'Type some tags, hit <Enter> to add a tag',
-    tags: tagList.split(",")
-  })
-} else {
-  new Taggle('tags-input', {
-    placeholder: 'Type some tags, hit <Enter> to add a tag'
-  })
-}

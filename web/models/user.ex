@@ -5,8 +5,6 @@ defmodule Flashklip.User do
 	schema "users" do
 		field :email, :string
 		field :username, :string
-		field :password, :string, virtual: true
-		field :password_hash, :string
     field :access_token, :string
     field :role, :string
     has_many :videos, Flashklip.Video, on_delete: :delete_all
@@ -23,9 +21,16 @@ defmodule Flashklip.User do
     |> validate_required([:email])
     |> unique_constraint(:email)
     |> unique_constraint(:access_token)
-		# |> validate_length(:username, min: 1, max: 20)
-    # |> unique_constraint(:username)
 	end
+
+  def username_changeset(struct, params) do
+    struct
+    |> cast(params, [:username])
+    |> validate_required([:username])
+		|> validate_length(:username, min: 4, max: 20)
+    |> validate_format(:username, ~r/^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/)
+    |> unique_constraint(:username)
+  end
 
   ### passwordless auth
   def registration_changeset(struct, params \\ %{}) do

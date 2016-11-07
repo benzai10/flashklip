@@ -2,31 +2,60 @@ defmodule Flashklip.PageController do
   use Flashklip.Web, :controller
 
   alias Flashklip.{
+    User,
     Metavideo,
     Klip
   }
 
-  def index(conn, _params) do
+  def action(conn, _) do
+    apply(__MODULE__, action_name(conn),
+      [conn, conn.params, conn.assigns.current_user])
+  end
+
+  def index(conn, _params, current_user) do
     metavideo_query = from m in Metavideo,
-      order_by: [desc: :updated_at]
-      # limit: 10
+      order_by: [desc: :updated_at],
+      limit: 30
 
     metavideos =
       Repo.all(metavideo_query)
       |> Repo.preload(:videos)
 
-    klips_query = from k in Klip,
-      order_by: [desc: :updated_at]
-      # limit: 10
+    if current_user do
+      not_copied_klips_query = from k in Klip,
+        where: k.copy_from == 0 and k.user_id != ^current_user.id
 
-    klips =
-      Repo.all(klips_query)
-      |> Repo.preload([:user, :video])
+      own_copied_klips_query = from k in Klip,
+        where: k.user_id == ^current_user.id and k.copy_from > 0
 
-    render(conn, "index.html", metavideos: metavideos, klips: klips)
+      klips_query = from k in not_copied_klips_query,
+        left_join: o in subquery(own_copied_klips_query),
+        on: k.id == o.copy_from,
+        where: is_nil(o.copy_from),
+        limit: 30
+
+      klips =
+        Repo.all(klips_query)
+        |> Repo.preload([:user, {:video, :metavideo}])
+    else
+      klips_query = from k in Klip,
+        where: k.copy_from == 0,
+        order_by: [desc: :updated_at],
+        limit: 30
+
+      klips =
+        Repo.all(klips_query)
+        |> Repo.preload([:user, {:video, :metavideo}])
+    end
+
+    if current_user do
+      changeset = Flashklip.User.username_changeset(current_user, _params)
+    end
+
+    render(conn, "index.html", metavideos: metavideos, klips: klips, changeset: changeset)
   end
 
-  def explore(conn, params) do
+  def explore(conn, params, current_user) do
     search_tag = params["search"]
     if is_nil(search_tag) do
       metavideo_query = from m in Metavideo,
@@ -36,12 +65,32 @@ defmodule Flashklip.PageController do
         Repo.all(metavideo_query)
         |> Repo.preload(:videos)
 
-      klips_query = from k in Klip,
-        order_by: [desc: :updated_at]
+      if current_user do
+        not_copied_klips_query = from k in Klip,
+          where: k.copy_from == 0 and k.user_id != ^current_user.id
 
-      klips =
-        Repo.all(klips_query)
-        |> Repo.preload([:user, :video])
+        own_copied_klips_query = from k in Klip,
+          where: k.user_id == ^current_user.id and k.copy_from > 0
+
+        klips_query = from k in not_copied_klips_query,
+          left_join: o in subquery(own_copied_klips_query),
+          on: k.id == o.copy_from,
+          where: is_nil(o.copy_from),
+          limit: 30
+
+        klips =
+          Repo.all(klips_query)
+          |> Repo.preload([:user, {:video, :metavideo}])
+      else
+          klips_query = from k in Klip,
+            where: k.copy_from == 0,
+            order_by: [desc: :updated_at],
+            limit: 30
+
+          klips =
+            Repo.all(klips_query)
+            |> Repo.preload([:user, {:video, :metavideo}])
+      end
 
       render(conn, "explore.html", metavideos: metavideos, klips: klips)
     else

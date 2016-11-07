@@ -1,7 +1,13 @@
-<h2>New video</h2>
+<div class="row">
+  <h2>New video</h2>
+</div>
 
-<%= render "form.html", changeset: @changeset,
-                        action: video_path(@conn, :create),
-                        with_url: true %>
+<div class="row">
+  <%= render "form.html", changeset: @changeset,
+                          action: video_path(@conn, :create),
+                          with_url: true %>
+</div>
 
-<%= link "Back", to: video_path(@conn, :index) %>
+<div class="row">
+  <%= link "Back", to: video_path(@conn, :index) %>
+</div>

@@ -3,7 +3,7 @@ defmodule Flashklip.Mailer do
   use Mailgun.Client,
     # domain: Application.get_env(:flashklip, :mailgun_domain),
     # key: Application.get_env(:flashklip, :mailgun_key)
-    domain: "https://api.mailgun.net/v3/sandbox4b323e6043014043a66a753c03dee035.mailgun.org",
+    domain: "https://api.mailgun.net/v3/flashklip.com",
     key: "key-7b853c6aed26bb87539ad3ae783d2b7a"
 
   def send_login_token(%User{email: email, access_token: token}) do

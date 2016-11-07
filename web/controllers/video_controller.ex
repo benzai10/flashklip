@@ -1,5 +1,6 @@
 defmodule Flashklip.VideoController do
   use Flashklip.Web, :controller
+  require IEx
 
   alias Flashklip.Video
   alias Flashklip.Metavideo
@@ -44,7 +45,7 @@ defmodule Flashklip.VideoController do
                     metavideo
                 end
 
-    metavideo_changeset = Metavideo.changeset(metavideo)
+    metavideo_changeset = Metavideo.changeset(metavideo, %{"tags" => conn.params["taggles"]})
 
     if metavideo_changeset.valid? do
       metavideo = Repo.insert_or_update!(metavideo_changeset)

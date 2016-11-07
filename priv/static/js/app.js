@@ -11282,26 +11282,25 @@ window.addEventListener('click', function (event) {
   })();
 });
 require.register("web/static/js/app.js", function(exports, require, module) {
-"use strict";
+'use strict';
 
-require("phoenix_html");
+require('phoenix_html');
 
-var _socket = require("./socket");
+var _loader = require('./views/loader');
+
+var _loader2 = _interopRequireDefault(_loader);
+
+var _socket = require('./socket');
 
 var _socket2 = _interopRequireDefault(_socket);
 
-var _video = require("./video");
+var _video = require('./video');
 
 var _video2 = _interopRequireDefault(_video);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
-
-_video2.default.init(_socket2.default, document.getElementById("video")); // Brunch automatically concatenates all files in your
+// Brunch automatically concatenates all files in your
 // watched paths. Those paths can be configured at
 // config.paths.watched in "brunch-config.js".
 //
@@ -11314,19 +11313,31 @@ _video2.default.init(_socket2.default, document.getElementById("video")); // Bru
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
+function handleDOMContentLoaded() {
+  // Get the current view name
+  var viewName = document.getElementsByTagName('body')[0].dataset.jsViewName;
 
+  // Load view class and mount it
+  var ViewClass = (0, _loader2.default)(viewName);
+  var view = new ViewClass();
+  view.mount();
 
-var tagList = document.getElementById("tags-input").getAttribute("data-tags");
-if (tagList.length > 0) {
-  new Taggle('tags-input', {
-    placeholder: 'Type some tags, hit <Enter> to add a tag',
-    tags: tagList.split(",")
-  });
-} else {
-  new Taggle('tags-input', {
-    placeholder: 'Type some tags, hit <Enter> to add a tag'
-  });
+  window.currentView = view;
 }
+
+// Import local files
+//
+// Local files can be imported directly using relative
+// paths "./socket" or full ones "web/static/js/socket".
+
+function handleDocumentUnload() {
+  window.currentView.unmount();
+}
+
+window.addEventListener('DOMContentLoaded', handleDOMContentLoaded, false);
+window.addEventListener('unload', handleDocumentUnload, false);
+
+_video2.default.init(_socket2.default, document.getElementById("video"));
 });
 
 ;require.register("web/static/js/player.js", function(exports, require, module) {
@@ -11724,12 +11735,13 @@ var Video = {
     });
 
     nextKlip.addEventListener("click", function (e) {
-      /* this.jumpedKlip = true*/
       _player2.default.seekTo(_this2.nextKlip.at);
     });
 
     prevKlip.addEventListener("click", function (e) {
-      _this2.jumpedKlip = true;
+      /* myKlipContainer.innerHTML = ``*/
+      document.getElementById("klip-content-display").className += " white-font";
+      document.getElementById("klip-ts-display").className += " white-font";
       _player2.default.seekTo(_this2.prevKlip.at);
     });
 
@@ -11740,6 +11752,8 @@ var Video = {
         return;
       }
       _player2.default.seekTo(seconds);
+      document.getElementById("klip-content-display").className += " white-font";
+      document.getElementById("klip-ts-display").className += " white-font";
     });
 
     allKlipsContainer.addEventListener("click", function (e) {
@@ -11919,8 +11933,6 @@ var Video = {
         return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
       });
 
-      _this2.scheduleKlips(myKlipContainer, _this2.currentAllKlips);
-
       // display all klips in the navigator tabs
       allKlipsContainer.innerHTML = "";
       var i = 0;
@@ -11933,8 +11945,11 @@ var Video = {
       allKlipsContainer.scrollTop = 0;
 
       if (_this2.at > 0) {
+        _this2.jumpedKlip = true;
         _player2.default.seekTo(_this2.at);
       }
+
+      _this2.scheduleKlips(myKlipContainer, _this2.currentAllKlips);
     }).receive("error", function (reason) {
       return console.log("join failed", reason);
     });
@@ -11949,16 +11964,22 @@ var Video = {
     var content = _ref.content;
     var at = _ref.at;
 
-    // following code was to prevent flashing of previous klip
-    // didn't work... revisit later to solve
-    /* if (this.jumpedKlip) {
-     *   this.jumpedKlip = false
-     *   return
-     * }
-     */
+
     var template = document.createElement("div");
 
-    myKlipContainer.innerHTML = "\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <div class=\"callout klip-callout\">\n        <p>" + this.esc(content) + "</p>\n        <hr>\n        <span class=\"timestamp\">\n            [" + this.formatTime(at) + "]\n        </span>\n      </div>\n    </a>\n    ";
+    myKlipContainer.innerHTML = "\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <div class=\"callout klip-callout\">\n        <p id=\"klip-content-display\">" + this.esc(content) + "</p>\n        <hr>\n        <span class=\"timestamp\" id=\"klip-ts-display\">\n            [" + this.formatTime(at) + "]\n        </span>\n      </div>\n    </a>\n    ";
+
+    if (this.jumpedKlip == true) {
+      if (this.at > at) {
+        document.getElementById("klip-content-display").className += " white-font";
+        document.getElementById("klip-ts-display").className += " white-font";
+      } else {
+        this.jumpedKlip = false;
+      }
+    } else {
+      document.getElementById("klip-content-display").classList.remove("white-font");
+      document.getElementById("klip-ts-display").classList.remove("white-font");
+    }
 
     if (user.id == this.currentUserId) {
       document.getElementById("klip-delete").classList.remove("hide");
@@ -12005,7 +12026,7 @@ var Video = {
       btnAction = "delete";
     } else {
       btnIcon = "fi-plus";
-      btnCaption = "Copy";
+      btnCaption = "Save";
       btnAction = "copy";
     }
 
@@ -12112,6 +12133,367 @@ var Video = {
   }
 };
 exports.default = Video;
+});
+
+;require.register("web/static/js/views/loader.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = loadView;
+
+var _main = require('./main');
+
+var _main2 = _interopRequireDefault(_main);
+
+var _index = require('./page/index');
+
+var _index2 = _interopRequireDefault(_index);
+
+var _new = require('./video/new');
+
+var _new2 = _interopRequireDefault(_new);
+
+var _edit = require('./video/edit');
+
+var _edit2 = _interopRequireDefault(_edit);
+
+var _new3 = require('./session/new');
+
+var _new4 = _interopRequireDefault(_new3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Collection of specific view modules
+var views = {
+  PageIndexView: _index2.default,
+  VideoNewView: _new2.default,
+  VideoEditView: _edit2.default,
+  SessionNewView: _new4.default
+};
+
+function loadView(viewName) {
+  return views[viewName] || _main2.default;
+}
+});
+
+;require.register("web/static/js/views/main.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var MainView = function () {
+  function MainView() {
+    _classCallCheck(this, MainView);
+  }
+
+  _createClass(MainView, [{
+    key: 'mount',
+    value: function mount() {
+      // This will be executed when the document loads...
+      console.log('MainView mounted');
+    }
+  }, {
+    key: 'unmount',
+    value: function unmount() {
+      // This will be executed when the document unloads...
+      console.log('MainView unmounted');
+    }
+  }]);
+
+  return MainView;
+}();
+
+exports.default = MainView;
+});
+
+;require.register("web/static/js/views/page/index.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _main = require('../main');
+
+var _main2 = _interopRequireDefault(_main);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var View = function (_MainView) {
+  _inherits(View, _MainView);
+
+  function View() {
+    _classCallCheck(this, View);
+
+    return _possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).apply(this, arguments));
+  }
+
+  _createClass(View, [{
+    key: 'mount',
+    value: function mount() {
+      _get(View.prototype.__proto__ || Object.getPrototypeOf(View.prototype), 'mount', this).call(this);
+
+      // Specific logic here
+      console.log('PageNewView mounted');
+
+      var username = document.getElementById("nav-username");
+
+      if (username && username.innerText == "") {
+        $('#usernameModal').foundation('open');
+      }
+    }
+  }, {
+    key: 'unmount',
+    value: function unmount() {
+      _get(View.prototype.__proto__ || Object.getPrototypeOf(View.prototype), 'unmount', this).call(this);
+
+      // Specific logic here
+      console.log('PageNewView unmounted');
+    }
+  }]);
+
+  return View;
+}(_main2.default);
+
+exports.default = View;
+});
+
+;require.register("web/static/js/views/session/new.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _main = require('../main');
+
+var _main2 = _interopRequireDefault(_main);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var View = function (_MainView) {
+  _inherits(View, _MainView);
+
+  function View() {
+    _classCallCheck(this, View);
+
+    return _possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).apply(this, arguments));
+  }
+
+  _createClass(View, [{
+    key: 'mount',
+    value: function mount() {
+      _get(View.prototype.__proto__ || Object.getPrototypeOf(View.prototype), 'mount', this).call(this);
+
+      // Specific logic here
+      console.log('SessionNewView mounted');
+
+      $('#email-field').each(function () {
+        var elem = $(this);
+
+        // Save current value of element
+        elem.data('oldVal', elem.val());
+
+        // Look for changes in the value
+        elem.bind("propertychange change click keyup input paste", function (event) {
+          // If value has changed...
+          if (elem.data('oldVal') != elem.val()) {
+            // Updated stored value
+            elem.data('oldVal', elem.val());
+
+            // Do action
+            if (validateEmail(document.getElementById("email-field").value)) {
+              document.getElementById("email-submit").classList.remove("disabled");
+            } else {
+              document.getElementById("email-submit").className += " disabled";
+            }
+          }
+        });
+      });
+
+      function validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+      }
+    }
+  }, {
+    key: 'unmount',
+    value: function unmount() {
+      _get(View.prototype.__proto__ || Object.getPrototypeOf(View.prototype), 'unmount', this).call(this);
+
+      // Specific logic here
+      console.log('SessionNewView unmounted');
+    }
+  }]);
+
+  return View;
+}(_main2.default);
+
+exports.default = View;
+});
+
+;require.register("web/static/js/views/video/edit.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _main = require('../main');
+
+var _main2 = _interopRequireDefault(_main);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var View = function (_MainView) {
+  _inherits(View, _MainView);
+
+  function View() {
+    _classCallCheck(this, View);
+
+    return _possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).apply(this, arguments));
+  }
+
+  _createClass(View, [{
+    key: 'mount',
+    value: function mount() {
+      _get(View.prototype.__proto__ || Object.getPrototypeOf(View.prototype), 'mount', this).call(this);
+
+      // Specific logic here
+      console.log('PageNewView mounted');
+
+      var tagList = document.getElementById("tags-input").getAttribute("data-tags");
+      if (tagList.length > 0) {
+        new Taggle('tags-input', {
+          placeholder: 'Type some tags, hit <Enter> to add a tag',
+          tags: tagList.split(",")
+        });
+      } else {
+        new Taggle('tags-input', {
+          placeholder: 'Type some tags, hit <Enter> to add a tag'
+        });
+      }
+    }
+  }, {
+    key: 'unmount',
+    value: function unmount() {
+      _get(View.prototype.__proto__ || Object.getPrototypeOf(View.prototype), 'unmount', this).call(this);
+
+      // Specific logic here
+      console.log('PageNewView unmounted');
+    }
+  }]);
+
+  return View;
+}(_main2.default);
+
+exports.default = View;
+});
+
+;require.register("web/static/js/views/video/new.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _main = require('../main');
+
+var _main2 = _interopRequireDefault(_main);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var View = function (_MainView) {
+  _inherits(View, _MainView);
+
+  function View() {
+    _classCallCheck(this, View);
+
+    return _possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).apply(this, arguments));
+  }
+
+  _createClass(View, [{
+    key: 'mount',
+    value: function mount() {
+      _get(View.prototype.__proto__ || Object.getPrototypeOf(View.prototype), 'mount', this).call(this);
+
+      // Specific logic here
+      console.log('PageNewView mounted');
+
+      var tagList = document.getElementById("tags-input").getAttribute("data-tags");
+      if (tagList.length > 0) {
+        new Taggle('tags-input', {
+          placeholder: 'Type some tags, hit <Enter> to add a tag',
+          tags: tagList.split(",")
+        });
+      } else {
+        new Taggle('tags-input', {
+          placeholder: 'Type some tags, hit <Enter> to add a tag'
+        });
+      }
+    }
+  }, {
+    key: 'unmount',
+    value: function unmount() {
+      _get(View.prototype.__proto__ || Object.getPrototypeOf(View.prototype), 'unmount', this).call(this);
+
+      // Specific logic here
+      console.log('PageNewView unmounted');
+    }
+  }]);
+
+  return View;
+}(_main2.default);
+
+exports.default = View;
 });
 
 ;require.alias("jquery/dist/jquery.js", "jquery");

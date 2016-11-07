@@ -29,10 +29,19 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 
+.menu .vertical {
+  text-align: center;
+  padding: 12px;
+}
+
 .cta-button {
   margin-top: 30px;
   margin-bottom: 20px;
   font-family: 'Oswald', sans-serif;
+}
+
+.alert-message {
+  color: #FF4136;
 }
 
 .reset-filter-button {
@@ -74,6 +83,16 @@ h1, h2, h3, h4, h5, h6, p {
   max-width: 680px;
 }
 
+.tabs-panel {
+  .columns {
+    padding: 4px;
+  }
+}
+
+.tag-button {
+  margin-bottom: 0px;
+}
+
 #new-video-button {
   margin-bottom: 0;
 }
@@ -103,15 +122,18 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 
+.klip-thumbnail-column {
+  padding-left: 0px;
+}
+
 .klips-thumbnail {
   img {
-    width: 177px;
-    height: 100px;
+    width: 100%;
+    height: auto;
   }
 }
 
 .klip-ticker-content {
-  padding-left: 8px;
   font-size: 18px;
   color: dimgray;
   font-weight: 700;
@@ -140,6 +162,7 @@ h1, h2, h3, h4, h5, h6, p {
 
 #my-klip-container {
   min-height: 60px;
+  margin-bottom: 12px;
 }
 
 #all-klips-container {
@@ -156,10 +179,12 @@ h1, h2, h3, h4, h5, h6, p {
 
 .video-callout {
   padding: 8px;
+  margin-bottom: 2px;
 }
 
 .klip-callout {
   padding: 8px;
+  margin-bottom: 8px;
 
   p {
     color: black;
@@ -167,6 +192,10 @@ h1, h2, h3, h4, h5, h6, p {
     color: dimgray;
     font-weight: 700;
     margin-bottom: 4px;
+  }
+
+  .white-font {
+    color: white !important;
   }
 
   hr {
@@ -189,6 +218,10 @@ h1, h2, h3, h4, h5, h6, p {
 
 }
 
+.navi-callout {
+  margin-bottom: 10px;
+}
+
 /* Responsive: Portrait tablets and up */
 /* @media screen and (min-width: 768px) { */
 @media screen and (max-width: 480px) {
@@ -201,6 +234,9 @@ h1, h2, h3, h4, h5, h6, p {
       a {
         padding-left: 10px;
         padding-right: 10px;
+      }
+      .nav-home {
+        padding-left: 0px;
       }
     }
   }
@@ -237,8 +273,28 @@ h1, h2, h3, h4, h5, h6, p {
     margin-top: 23px;
   }
 
+  #my-tabs {
+    margin-top: 23px;
+  }
+
+  #klipTabs {
+    margin-bottom: 8px;
+  }
+
   .callout {
     padding: 4px;
+  }
+
+  /* .video-callout { */
+  /*   margin-left: 0px; */
+  /*   margin-right: 0px; */
+  /* } */
+
+  .klip-callout {
+    padding: 2px;
+    .column {
+      padding: 0px;
+    }
   }
 
   .klip-ticker {
@@ -247,26 +303,44 @@ h1, h2, h3, h4, h5, h6, p {
 
   .youtube-thumbnail {
     img {
-      width: 88px;
-      height: 50px;
+      width: 123px;
+      height: 70px;
     }
+  }
+
+  .username {
+    margin-right: 4px;
   }
 
   .klips-thumbnail {
+    margin-bottom: 0px;
     img {
-      width: 88px;
-      height: 50px;
+      width: 100%;
+      height: auto;
     }
   }
 
+  .tabs-panel {
+    padding: 4px;
+    padding-left: 0px;
+    padding-right: 0px;
+    .columns {
+      padding: 4px;
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+
   .tabs-title {
     a {
-      padding-left: 20px;
-      padding-right: 20px;
+      padding-left: 16px;
+      padding-right: 16px;
     }
   }
 
   .video-added {
     margin-bottom: 0px;
   }
+
 }
