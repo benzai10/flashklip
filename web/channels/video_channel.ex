@@ -61,6 +61,7 @@ defmodule Flashklip.VideoChannel do
                 at: klip.at,
                 video_id: klip.video_id,
                 copy_from: klip.copy_from,
+                in_timeview: klip.in_timeview,
                 redirect: true
               }
               {:reply, :ok, socket}
@@ -86,6 +87,7 @@ defmodule Flashklip.VideoChannel do
             content: klip.content,
             copy_from: klip.copy_from,
             at: klip.at,
+            in_timeview: true,
             copy_from_timeview: params["copy_from_timeview"]
           }
           {:reply, :ok, socket}
@@ -103,16 +105,15 @@ defmodule Flashklip.VideoChannel do
     changeset =
       klip
       |> Flashklip.Klip.changeset(params)
-    # add delete restriction here if user != current_user
 
     case Flashklip.Repo.update(changeset)  do
       {:ok, klip} ->
         broadcast! socket, "update_klip", %{
           id: klip.id,
           at: klip.at,
-          # type: ann.type,
           user: Flashklip.UserView.render("user.json", %{user: user}),
-          content: klip.content
+          content: klip.content,
+          in_timeview: klip.in_timeview
         }
         {:reply, :ok, socket}
       {:error, changeset} ->

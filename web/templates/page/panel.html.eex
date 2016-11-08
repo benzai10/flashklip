@@ -38,7 +38,7 @@
               </div>
             </div>
             <p>
-              <%= if Enum.count(metavideo.tags) > 0 do %>
+              <%= if metavideo.tags && Enum.count(metavideo.tags) > 0 do %>
                 <span>
                   <%= for tag <-
                   Enum.join(metavideo.tags, ",") |> String.split(",") do %>
@@ -65,7 +65,7 @@
               </div>
             </div>
             <p>
-              <%= if Enum.count(metavideo.tags) > 0 do %>
+              <%= if metavideo.tags && Enum.count(metavideo.tags) > 0 do %>
                 <span>
                   <%= for tag <-
                   Enum.join(metavideo.tags, ",") |> String.split(",") do %>

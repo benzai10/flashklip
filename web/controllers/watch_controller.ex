@@ -11,7 +11,7 @@ defmodule Flashklip.WatchController do
         _ -> 0
       end
 
-    if String.to_integer(v) > 0 do
+    if String.to_integer(v) > 0 || user_id == 0 do
       video =
         Repo.get!(Video, id)
         |> Repo.preload(:metavideo)

@@ -86,7 +86,7 @@ defmodule Flashklip.VideoController do
     metavideo = case Repo.get_by(Metavideo, url: video_params["url"]) do
                   nil ->
                     %Metavideo{url: video_params["url"],
-                               tags: tags_params}
+                               tags: Enum.take(tags_params, 10)}
                   metavideo ->
                     metavideo
     end
@@ -148,7 +148,7 @@ defmodule Flashklip.VideoController do
   def update(conn, %{"id" => id, "taggles" => tags_params}, user) do
     video = Repo.get!(user_videos(user), id) |> Repo.preload(:metavideo)
     metavideo = video.metavideo
-    changeset = Metavideo.changeset(metavideo, %{"tags" => tags_params})
+    changeset = Metavideo.changeset(metavideo, %{"tags" => Enum.take(tags_params, 10)})
 
     case Repo.update(changeset) do
       {:ok, _metavideo} ->

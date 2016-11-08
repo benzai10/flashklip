@@ -12,9 +12,11 @@
     <li class="tabs-title" id="overview-tab">
       <a href="#navi" id="overview-title">ALL KLIPS</a>
     </li>
-    <li class="tabs-title <%= @show %>" id="add-klip-tab">
-      <a href="#add-klip">ADD KLIP</a>
-    </li>
+    <%= if @current_user do %>
+      <li class="tabs-title <%= @show %>" id="add-klip-tab">
+        <a href="#add-klip">ADD KLIP</a>
+      </li>
+    <% end %>
     <%= if is_nil(@user_video) do %>
       <li class="tabs-title <%= @show %>" id="save-video-tab">
         <a href="#save-video">SAVE</a>
@@ -23,9 +25,11 @@
         <a href="#edit-video"><i class="fi-widget"></i></a>
       </li>
     <% else %>
-      <li class="tabs-title <%= @show %> float-right" id="add-klip-tab">
-        <a href="#edit-video"><i class="fi-widget"></i></a>
-      </li>
+      <%= if @current_user do %>
+        <li class="tabs-title <%= @show %> float-right" id="add-klip-tab">
+          <a href="#edit-video"><i class="fi-widget"></i></a>
+        </li>
+      <% end %>
     <% end %>
   </ul>
 </div>
@@ -63,6 +67,7 @@
       <button type="button" class="small hollow button <%= @show %>" id="klip-next">Next Klip</button>
       <span class="float-right <%= @show %>">
         <button type="button" class="alert small hollow button hide" id="klip-delete">Delete</button>
+        <button type="button" class="small hollow button hide" id="klip-hide">Hide</button>
         <button type="button" class="small hollow button hide" id="klip-edit">Edit</button>
         <button type="button" class="small hollow button hide" id="klip-cancel-edit">Cancel Edit</button>
         <button type="button" class="small hollow button hide" id="klip-copy">Save</button>
