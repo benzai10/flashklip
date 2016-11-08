@@ -12084,6 +12084,7 @@ var Video = {
     var btnTimeviewClass = "";
     var btnTimeviewCaption = "";
     var btnTimeviewAction = "";
+    var divTimeviewClass = "";
 
     if (user.id == this.currentUserId) {
       btnIcon = "fi-minus";
@@ -12091,9 +12092,11 @@ var Video = {
       btnAction = "delete";
       btnTimeviewClass = "";
       if (in_timeview == true) {
+        divTimeviewClass = "";
         btnTimeviewCaption = "Hide";
         btnTimeviewAction = "hide";
       } else {
+        divTimeviewClass = "hidden-klip";
         btnTimeviewCaption = "Show";
         btnTimeviewAction = "show";
       }
@@ -12104,7 +12107,7 @@ var Video = {
       btnTimeviewClass = " hide";
     }
 
-    template.innerHTML = "\n  <div class=\"callout klip-callout navi-callout\">\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <p>" + this.esc(content) + "</p>\n      <hr>\n    </a>\n    <span class=\"timestamp\">\n        [" + this.formatTime(at) + "]\n    </span>\n    <span class=\"username\">\n      by " + this.esc(user.username) + "\n    </span>\n    <span class=\"float-right\">\n    <button type=\"button\" class=\"tiny hollow button navi-button " + this.esc(btnTimeviewClass) + "\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnTimeviewAction) + "\">\n      " + this.esc(btnTimeviewCaption) + "\n    </button>\n    <button type=\"button\" class=\"tiny hollow button navi-button\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnAction) + "\">\n      " + this.esc(btnCaption) + "\n    </button>\n    </span>\n  </div>\n    ";
+    template.innerHTML = "\n  <div class=\"callout klip-callout navi-callout " + this.esc(divTimeviewClass) + "\">\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <p>" + this.esc(content) + "</p>\n      <hr>\n    </a>\n    <span class=\"timestamp\">\n        [" + this.formatTime(at) + "]\n    </span>\n    <span class=\"username\">\n      by " + this.esc(user.username) + "\n    </span>\n    <span class=\"float-right\">\n    <button type=\"button\" class=\"tiny hollow button navi-button " + this.esc(btnTimeviewClass) + "\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnTimeviewAction) + "\">\n      " + this.esc(btnTimeviewCaption) + "\n    </button>\n    <button type=\"button\" class=\"tiny hollow button navi-button\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnAction) + "\">\n      " + this.esc(btnCaption) + "\n    </button>\n    </span>\n  </div>\n    ";
     allKlipsContainer.appendChild(template);
     allKlipsContainer.scrollTop = allKlipsContainer.scrollHeight;
   },

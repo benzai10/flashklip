@@ -586,6 +586,7 @@ let Video = {
     let btnTimeviewClass = ""
     let btnTimeviewCaption = ""
     let btnTimeviewAction = ""
+    let divTimeviewClass = ""
 
     if (user.id == this.currentUserId) {
       btnIcon = "fi-minus"
@@ -593,9 +594,11 @@ let Video = {
       btnAction = "delete"
       btnTimeviewClass = ""
       if (in_timeview == true) {
+        divTimeviewClass = ""
         btnTimeviewCaption = "Hide"
         btnTimeviewAction = "hide"
       } else {
+        divTimeviewClass = "hidden-klip"
         btnTimeviewCaption = "Show"
         btnTimeviewAction = "show"
       }
@@ -607,7 +610,7 @@ let Video = {
     }
 
     template.innerHTML = `
-  <div class="callout klip-callout navi-callout">
+  <div class="callout klip-callout navi-callout ${this.esc(divTimeviewClass)}">
     <a href="#" data-seek="${this.esc(at)}">
       <p>${this.esc(content)}</p>
       <hr>

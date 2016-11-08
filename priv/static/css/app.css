@@ -4647,6 +4647,19 @@ h1, h2, h3, h4, h5, h6, p {
 .navi-callout {
   margin-bottom: 10px; }
 
+.hidden-klip {
+  background-color: #E6E6E6; }
+  .hidden-klip a p {
+    color: ghostwhite;
+    font-weight: 100; }
+  .hidden-klip .username {
+    color: ghostwhite; }
+  .hidden-klip .timestamp {
+    color: ghostwhite; }
+  .hidden-klip button {
+    color: darkgray !important;
+    border-color: darkgray !important; }
+
 /* Responsive: Portrait tablets and up */
 /* @media screen and (min-width: 768px) { */
 @media screen and (max-width: 480px) {

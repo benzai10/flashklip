@@ -236,6 +236,26 @@ h1, h2, h3, h4, h5, h6, p {
   margin-bottom: 10px;
 }
 
+.hidden-klip {
+  background-color: #E6E6E6;
+  a {
+    p {
+      color: ghostwhite;
+      font-weight: 100;
+    }
+  }
+  .username {
+    color: ghostwhite;
+  }
+  .timestamp {
+    color: ghostwhite;
+  }
+  button {
+    color: darkgray !important;
+    border-color: darkgray !important;
+  }
+}
+
 /* Responsive: Portrait tablets and up */
 /* @media screen and (min-width: 768px) { */
 @media screen and (max-width: 480px) {
