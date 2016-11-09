@@ -4550,11 +4550,39 @@ h1, h2, h3, h4, h5, h6, p {
 .column, .columns {
   max-width: 680px; }
 
-.tabs-panel .columns {
-  padding: 4px; }
+.tabs-panel {
+  padding-left: 10px;
+  padding-right: 10px; }
+  .tabs-panel .columns {
+    padding: 4px; }
 
-.tabs-panel .tag-button {
-  margin-bottom: 4px; }
+.tabs-panel-watchview {
+  padding-left: 0px;
+  padding-right: 0px; }
+  .tabs-panel-watchview .columns {
+    padding: 4px; }
+  .tabs-panel-watchview .tag-button {
+    margin-bottom: 4px; }
+
+#add-klip .callout {
+  border: none; }
+
+#edit-video {
+  padding-top: 8px !important; }
+  #edit-video hr {
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+    margin-right: 4px; }
+  #edit-video .callout {
+    border: none;
+    padding-top: 8px;
+    padding-left: 34px;
+    padding-right: 20px; }
+    #edit-video .callout h6 {
+      padding-left: 4px;
+      margin-bottom: 2px; }
+  #edit-video #overview-switch {
+    margin-top: 3px; }
 
 .tag-button {
   margin-bottom: 0px; }
@@ -4625,7 +4653,10 @@ h1, h2, h3, h4, h5, h6, p {
 
 .klip-callout {
   padding: 8px;
-  margin-bottom: 8px; }
+  margin-bottom: 8px;
+  border-color: gray; }
+  .klip-callout hr {
+    margin-bottom: 4px !important; }
   .klip-callout p {
     color: black;
     font-size: 18px;
@@ -4648,17 +4679,61 @@ h1, h2, h3, h4, h5, h6, p {
   margin-bottom: 10px; }
 
 .hidden-klip {
-  background-color: #E6E6E6; }
+  border: none; }
+  .hidden-klip hr {
+    border-color: gainsboro; }
   .hidden-klip a p {
-    color: ghostwhite;
+    color: silver;
     font-weight: 100; }
   .hidden-klip .username {
-    color: ghostwhite; }
+    color: silver; }
   .hidden-klip .timestamp {
-    color: ghostwhite; }
+    color: silver; }
   .hidden-klip button {
-    color: darkgray !important;
-    border-color: darkgray !important; }
+    color: slategray !important;
+    border-color: slategray !important; }
+
+.new-video-info {
+  margin-top: 20px;
+  background-color: #85144b;
+  border: none; }
+  .new-video-info h4 {
+    color: white; }
+  .new-video-info p {
+    color: white; }
+
+.edit-tags-info {
+  margin-top: 20px;
+  background-color: #3d9970;
+  border: none; }
+  .edit-tags-info h4 {
+    color: white; }
+  .edit-tags-info p {
+    color: white; }
+
+#tags-input {
+  box-shadow: none;
+  border: 1px solid gainsboro;
+  border-radius: 0px; }
+
+.alerts .callout {
+  background-color: white; }
+
+.alerts .alert-info {
+  border-color: #2ECC40;
+  color: #2ECC40; }
+  .alerts .alert-info .close-button {
+    color: #2ECC40; }
+
+.alerts .alert-error {
+  border-color: #FF4136;
+  color: #FF4136; }
+  .alerts .alert-error .close-button {
+    color: #FF4136; }
+
+.custom-field-label {
+  color: dimgray;
+  font-size: 0.8em; }
 
 /* Responsive: Portrait tablets and up */
 /* @media screen and (min-width: 768px) { */

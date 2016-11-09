@@ -1,13 +1,13 @@
 <div class="row">
-  <h2>New video</h2>
+  <div class="callout new-video-info">
+    <h4>Add Video</h4>
+    <p>Enter a valid YouTube link to get the video available on Flashklip</p>
+  </div>
 </div>
 
 <div class="row">
   <%= render "form.html", changeset: @changeset,
-                          action: video_path(@conn, :create),
-                          with_url: true %>
-</div>
-
-<div class="row">
-  <%= link "Back", to: video_path(@conn, :index) %>
+  action: video_path(@conn, :create),
+  with_url: true,
+  with_tag_info: true %>
 </div>

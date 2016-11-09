@@ -1,6 +1,5 @@
 defmodule Flashklip.VideoController do
   use Flashklip.Web, :controller
-  require IEx
 
   alias Flashklip.Video
   alias Flashklip.Metavideo
@@ -64,7 +63,7 @@ defmodule Flashklip.VideoController do
       case Repo.insert(changeset) do
         {:ok, video} ->
           conn
-          |> put_flash(:info, "Video created successfully.")
+          |> put_flash(:info, "Video [#{metavideo.title}] got added successfully.")
           |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
         {:error, changeset} ->
           render(conn, "new.html", changeset: changeset)
@@ -103,7 +102,8 @@ defmodule Flashklip.VideoController do
       case Repo.insert(changeset) do
         {:ok, video} ->
           conn
-          |> put_flash(:info, "Video created successfully.")
+          |> put_flash(:info, "Video [#{metavideo.title}] got added successfully.")
+          |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
           |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
         {:error, changeset} ->
           render(conn, "new.html", changeset: changeset)
@@ -138,7 +138,7 @@ defmodule Flashklip.VideoController do
     case Repo.update(changeset) do
       {:ok, video} ->
         conn
-        |> put_flash(:info, "Video updated successfully.")
+        |> put_flash(:info, 'Video got added successfully.')
         |> redirect(to: video_path(conn, :show, video))
       {:error, changeset} ->
         render(conn, "edit.html", video: video, changeset: changeset)

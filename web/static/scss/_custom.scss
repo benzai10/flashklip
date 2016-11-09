@@ -95,11 +95,49 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .tabs-panel {
+  padding-left: 10px;
+  padding-right: 10px;
+  .columns {
+    padding: 4px;
+  }
+}
+
+.tabs-panel-watchview {
+  padding-left: 0px;
+  padding-right: 0px;
   .columns {
     padding: 4px;
   }
   .tag-button {
     margin-bottom: 4px;
+  }
+}
+
+#add-klip {
+  .callout {
+    border: none;
+  }
+}
+
+#edit-video {
+  padding-top: 8px !important;
+  hr {
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+    margin-right: 4px;
+  }
+  .callout {
+    border: none;
+    padding-top: 8px;
+    padding-left: 34px;
+    padding-right: 20px;
+    h6 {
+      padding-left: 4px;
+      margin-bottom: 2px;
+    }
+  }
+  #overview-switch {
+    margin-top: 3px;
   }
 }
 
@@ -199,6 +237,11 @@ h1, h2, h3, h4, h5, h6, p {
 .klip-callout {
   padding: 8px;
   margin-bottom: 8px;
+  border-color: gray;
+
+  hr {
+    margin-bottom: 4px !important;
+  }
 
   p {
     color: black;
@@ -237,23 +280,81 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .hidden-klip {
-  background-color: #E6E6E6;
+  border: none;
+  hr {
+    border-color: gainsboro;
+  }
   a {
     p {
-      color: ghostwhite;
+      color: silver;
       font-weight: 100;
     }
   }
   .username {
-    color: ghostwhite;
+    color: silver;
   }
   .timestamp {
-    color: ghostwhite;
+    color: silver;
   }
   button {
-    color: darkgray !important;
-    border-color: darkgray !important;
+    color: slategray !important;
+    border-color: slategray !important;
   }
+}
+
+.new-video-info {
+  margin-top: 20px;
+  background-color: #85144b;
+  border: none;
+  h4 {
+    color: white;
+  }
+  p {
+    color: white;
+  }
+}
+
+.edit-tags-info {
+  margin-top: 20px;
+  background-color: #3d9970;
+  border: none;
+  h4 {
+    color: white;
+  }
+  p {
+    color: white;
+  }
+}
+
+#tags-input {
+  box-shadow: none;
+  border: 1px solid gainsboro;
+  border-radius: 0px;
+}
+
+.alerts {
+  .callout {
+    background-color: white;
+  }
+  .alert-info {
+    border-color: #2ECC40;
+    color: #2ECC40;
+    .close-button {
+      color: #2ECC40;
+    }
+  }
+  .alert-error {
+    border-color: #FF4136;
+    color: #FF4136;
+    .close-button {
+      color: #FF4136;
+    }
+  }
+}
+
+.custom-field-label {
+  color: dimgray;
+  font-size: 0.8em;
 }
 
 /* Responsive: Portrait tablets and up */

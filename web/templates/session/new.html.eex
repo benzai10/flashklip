@@ -16,7 +16,7 @@
   </div>
 <% end %>
 <div class="form-group">
-  <%= email_input f, :email, placeholder: "Email", class: "form-control", id: "email-field" %>
+  <%= email_input f, :email, placeholder: "Email", class: "form-control", id: "email-field", maxlength: "50" %>
   <%= error_tag f, :email %>
 </div>
 <%= submit "Email me a link to sign in", class: "button disabled", id: "email-submit" %>

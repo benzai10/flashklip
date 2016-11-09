@@ -4,7 +4,7 @@
     <% end %>
   </div>
 </div>
-<div class="row">
+<div class="row" id="tabs-container">
   <ul class="tabs" data-tabs id="klipTabs">
     <li class="tabs-title is-active" id="timeview-tab">
       <a href="#live" aria-selected="true">TIMEVIEW</a>
@@ -35,7 +35,7 @@
 </div>
 <div class="row">
   <div class="tabs-content" data-tabs-content="klipTabs">
-    <div class="tabs-panel is-active" id="live">
+    <div class="tabs-panel is-active tabs-panel-watchview" id="live">
       <div id="my-klip-container">
         <%= if !@current_user do %>
           <p>Timeview is only available for logged in users.</p>
@@ -46,7 +46,7 @@
       <div id="my-edit-container" class="hide">
         <div class="callout klip-callout">
           <div class="input-group">
-            <input id="klip-input-edit" class="input-group-field" type="text">
+            <input id="klip-input-edit" class="input-group-field" type="text" maxlength="300">
             <div class="input-group-button">
               <input id="klip-update" type="submit" class="hollow button" value="Update">
             </div>
@@ -73,8 +73,7 @@
         <button type="button" class="small hollow button hide" id="klip-copy">Save</button>
       </span>
     </div>
-    <div class="tabs-panel" id="navi">
-      <%#= Enum.map(@video.klips, fn(k) -> render "klip.html", klip: k end) %>
+    <div class="tabs-panel tabs-panel-watchview" id="navi">
       <div id="all-klips-container">
         <%= if !@current_user do %>
           <%= for klip <- @klips do %>
@@ -83,10 +82,10 @@
         <% end %>
       </div>
     </div>
-    <div class="tabs-panel" id="add-klip">
+    <div class="tabs-panel tabs-panel-watchview" id="add-klip">
       <div class="callout klip-callout">
         <div class="input-group">
-          <input id="klip-input" class="input-group-field" type="text">
+          <input id="klip-input" class="input-group-field" type="text" maxlength="300">
           <div class="input-group-button">
             <input id="klip-submit" type="submit" class="hollow button" value="Add">
           </div>
@@ -103,7 +102,8 @@
         </div>
       </div>
     </div>
-    <div class="tabs-panel" id="save-video">
+
+    <div class="tabs-panel tabs-panel-watchview" id="save-video">
       <div class="callout">
         <p>
           Save video to your own Flashklip collection for individual Klips management.
@@ -117,53 +117,56 @@
         </p>
       </div>
     </div>
-    <div class="tabs-panel" id="edit-video">
-      <div class="row">
-        <div class="small-8 columns">
-          <h6>Display only own klips?</h6>
-        </div>
-        <div class="small-4 columns">
-          <div class="switch large float-right">
-            <input class="switch-input" id="overview-switch" type="checkbox" name="overviewSwitch">
-            <label class="switch-paddle" for="overview-switch">
-              <span class="show-for-sr">Toggle Overview</span>
-              <span class="switch-active" aria-hidden="true">Yes</span>
-              <span class="switch-inactive" aria-hidden="true">No</span>
-            </label>
-          </div>
-        </div>
-        <hr>
-      </div>
-      <div class="row">
-        <div class="small-8 columns">
-          <%= if @video.tags && Enum.count(@video.tags) > 0 do %>
-            <%= for tag <-
-            Enum.join(@video.tags, ",") |> String.split(",") do %>
-              <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
-            <% end %>
-          <% end %>
-        </div>
-        <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
-          <div class="small-4 columns">
-            <%= link "Edit Tags", to: video_path(@conn, :edit, @user_video),
-            class: "hollow small button float-right" %>
-          </div>
-        <% end %>
-      <hr>
-      </div>
-      <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
+
+    <div class="tabs-panel tabs-panel-watchview" id="edit-video">
+      <div class="callout">
+
         <div class="row">
           <div class="small-8 columns small-text">
-            <p>Delete will remove the video from your playlist. All klips will be deleted.</p>
+            <p>Save Klips and determine which Klips show up in the Timeview in your individual Klips view.</p>
+          </div>
+          <div class="small-4 columns">
+            <button id="overview-switch" class="float-right hollow small button">Load my Klips</button>
+          </div>
+          <hr>
+        </div>
+
+        <div class="row">
+          <h6>Video Tags</h6>
+          <div class="small-8 columns">
+            <%= if @video.tags && Enum.count(@video.tags) > 0 do %>
+              <%= for tag <-
+              Enum.join(@video.tags, ",") |> String.split(",") do %>
+                <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+              <% end %>
+            <% end %>
+          </div>
+          <div class="small-4 columns">
+            <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
+              <%= link "Edit Tags", to: video_path(@conn, :edit, @user_video),
+              class: "hollow small button float-right" %>
+            <% end %>
+          </div>
+          <hr>
+        </div>
+
+        <div class="row">
+          <div class="small-8 columns small-text">
+            <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
+              <p>Delete will remove the video from your playlist. All klips will be deleted.</p>
+            <% end %>
           </div>
           <div class="small-2 columns">
-            <%= link "Delete", to: video_path(@conn, :delete, @user_video),
-            method: :delete,
-            data: [confirm: "Are you sure?"],
-            class: "alert small hollow button float-right" %>
+            <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
+              <%= link "Delete", to: video_path(@conn, :delete, @user_video),
+              method: :delete,
+              data: [confirm: "Are you sure?"],
+              class: "alert small hollow button float-right" %>
+            <% end %>
           </div>
         </div>
-      <% end %>
+
+      </div>
     </div>
   </div>
 </div>

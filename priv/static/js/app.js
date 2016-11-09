@@ -11483,7 +11483,7 @@ var Video = {
   allKlips: [],
   liveKlipTimer: {},
   userVideoId: 0,
-  overviewAll: true,
+  activeView: "",
   currentUserId: 0,
   at: 0,
 
@@ -11532,6 +11532,14 @@ var Video = {
     // maybe later change to aggChannel?
     var vidChannel = socket.channel("videos:" + videoId);
 
+    document.getElementById("timeview-tab").addEventListener("click", function (e) {
+      _this2.activeView = "timeview";
+    });
+
+    document.getElementById("overview-tab").addEventListener("click", function (e) {
+      _this2.activeView = "overview";
+    });
+
     switchOverview.addEventListener("click", function (e) {
       if (overviewTitle.innerHTML == "ALL KLIPS") {
         // filter only own klips
@@ -11556,11 +11564,13 @@ var Video = {
         _this2.addNaviEventListeners(vidChannel);
 
         overviewTitle.innerHTML = "MY KLIPS";
+        switchOverview.innerHTML = "Load all Klips";
       } else {
         var k;
 
         (function () {
           overviewTitle.innerHTML = "ALL KLIPS";
+          switchOverview.innerHTML = "Load my Klips";
           /* this.currentAllKlips = this.allKlips*/
 
           // filter out original klips where a copy exists
@@ -11605,7 +11615,13 @@ var Video = {
     });
 
     postButton.addEventListener("click", function (e) {
-      var payload = { content: klipInput.value, at: saveAt, user_video_id: _this2.userVideoId, in_timeview: true };
+      var payload = {
+        content: klipInput.value,
+        at: saveAt,
+        user_video_id: _this2.userVideoId,
+        in_timeview: true,
+        copy_from_timeview: true
+      };
       vidChannel.push("new_klip", payload).receive("error", function (e) {
         return console.log(e);
       });
@@ -11619,7 +11635,7 @@ var Video = {
         copy_from: _this2.currentLiveKlip.id,
         user_video_id: _this2.userVideoId,
         in_timeview: true,
-        copy_from_timeview: true
+        copy_from_timeview: false
       };
       vidChannel.push("new_klip", payload).receive("error", function (e) {
         return console.log(e);
@@ -11799,13 +11815,29 @@ var Video = {
       }
 
       vidChannel.params.last_seen_id = resp.id;
+
+      // add new klip to timeview
+      _this2.currentTimeviewKlips.push(resp);
+      _this2.currentTimeviewKlips.sort(function (a, b) {
+        return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+      });
+
       _this2.renderLiveKlip(myKlipContainer, resp);
 
       // switch to timeview tab (but not after copy)
       // for the time being, switch to overview
-      if (resp.copy_from_timeview != true) {
+      if (_this2.activeView == "timeview") {
+        $('#timeview-tab').trigger("click");
+      } else {
         $('#overview-tab').trigger("click");
       }
+
+      /* if (resp.copy_from_timeview == true) {
+       *   $('#timeview-tab').trigger("click")
+       * } else {
+       *   $('#overview-tab').trigger("click")
+       * }
+       */
 
       // *** quick hack
 
@@ -11927,6 +11959,11 @@ var Video = {
       // remove deleted klip from navi container
       var deletedKlip = document.getElementById("klip-id-" + resp.id);
       deletedKlip.parentElement.removeChild(deletedKlip);
+
+      // remove delete klip from timeview
+      _this2.currentTimeviewKlips = _this2.currentTimeviewKlips.filter(function (klip) {
+        return klip.id != resp.id;
+      });
 
       // remove deleted klip from live container
       myKlipContainer.innerHTML = "";

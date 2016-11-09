@@ -11,7 +11,7 @@ let Video = {
   allKlips: [],
   liveKlipTimer: {},
   userVideoId: 0,
-  overviewAll: true,
+  activeView: "",
   currentUserId: 0,
   at: 0,
 
@@ -55,6 +55,14 @@ let Video = {
     // maybe later change to aggChannel?
     let vidChannel        = socket.channel("videos:" + videoId)
 
+    document.getElementById("timeview-tab").addEventListener("click", e => {
+      this.activeView = "timeview"
+    })
+
+    document.getElementById("overview-tab").addEventListener("click", e => {
+      this.activeView = "overview"
+    })
+
     switchOverview.addEventListener("click", e => {
       if (overviewTitle.innerHTML == "ALL KLIPS") {
         // filter only own klips
@@ -76,9 +84,11 @@ let Video = {
         this.addNaviEventListeners(vidChannel)
 
         overviewTitle.innerHTML = "MY KLIPS"
+        switchOverview.innerHTML = "Load all Klips"
 
       } else {
         overviewTitle.innerHTML = "ALL KLIPS"
+        switchOverview.innerHTML = "Load my Klips"
         /* this.currentAllKlips = this.allKlips*/
 
         // filter out original klips where a copy exists
@@ -119,7 +129,13 @@ let Video = {
     })
 
     postButton.addEventListener("click", e => {
-      let payload = {content: klipInput.value, at: saveAt, user_video_id: this.userVideoId, in_timeview: true}
+      let payload = {
+        content: klipInput.value,
+        at: saveAt,
+        user_video_id: this.userVideoId,
+        in_timeview: true,
+        copy_from_timeview: true
+      }
       vidChannel.push("new_klip", payload)
         .receive("error", e => console.log(e))
       klipInput.value = ""
@@ -132,7 +148,7 @@ let Video = {
         copy_from: this.currentLiveKlip.id,
         user_video_id: this.userVideoId,
         in_timeview: true,
-        copy_from_timeview: true
+        copy_from_timeview: false
       }
       vidChannel.push("new_klip", payload)
         .receive("error", e => console.log(e))
@@ -312,13 +328,28 @@ let Video = {
       }
 
       vidChannel.params.last_seen_id = resp.id
+
+      // add new klip to timeview
+      this.currentTimeviewKlips.push(resp)
+      this.currentTimeviewKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
+
       this.renderLiveKlip(myKlipContainer, resp)
 
       // switch to timeview tab (but not after copy)
       // for the time being, switch to overview
-      if (resp.copy_from_timeview != true) {
-        $('#overview-tab').trigger("click");
+      if (this.activeView == "timeview") {
+       $('#timeview-tab').trigger("click")
+      } else {
+        $('#overview-tab').trigger("click")
       }
+
+      /* if (resp.copy_from_timeview == true) {
+       *   $('#timeview-tab').trigger("click")
+       * } else {
+       *   $('#overview-tab').trigger("click")
+       * }
+       */
+
 
 
       // *** quick hack
@@ -430,6 +461,11 @@ let Video = {
       // remove deleted klip from navi container
       let deletedKlip = document.getElementById("klip-id-" + resp.id)
       deletedKlip.parentElement.removeChild(deletedKlip)
+
+      // remove delete klip from timeview
+      this.currentTimeviewKlips = this.currentTimeviewKlips.filter( klip => {
+        return klip.id != resp.id
+      })
 
       // remove deleted klip from live container
       myKlipContainer.innerHTML = ""

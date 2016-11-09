@@ -1,13 +1,14 @@
 <div class="row">
-  <h2>Edit video</h2>
+  <div class="callout edit-tags-info">
+    <h4>Edit Tags</h4>
+    <p>Specifiy tags (maximum 10) to enable filtering.</p>
+    <p>To enter tags, seperate each tag with a comma or use the return/go key.</p>
+  </div>
 </div>
 
 <div class="row">
   <%= render "form.html", changeset: @changeset,
                           action: video_path(@conn, :update, @video),
-                          with_url: false %>
-</div>
-
-<div class="row">
-  <%= link "Videos", to: video_path(@conn, :index) %>
+                          with_url: false,
+                          with_tag_info: false %>
 </div>
