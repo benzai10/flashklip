@@ -113,7 +113,8 @@ defmodule Flashklip.VideoChannel do
           at: klip.at,
           user: Flashklip.UserView.render("user.json", %{user: user}),
           content: klip.content,
-          in_timeview: klip.in_timeview
+          in_timeview: klip.in_timeview,
+          current_scroll_pos: params["current_scroll_pos"]
         }
         {:reply, :ok, socket}
       {:error, changeset} ->

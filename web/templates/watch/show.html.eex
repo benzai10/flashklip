@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" id="video-player">
   <div class="flex-video widescreen">
     <%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video_id, user_id: @user_id, at: @at] do %>
     <% end %>

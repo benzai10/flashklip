@@ -11348,6 +11348,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var Player = {
   player: null,
+  playerState: 0,
 
   init: function init(domId, playerId, onReady) {
     var _this = this;
@@ -11376,7 +11377,9 @@ var Player = {
       }
     });
   },
-  onPlayerStateChange: function onPlayerStateChange(event) {},
+  onPlayerStateChange: function onPlayerStateChange(event) {
+    this.playerState = event.data;
+  },
   getCurrentTime: function getCurrentTime() {
     return Math.floor(this.player.getCurrentTime() * 1000);
   },
@@ -11476,6 +11479,7 @@ var Video = {
 
   currentLiveKlip: {},
   jumpedKlip: false,
+  liveKlip: null,
   nextKlip: {},
   prevKlip: {},
   currentAllKlips: [],
@@ -11486,6 +11490,7 @@ var Video = {
   activeView: "",
   currentUserId: 0,
   at: 0,
+  startTimer: false,
 
   init: function init(socket, element) {
     var _this = this;
@@ -11732,6 +11737,7 @@ var Video = {
       if (_this2.currentLiveKlip.at < 1000) {
         editTsBack.className += " disabled";
       }
+      _this2.startTimer = true;
       _player2.default.seekTo(_this2.currentLiveKlip.at);
       editTsDisplay.innerHTML = "[" + _this2.formatTime(_this2.currentLiveKlip.at) + "]";
     });
@@ -11742,6 +11748,7 @@ var Video = {
       if (_this2.currentLiveKlip.at > 999) {
         editTsBack.classList.remove("disabled");
       }
+      _this2.startTimer = true;
       _player2.default.seekTo(_this2.currentLiveKlip.at);
       editTsDisplay.innerHTML = "[" + _this2.formatTime(_this2.currentLiveKlip.at) + "]";
     });
@@ -11757,6 +11764,7 @@ var Video = {
       if (saveAt < 1000) {
         newTsBack.className += " disabled";
       }
+      _this2.startTimer = true;
       _player2.default.seekTo(saveAt);
       newTsDisplay.innerHTML = "[" + _this2.formatTime(saveAt) + "]";
     });
@@ -11767,21 +11775,27 @@ var Video = {
       if (saveAt > 999) {
         newTsBack.classList.remove("disabled");
       }
+      _this2.startTimer = true;
       _player2.default.seekTo(saveAt);
       newTsDisplay.innerHTML = "[" + _this2.formatTime(saveAt) + "]";
     });
 
     newTsDisplay.addEventListener("click", function (e) {
       e.preventDefault();
+      _this2.startTimer = true;
       _player2.default.seekTo(saveAt);
     });
 
     nextKlip.addEventListener("click", function (e) {
+      _this2.liveKlip = _this2.nextKlip;
+      _this2.startTimer = true;
       _player2.default.seekTo(_this2.nextKlip.at);
     });
 
     prevKlip.addEventListener("click", function (e) {
+      _this2.liveKlip = _this2.prevKlip;
       /* myKlipContainer.innerHTML = ``*/
+      _this2.startTimer = true;
       document.getElementById("klip-content-display").className += " white-font";
       document.getElementById("klip-ts-display").className += " white-font";
       _player2.default.seekTo(_this2.prevKlip.at);
@@ -11793,6 +11807,7 @@ var Video = {
       if (!seconds) {
         return;
       }
+      _this2.startTimer = true;
       _player2.default.seekTo(seconds);
       document.getElementById("klip-content-display").className += " white-font";
       document.getElementById("klip-ts-display").className += " white-font";
@@ -11800,12 +11815,14 @@ var Video = {
 
     allKlipsContainer.addEventListener("click", function (e) {
       e.preventDefault();
-      var seconds = e.target.getAttribute("data-seek") || e.target.parentNode.getAttribute("data-seek") || e.target.parentNode.parentNode.getAttribute("data-seek");
-      console.log(seconds);
-      if (!seconds) {
-        return;
-      }
-      _player2.default.seekTo(seconds);
+      var klipId = e.target.closest("div").parentNode.getAttribute("id").match(/\d+/)[0];
+
+      _this2.liveKlip = _this2.allKlips.find(function (klip) {
+        return klip.id == klipId;
+      });
+
+      _this2.startTimer = true;
+      _player2.default.seekTo(_this2.liveKlip.at);
     });
 
     vidChannel.on("new_klip", function (resp) {
@@ -11822,6 +11839,7 @@ var Video = {
         return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
       });
 
+      _this2.liveKlip = resp;
       _this2.renderLiveKlip(myKlipContainer, resp);
 
       // switch to timeview tab (but not after copy)
@@ -11831,13 +11849,6 @@ var Video = {
       } else {
         $('#overview-tab').trigger("click");
       }
-
-      /* if (resp.copy_from_timeview == true) {
-       *   $('#timeview-tab').trigger("click")
-       * } else {
-       *   $('#overview-tab').trigger("click")
-       * }
-       */
 
       // *** quick hack
 
@@ -11872,11 +11883,15 @@ var Video = {
       }
       _this2.addNaviEventListeners(vidChannel);
 
+      // add also event listener for seekAt
+
+
       // *** end quick hack
     });
 
     vidChannel.on("update_klip", function (resp) {
       if (resp.in_timeview == true) {
+        _this2.liveKlip = resp;
         _this2.renderLiveKlip(myKlipContainer, resp);
       } else {
         // remove hidden klip from live container
@@ -11915,7 +11930,7 @@ var Video = {
       // display all klips in the navigator
       var i = 0;
       for (i = 0; i < _this2.currentAllKlips.length; i++) {
-        _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
+        _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i], resp.current_scroll_pos);
       }
       _this2.addNaviEventListeners(vidChannel);
     });
@@ -12104,7 +12119,7 @@ var Video = {
     var timestampDisplay = document.getElementById("klip-edit-ts-display");
     timestampDisplay.innerHTML = "\n    [" + this.formatTime(at) + "]\n    ";
   },
-  renderNaviKlip: function renderNaviKlip(allKlipsContainer, _ref2) {
+  renderNaviKlip: function renderNaviKlip(allKlipsContainer, _ref2, currentScrollPos) {
     var id = _ref2.id;
     var user = _ref2.user;
     var content = _ref2.content;
@@ -12145,16 +12160,22 @@ var Video = {
     }
 
     template.innerHTML = "\n  <div class=\"callout klip-callout navi-callout " + this.esc(divTimeviewClass) + "\">\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <p>" + this.esc(content) + "</p>\n      <hr>\n    </a>\n    <span class=\"timestamp\">\n        [" + this.formatTime(at) + "]\n    </span>\n    <span class=\"username\">\n      by " + this.esc(user.username) + "\n    </span>\n    <span class=\"float-right\">\n    <button type=\"button\" class=\"tiny hollow button navi-button " + this.esc(btnTimeviewClass) + "\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnTimeviewAction) + "\">\n      " + this.esc(btnTimeviewCaption) + "\n    </button>\n    <button type=\"button\" class=\"tiny hollow button navi-button\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnAction) + "\">\n      " + this.esc(btnCaption) + "\n    </button>\n    </span>\n  </div>\n    ";
+
     allKlipsContainer.appendChild(template);
-    allKlipsContainer.scrollTop = allKlipsContainer.scrollHeight;
+    if (currentScrollPos) {
+      console.log(currentScrollPos);
+    }
+    /* allKlipsContainer.scrollTop = allKlipsContainer.scrollHeight*/
+    allKlipsContainer.scrollTop = currentScrollPos;
   },
   scheduleKlips: function scheduleKlips(myKlipContainer, klips) {
     var _this3 = this;
 
     // get last klip before current time and display it
     this.liveKlipTimer = setTimeout(function () {
+
       var ctime = _player2.default.getCurrentTime();
-      var liveKlip = {};
+      var nowKlip = {};
       _this3.nextKlip = klips.filter(function (klip) {
         if (klip.at > ctime) {
           return true;
@@ -12167,16 +12188,16 @@ var Video = {
         document.getElementById("klip-next").className += " disabled";
       }
       var lastTwoKlips = klips.filter(function (klip) {
-        if (klip.at < ctime) {
+        if (klip.at <= ctime) {
           return true;
         }
       }).slice(-2);
       if (lastTwoKlips.length > 1) {
         _this3.prevKlip = lastTwoKlips[0];
-        liveKlip = lastTwoKlips[1];
+        nowKlip = lastTwoKlips[1];
       } else {
         _this3.prevKlip = null;
-        liveKlip = lastTwoKlips[0];
+        nowKlip = lastTwoKlips[0];
       }
       if (_this3.prevKlip) {
         document.getElementById("klip-prev").classList.remove("disabled");
@@ -12184,9 +12205,10 @@ var Video = {
         document.getElementById("klip-prev").classList.remove("disabled");
         document.getElementById("klip-prev").className += " disabled";
       }
-      if (liveKlip) {
-        _this3.currentLiveKlip = liveKlip;
-        _this3.renderLiveKlip(myKlipContainer, liveKlip);
+
+      if (nowKlip) {
+        _this3.currentLiveKlip = nowKlip;
+        _this3.renderLiveKlip(myKlipContainer, nowKlip);
       } else {
         document.getElementById("my-klip-container").innerHTML = "";
         document.getElementById("klip-hide").classList.remove("hide");
@@ -12198,6 +12220,7 @@ var Video = {
         document.getElementById("klip-delete").className += " hide";
         document.getElementById("klip-copy").className += " hide";
       }
+
       _this3.scheduleKlips(myKlipContainer, _this3.currentTimeviewKlips);
     }, 500);
   },
@@ -12206,6 +12229,9 @@ var Video = {
     Array.from(document.getElementsByClassName("navi-button")).forEach(function (element) {
       element.addEventListener('click', function (e) {
         e.preventDefault();
+
+        var currentScrollPos = e.target.closest("div").parentNode.parentNode.scrollTop;
+
         var seekAt = e.target.parentNode.firstElementChild.getAttribute("data-seek") || e.target.parentNode.parentNode.firstElementChild.getAttribute("data-seek") || e.target.parentNode.parentNode.parentNode.firstElementChild.getAttribute("data-seek");
 
         var content = e.target.getAttribute("data-klip-content") || e.target.parentNode.getAttribute("data-klip-content");
@@ -12221,7 +12247,12 @@ var Video = {
         /* switch (klipAction) {*/
         /* case "copy":*/
         if (klipAction == "copy") {
-          var payload = { content: content, at: seekAt, copy_from: id, user_video_id: videoId };
+          var payload = {
+            content: content,
+            at: seekAt,
+            copy_from: id,
+            user_video_id: videoId,
+            current_scroll_pos: currentScrollPos };
 
           vidChannel.push("new_klip", payload).receive("error", function (e) {
             return console.log(e);
@@ -12230,7 +12261,8 @@ var Video = {
 
           var _payload = {
             id: id,
-            in_timeview: true
+            in_timeview: true,
+            current_scroll_pos: currentScrollPos
           };
           vidChannel.push("update_klip", _payload).receive("error", function (e) {
             return console.log(e);
@@ -12239,7 +12271,8 @@ var Video = {
 
           var _payload2 = {
             id: id,
-            in_timeview: false
+            in_timeview: false,
+            current_scroll_pos: currentScrollPos
           };
           vidChannel.push("update_klip", _payload2).receive("error", function (e) {
             return console.log(e);
