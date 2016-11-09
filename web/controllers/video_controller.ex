@@ -22,9 +22,23 @@ defmodule Flashklip.VideoController do
         Repo.all(user_videos_filtered(user, search_tag))
         |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
     end
+
     klips = Enum.flat_map(videos, fn(v) -> v.klips end)
+
     metavideos = Enum.map(videos, fn(v) -> v.metavideo end)
-    render(conn, "index.html", videos: videos, klips: klips, metavideos: metavideos)
+
+    metavideos_ids =
+      metavideos
+      |> Enum.map(&(Integer.to_string(&1.id) <> ", " ))
+      |> List.to_string
+      |> String.replace_trailing(", ", "")
+
+    popular_tags_query = "select unnest(tags), count(tags) from metavideos where id in" <> "(" <> metavideos_ids <> ")" <> " group by unnest(tags) order by count desc limit 30;"
+
+    # popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, ["(" <> metavideos_ids <> ")"]).rows
+    popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+
+    render(conn, "index.html", videos: videos, klips: klips, metavideos: metavideos, popular_tags: popular_tags)
   end
 
   def new(conn, _params, user) do

@@ -16,6 +16,14 @@
         <span class="video-klips-count badge"><%= Enum.count(@klips) %></span> Klips
       </div>
     </div>
+    <h6 id="pop-tags-title">Popular Tags</h6>
+    <hr>
+    <%= for tag <- @popular_tags do %>
+      <span>
+        <% pop_tag_caption = Enum.at(tag, 0) <> " [" <> Integer.to_string(Enum.at(tag, 1)) <> "]"  %>
+      <%=  link pop_tag_caption, to: video_path(@conn, :index, search: Enum.at(tag, 0)), class: "hollow small button pop-tag-button" %>
+      </span>
+    <% end %>
   </div>
 </div>
 

@@ -4521,6 +4521,12 @@ h1, h2, h3, h4, h5, h6, p {
 .alert-message {
   color: #FF4136; }
 
+.pop-tag-button {
+  margin-bottom: 6px; }
+
+#pop-tags-title {
+  margin-top: 20px; }
+
 .reset-filter-button {
   margin-left: 8px; }
 

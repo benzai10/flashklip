@@ -92,7 +92,11 @@ defmodule Flashklip.PageController do
             |> Repo.preload([:user, {:video, :metavideo}])
       end
 
-      render(conn, "explore.html", metavideos: metavideos, klips: klips)
+      popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30"
+
+      popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+
+      render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, klips: klips)
     else
       query = from m in Metavideo,
         where: ^search_tag in m.tags
@@ -100,7 +104,12 @@ defmodule Flashklip.PageController do
         Repo.all(query)
         |> Repo.preload(:videos)
 
-      render(conn, "explore.html", metavideos: metavideos, klips: nil)
+      popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30;"
+
+      popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+
+      render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, klips: nil)
     end
+
   end
 end
