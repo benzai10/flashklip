@@ -67,14 +67,17 @@ defmodule Flashklip.Metavideo do
       :httpc.request(String.to_char_list("https://www.googleapis.com/youtube/v3/videos?id=" <> youtube_video_id <> "&key=" <> "AIzaSyDTeV8UtwCWOXATwMrlOvZf0id4On_O4Qc" <> "&part=snippet&fields=items(snippet(title))"))
     # if resp code = 200, dissect title
     if resp == 200 do
-      body
-      |> List.to_string
-      |> String.split_at(-16)
-      |> Tuple.to_list
-      |> List.first
-      |> String.split_at(48)
-      |> Tuple.to_list
-      |> List.last
+      title =
+        body
+        |> List.to_string
+        |> String.split_at(-16)
+        |> Tuple.to_list
+        |> List.first
+        |> String.split_at(48)
+        |> Tuple.to_list
+        |> List.last
+
+      Enum.join(for <<c::utf8 <- title>>, do: <<c::big>>)
     else
       ""
     end
