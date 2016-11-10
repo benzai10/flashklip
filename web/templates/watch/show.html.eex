@@ -153,7 +153,7 @@
         <div class="row">
           <div class="small-8 columns small-text">
             <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
-              <p>Delete will remove the video from your playlist. All klips will be deleted.</p>
+              <p>Delete will remove the video from your playlist. Your klips will be deleted.</p>
             <% end %>
           </div>
           <div class="small-2 columns">

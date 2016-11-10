@@ -104,8 +104,15 @@ defmodule Flashklip.PageController do
         Repo.all(query)
         |> Repo.preload(:videos)
 
-      popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30;"
+      metavideos_ids =
+        metavideos
+        |> Enum.map(&(Integer.to_string(&1.id) <> ", " ))
+        |> List.to_string
+        |> String.replace_trailing(", ", "")
 
+      popular_tags_query = "select unnest(tags), count(tags) from metavideos where id in" <> "(" <> metavideos_ids <> ")" <> " group by unnest(tags) order by count desc limit 30;"
+
+      # popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, ["(" <> metavideos_ids <> ")"]).rows
       popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
       render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, klips: nil)

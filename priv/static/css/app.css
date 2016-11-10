@@ -4752,6 +4752,10 @@ h1, h2, h3, h4, h5, h6, p {
     padding-right: 10px; }
   .menu li .nav-home {
     padding-left: 0px; }
+  .alert-info .close-button {
+    top: 0;
+    right: 0;
+    padding-right: 4px; }
   p {
     padding-top: 2px;
     padding-bottom: 2px; }
@@ -4780,10 +4784,8 @@ h1, h2, h3, h4, h5, h6, p {
     margin-bottom: 8px; }
   .callout {
     padding: 4px; }
-  /* .video-callout { */
-  /*   margin-left: 0px; */
-  /*   margin-right: 0px; */
-  /* } */
+  .navi-button {
+    margin-top: -4px; }
   .klip-callout {
     padding: 2px; }
     .klip-callout .column, .klip-callout .columns {
@@ -4808,11 +4810,27 @@ h1, h2, h3, h4, h5, h6, p {
       padding: 4px;
       padding-left: 0px;
       padding-right: 0px; }
+  #klipTabs {
+    margin-bottom: 0px; }
   .tabs-title a {
     padding-left: 16px;
     padding-right: 16px; }
   .video-added {
-    margin-bottom: 0px; } }
+    margin-bottom: 0px; }
+  #edit-video hr {
+    margin-top: 4px !important;
+    margin-bottom: 4px !important; }
+  #edit-video .callout {
+    border: none;
+    margin-top: 0px;
+    padding-top: 0px;
+    padding-left: 8px;
+    padding-right: 8px; }
+    #edit-video .callout h6 {
+      padding-left: 0px;
+      margin-bottom: 2px; }
+  #edit-video #overview-switch {
+    margin-top: 3px; } }
 
 /* .clearfix:before, .clearfix:after { */
 /*     display: block; */

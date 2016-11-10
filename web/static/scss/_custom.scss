@@ -384,6 +384,14 @@ h1, h2, h3, h4, h5, h6, p {
     }
   }
 
+  .alert-info {
+    .close-button {
+      top: 0;
+      right: 0;
+      padding-right: 4px;
+    }
+  }
+
   p {
     padding-top: 2px;
     padding-bottom: 2px;
@@ -428,10 +436,9 @@ h1, h2, h3, h4, h5, h6, p {
     padding: 4px;
   }
 
-  /* .video-callout { */
-  /*   margin-left: 0px; */
-  /*   margin-right: 0px; */
-  /* } */
+  .navi-button {
+    margin-top: -4px;
+  }
 
   .klip-callout {
     padding: 2px;
@@ -474,6 +481,10 @@ h1, h2, h3, h4, h5, h6, p {
     }
   }
 
+  #klipTabs {
+    margin-bottom: 0px;
+  }
+
 
   .tabs-title {
     a {
@@ -484,6 +495,27 @@ h1, h2, h3, h4, h5, h6, p {
 
   .video-added {
     margin-bottom: 0px;
+  }
+
+  #edit-video {
+    hr {
+      margin-top: 4px !important;
+      margin-bottom: 4px !important;
+    }
+    .callout {
+      border: none;
+      margin-top: 0px;
+      padding-top: 0px;
+      padding-left: 8px;
+      padding-right: 8px;
+      h6 {
+        padding-left: 0px;
+        margin-bottom: 2px;
+      }
+    }
+    #overview-switch {
+      margin-top: 3px;
+    }
   }
 
 }
