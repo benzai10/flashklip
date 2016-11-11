@@ -42,10 +42,10 @@ let Video = {
     let saveButtonInTView = document.getElementById("klip-save-in-timeview")
     let deleteButton      = document.getElementById("klip-delete")
     let hideButton        = document.getElementById("klip-hide")
-
-    let klipInput         = document.getElementById("klip-input")
     let editButton        = document.getElementById("klip-edit")
     let cancelEditButton  = document.getElementById("klip-cancel-edit")
+
+    let klipInput         = document.getElementById("klip-input")
     let updateButton      = document.getElementById("klip-update")
     let editTsBack        = document.getElementById("klip-edit-ts-back")
     let editTsForward     = document.getElementById("klip-edit-ts-forward")
@@ -66,46 +66,45 @@ let Video = {
       .receive("ok", resp => {
         let ids = resp.klips.map(klip => klip.id)
         if (ids.length > 0) { vidChannel.params.last_seen_id = Math.max(...ids) }
-        // if allKlips is not empty, add newly added klips
-        if (this.allKlips.length == 0) {
-          this.allKlips = resp.klips
+        // if vidKlips is not empty, add only newly added klips
+        if (this.vidKlips.length == 0) {
+          this.vidKlips = resp.klips
+          // initialise all klip arrays
+          this.allKlips = this.removeCopyOriginals(this.vidKlips)
+          this.myKlips = this.vidKlips.filter( klip => {
+            if (klip.copy_from > 0 || (klip.copy_from == 0 && klip.user.id == this.currentUserId)) {
+              return true
+            }
+          })
+          this.allTimeKlips = this.allKlips.filter( klip => {
+            if (klip.in_timeview == true || (klip.copy_from == 0 && klip.user.id != this.currentUserId)) {
+              return true
+            }
+          })
+          // sort all arrays
+          this.allKlips.sort( (a,b) => {
+            return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
+          this.myKlips.sort( (a,b) => {
+            return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
+          this.allTimeKlips.sort( (a,b) => {
+            return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
+          // display all klips in the navigator tab
+          allKlipsContainer.innerHTML = ""
+          let i = 0
+          for (i = 0; i < this.allKlips.length; i++) {
+            this.renderNaviKlip(allKlipsContainer, this.allKlips[i])
+          }
+          this.addNaviEventListeners(vidChannel)
+          /* allKlipsContainer.scrollTop = 0*/
+          /* if (this.at > 0) {*/
+          /* this.jumpedKlip = true*/
+          /* Player.seekTo(this.at)*/
+          /* }*/
+          this.currentTimeviewKlips = this.allTimeKlips
+          this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
         } else {
-          this.allKlips.push.apply(this.allKlips, resp.klips)
+          this.vidKlips.push.apply(this.allKlips, resp.klips)
         }
-        // initialise all klip arrays
-        this.vidKlips = resp.klips
-        this.allKlips = this.removeCopyOriginals(this.vidKlips)
-        this.myKlips = this.vidKlips.filter( klip => {
-          if (klip.copy_from > 0 || (klip.copy_from == 0 && klip.user.id == this.currentUserId)) {
-            return true
-          }
-        })
-        this.allTimeKlips = this.allKlips.filter( klip => {
-          if (klip.in_timeview == true || (klip.copy_from == 0 && klip.user.id != this.currentUserId)) {
-            return true
-          }
-        })
-        // sort all arrays
-        this.allKlips.sort( (a,b) => {
-          return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
-        this.myKlips.sort( (a,b) => {
-          return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
-        this.allTimeKlips.sort( (a,b) => {
-          return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
-        // display all klips in the navigator tab
-        allKlipsContainer.innerHTML = ""
-        let i = 0
-        for (i = 0; i < this.allKlips.length; i++) {
-          this.renderNaviKlip(allKlipsContainer, this.allKlips[i])
-        }
-        this.addNaviEventListeners(vidChannel)
-        allKlipsContainer.scrollTop = 0
-        if (this.at > 0) {
-          this.jumpedKlip = true
-          Player.seekTo(this.at)
-        }
-        this.currentTimeviewKlips = this.allTimeKlips
-        this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
       })
       .receive("error", reason => console.log("join failed", reason))
 
@@ -352,6 +351,46 @@ let Video = {
       vidChannel.push("update_klip", payload)
         .receive("error", e => console.log(e) )
 
+    })
+
+    editButton.addEventListener("click", e => {
+      console.log("editButton clicked")
+      clearTimeout(this.liveKlipTimer)
+      document.getElementById("live-klip-container").className += " hide"
+      document.getElementById("klip-edit").className += " hide"
+      document.getElementById("klip-hide").className += " hide"
+      nextKlip.classList.remove("invisible")
+      prevKlip.classList.remove("invisible")
+      nextKlip.className += " invisible"
+      prevKlip.className += " invisible"
+      document.getElementById("my-edit-container").classList.remove("hide")
+      document.getElementById("klip-cancel-edit").classList.remove("hide")
+    })
+
+    updateButton.addEventListener("click", e => {
+      let payload = {
+        id: this.currentLiveKlip.id,
+        at: this.currentLiveKlip.at,
+        content: document.getElementById("klip-input-edit").value,
+        in_timeview: true
+      }
+      vidChannel.push("update_klip", payload)
+        .receive("error", e => console.log(e) )
+      document.getElementById("my-edit-container").className += " hide"
+      document.getElementById("klip-cancel-edit").className += " hide"
+      document.getElementById("live-klip-container").classList.remove("hide")
+      document.getElementById("klip-edit").classList.remove("hide")
+      document.getElementById("klip-hide").classList.remove("hide")
+    })
+
+    cancelEditButton.addEventListener("click", e => {
+      document.getElementById("my-edit-container").className += " hide"
+      document.getElementById("klip-cancel-edit").className += " hide"
+      document.getElementById("live-klip-container").classList.remove("hide")
+      document.getElementById("klip-edit").classList.remove("hide")
+      nextKlip.classList.remove("invisible")
+      prevKlip.classList.remove("invisible")
+
       // restart liveKlipTimer
       this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
     })
@@ -359,6 +398,8 @@ let Video = {
     vidChannel.on("update_klip", (resp) => {
       if (resp.user.id == this.currentUserId) {
         clearTimeout(this.liveKlipTimer)
+
+        console.log("timeview value: " + resp.in_timeview)
 
         if (resp.in_timeview == true) {
           this.liveKlip = resp
@@ -406,72 +447,12 @@ let Video = {
         }
         this.addNaviEventListeners(vidChannel)
         this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
-      }
-    })
-
-
-    updateButton.addEventListener("click", e => {
-      let payload = {
-        id: this.currentLiveKlip.id,
-        at: this.currentLiveKlip.at,
-        content: document.getElementById("klip-input-edit").value
-      }
-      vidChannel.push("update_klip", payload)
-        .receive("error", e => console.log(e) )
-      document.getElementById("my-edit-container").className += " hide"
-      document.getElementById("klip-cancel-edit").className += " hide"
-      document.getElementById("my-klip-container").classList.remove("hide")
-      document.getElementById("klip-edit").classList.remove("hide")
-      this.currentAllKlips.forEach( klip => {
-        if (klip.id == payload.id) {
-          klip.at = payload.at,
-          klip.content = payload.content,
-          klip.in_timeview = payload.in_timeview
+        if (resp.in_timeview == true) {
+          Player.seekTo(resp.at)
         }
-      })
-
-      if (this.activeView = "timeview") {
-        this.currentTimeviewKlips = this.currentAllKlips.filter( klip => {
-          if (klip.in_timeview == true && klip.user_id == this.currentUserId) {
-            return true
-          }
-        })
-      } else {
-        this.currentTimeviewKlips = this.currentAllKlips.filter( klip => {
-          if (klip.in_timeview == true) {
-            return true
-          }
-        })
       }
-
-
-      // restart liveKlipTimer
-      this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
     })
 
-    editButton.addEventListener("click", e => {
-      clearTimeout(this.liveKlipTimer)
-      document.getElementById("my-klip-container").className += " hide"
-      document.getElementById("klip-edit").className += " hide"
-      nextKlip.classList.remove("invisible")
-      prevKlip.classList.remove("invisible")
-      nextKlip.className += " invisible"
-      prevKlip.className += " invisible"
-      document.getElementById("my-edit-container").classList.remove("hide")
-      document.getElementById("klip-cancel-edit").classList.remove("hide")
-    })
-
-    cancelEditButton.addEventListener("click", e => {
-      document.getElementById("my-edit-container").className += " hide"
-      document.getElementById("klip-cancel-edit").className += " hide"
-      document.getElementById("my-klip-container").classList.remove("hide")
-      document.getElementById("klip-edit").classList.remove("hide")
-      nextKlip.classList.remove("invisible")
-      prevKlip.classList.remove("invisible")
-
-      // restart liveKlipTimer
-      this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
-    })
 
     editTsBack.addEventListener("click", e => {
       e.preventDefault()
@@ -565,8 +546,6 @@ let Video = {
       this.startTimer = true
       Player.seekTo(this.liveKlip.at)
     })
-
-
 
   },
 
@@ -715,53 +694,53 @@ let Video = {
   scheduleKlips(liveKlipContainer, klips) {
     this.liveKlipTimer = setTimeout(() => {
 
-          let ctime = Player.getCurrentTime()
+      let ctime = Player.getCurrentTime()
 
-          let nowKlip = {}
-          this.nextKlip = klips.filter( klip => {
-            if (klip.at > ctime) {
-              return true
-            }
-          }).slice(0,1)[0]
-          if (this.nextKlip) {
-            document.getElementById("klip-next").classList.remove("disabled")
-          } else {
-            document.getElementById("klip-next").classList.remove("disabled")
-            document.getElementById("klip-next").className += " disabled"
-          }
-          let lastTwoKlips = klips.filter( klip => {
-            if (klip.at <= ctime) {
-              return true
-            }
-          }).slice(-2)
-          if (lastTwoKlips.length > 1) {
-            this.prevKlip = lastTwoKlips[0]
-            nowKlip = lastTwoKlips[1]
-          } else {
-            this.prevKlip = null
-            nowKlip = lastTwoKlips[0]
-          }
-          if (this.prevKlip) {
-            document.getElementById("klip-prev").classList.remove("disabled")
-          } else {
-            document.getElementById("klip-prev").classList.remove("disabled")
-            document.getElementById("klip-prev").className += " disabled"
-          }
+      let nowKlip = {}
+      this.nextKlip = klips.filter( klip => {
+        if (klip.at > ctime) {
+          return true
+        }
+      }).slice(0,1)[0]
+      if (this.nextKlip) {
+        document.getElementById("klip-next").classList.remove("disabled")
+      } else {
+        document.getElementById("klip-next").classList.remove("disabled")
+        document.getElementById("klip-next").className += " disabled"
+      }
+      let lastTwoKlips = klips.filter( klip => {
+        if (klip.at <= ctime) {
+          return true
+        }
+      }).slice(-2)
+      if (lastTwoKlips.length > 1) {
+        this.prevKlip = lastTwoKlips[0]
+        nowKlip = lastTwoKlips[1]
+      } else {
+        this.prevKlip = null
+        nowKlip = lastTwoKlips[0]
+      }
+      if (this.prevKlip) {
+        document.getElementById("klip-prev").classList.remove("disabled")
+      } else {
+        document.getElementById("klip-prev").classList.remove("disabled")
+        document.getElementById("klip-prev").className += " disabled"
+      }
 
-          if (nowKlip) {
-            this.currentLiveKlip = nowKlip
-            this.renderLiveKlip(liveKlipContainer, nowKlip)
-          } else {
-            document.getElementById("live-klip-container").innerHTML = ""
-            document.getElementById("klip-hide").classList.remove("hide")
-            document.getElementById("klip-edit").classList.remove("hide")
-            document.getElementById("klip-delete").classList.remove("hide")
-            document.getElementById("klip-save-in-timeview").classList.remove("hide")
-            document.getElementById("klip-edit").className += " hide"
-            document.getElementById("klip-hide").className += " hide"
-            document.getElementById("klip-delete").className += " hide"
-            document.getElementById("klip-save-in-timeview").className += " hide"
-          }
+      if (nowKlip) {
+        this.currentLiveKlip = nowKlip
+        this.renderLiveKlip(liveKlipContainer, nowKlip)
+      } else {
+        document.getElementById("live-klip-container").innerHTML = ""
+        document.getElementById("klip-hide").classList.remove("hide")
+        document.getElementById("klip-edit").classList.remove("hide")
+        document.getElementById("klip-delete").classList.remove("hide")
+        document.getElementById("klip-save-in-timeview").classList.remove("hide")
+        document.getElementById("klip-edit").className += " hide"
+        document.getElementById("klip-hide").className += " hide"
+        document.getElementById("klip-delete").className += " hide"
+        document.getElementById("klip-save-in-timeview").className += " hide"
+      }
 
       this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
     }, 500)

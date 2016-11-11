@@ -11523,10 +11523,10 @@ var Video = {
     var saveButtonInTView = document.getElementById("klip-save-in-timeview");
     var deleteButton = document.getElementById("klip-delete");
     var hideButton = document.getElementById("klip-hide");
-
-    var klipInput = document.getElementById("klip-input");
     var editButton = document.getElementById("klip-edit");
     var cancelEditButton = document.getElementById("klip-cancel-edit");
+
+    var klipInput = document.getElementById("klip-input");
     var updateButton = document.getElementById("klip-update");
     var editTsBack = document.getElementById("klip-edit-ts-back");
     var editTsForward = document.getElementById("klip-edit-ts-forward");
@@ -11550,49 +11550,48 @@ var Video = {
       if (ids.length > 0) {
         vidChannel.params.last_seen_id = Math.max.apply(Math, _toConsumableArray(ids));
       }
-      // if allKlips is not empty, add newly added klips
-      if (_this2.allKlips.length == 0) {
-        _this2.allKlips = resp.klips;
+      // if vidKlips is not empty, add only newly added klips
+      if (_this2.vidKlips.length == 0) {
+        _this2.vidKlips = resp.klips;
+        // initialise all klip arrays
+        _this2.allKlips = _this2.removeCopyOriginals(_this2.vidKlips);
+        _this2.myKlips = _this2.vidKlips.filter(function (klip) {
+          if (klip.copy_from > 0 || klip.copy_from == 0 && klip.user.id == _this2.currentUserId) {
+            return true;
+          }
+        });
+        _this2.allTimeKlips = _this2.allKlips.filter(function (klip) {
+          if (klip.in_timeview == true || klip.copy_from == 0 && klip.user.id != _this2.currentUserId) {
+            return true;
+          }
+        });
+        // sort all arrays
+        _this2.allKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        _this2.myKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        _this2.allTimeKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        // display all klips in the navigator tab
+        allKlipsContainer.innerHTML = "";
+        var i = 0;
+        for (i = 0; i < _this2.allKlips.length; i++) {
+          _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i]);
+        }
+        _this2.addNaviEventListeners(vidChannel);
+        /* allKlipsContainer.scrollTop = 0*/
+        /* if (this.at > 0) {*/
+        /* this.jumpedKlip = true*/
+        /* Player.seekTo(this.at)*/
+        /* }*/
+        _this2.currentTimeviewKlips = _this2.allTimeKlips;
+        _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
       } else {
-        _this2.allKlips.push.apply(_this2.allKlips, resp.klips);
+        _this2.vidKlips.push.apply(_this2.allKlips, resp.klips);
       }
-      // initialise all klip arrays
-      _this2.vidKlips = resp.klips;
-      _this2.allKlips = _this2.removeCopyOriginals(_this2.vidKlips);
-      _this2.myKlips = _this2.vidKlips.filter(function (klip) {
-        if (klip.copy_from > 0 || klip.copy_from == 0 && klip.user.id == _this2.currentUserId) {
-          return true;
-        }
-      });
-      _this2.allTimeKlips = _this2.allKlips.filter(function (klip) {
-        if (klip.in_timeview == true || klip.copy_from == 0 && klip.user.id != _this2.currentUserId) {
-          return true;
-        }
-      });
-      // sort all arrays
-      _this2.allKlips.sort(function (a, b) {
-        return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-      });
-      _this2.myKlips.sort(function (a, b) {
-        return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-      });
-      _this2.allTimeKlips.sort(function (a, b) {
-        return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-      });
-      // display all klips in the navigator tab
-      allKlipsContainer.innerHTML = "";
-      var i = 0;
-      for (i = 0; i < _this2.allKlips.length; i++) {
-        _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i]);
-      }
-      _this2.addNaviEventListeners(vidChannel);
-      allKlipsContainer.scrollTop = 0;
-      if (_this2.at > 0) {
-        _this2.jumpedKlip = true;
-        _player2.default.seekTo(_this2.at);
-      }
-      _this2.currentTimeviewKlips = _this2.allTimeKlips;
-      _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
     }).receive("error", function (reason) {
       return console.log("join failed", reason);
     });
@@ -11857,6 +11856,46 @@ var Video = {
       vidChannel.push("update_klip", payload).receive("error", function (e) {
         return console.log(e);
       });
+    });
+
+    editButton.addEventListener("click", function (e) {
+      console.log("editButton clicked");
+      clearTimeout(_this2.liveKlipTimer);
+      document.getElementById("live-klip-container").className += " hide";
+      document.getElementById("klip-edit").className += " hide";
+      document.getElementById("klip-hide").className += " hide";
+      nextKlip.classList.remove("invisible");
+      prevKlip.classList.remove("invisible");
+      nextKlip.className += " invisible";
+      prevKlip.className += " invisible";
+      document.getElementById("my-edit-container").classList.remove("hide");
+      document.getElementById("klip-cancel-edit").classList.remove("hide");
+    });
+
+    updateButton.addEventListener("click", function (e) {
+      var payload = {
+        id: _this2.currentLiveKlip.id,
+        at: _this2.currentLiveKlip.at,
+        content: document.getElementById("klip-input-edit").value,
+        in_timeview: true
+      };
+      vidChannel.push("update_klip", payload).receive("error", function (e) {
+        return console.log(e);
+      });
+      document.getElementById("my-edit-container").className += " hide";
+      document.getElementById("klip-cancel-edit").className += " hide";
+      document.getElementById("live-klip-container").classList.remove("hide");
+      document.getElementById("klip-edit").classList.remove("hide");
+      document.getElementById("klip-hide").classList.remove("hide");
+    });
+
+    cancelEditButton.addEventListener("click", function (e) {
+      document.getElementById("my-edit-container").className += " hide";
+      document.getElementById("klip-cancel-edit").className += " hide";
+      document.getElementById("live-klip-container").classList.remove("hide");
+      document.getElementById("klip-edit").classList.remove("hide");
+      nextKlip.classList.remove("invisible");
+      prevKlip.classList.remove("invisible");
 
       // restart liveKlipTimer
       _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
@@ -11865,6 +11904,8 @@ var Video = {
     vidChannel.on("update_klip", function (resp) {
       if (resp.user.id == _this2.currentUserId) {
         clearTimeout(_this2.liveKlipTimer);
+
+        console.log("timeview value: " + resp.in_timeview);
 
         if (resp.in_timeview == true) {
           _this2.liveKlip = resp;
@@ -11936,68 +11977,10 @@ var Video = {
         }
         _this2.addNaviEventListeners(vidChannel);
         _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
-      }
-    });
-
-    updateButton.addEventListener("click", function (e) {
-      var payload = {
-        id: _this2.currentLiveKlip.id,
-        at: _this2.currentLiveKlip.at,
-        content: document.getElementById("klip-input-edit").value
-      };
-      vidChannel.push("update_klip", payload).receive("error", function (e) {
-        return console.log(e);
-      });
-      document.getElementById("my-edit-container").className += " hide";
-      document.getElementById("klip-cancel-edit").className += " hide";
-      document.getElementById("my-klip-container").classList.remove("hide");
-      document.getElementById("klip-edit").classList.remove("hide");
-      _this2.currentAllKlips.forEach(function (klip) {
-        if (klip.id == payload.id) {
-          klip.at = payload.at, klip.content = payload.content, klip.in_timeview = payload.in_timeview;
+        if (resp.in_timeview == true) {
+          _player2.default.seekTo(resp.at);
         }
-      });
-
-      if (_this2.activeView = "timeview") {
-        _this2.currentTimeviewKlips = _this2.currentAllKlips.filter(function (klip) {
-          if (klip.in_timeview == true && klip.user_id == _this2.currentUserId) {
-            return true;
-          }
-        });
-      } else {
-        _this2.currentTimeviewKlips = _this2.currentAllKlips.filter(function (klip) {
-          if (klip.in_timeview == true) {
-            return true;
-          }
-        });
       }
-
-      // restart liveKlipTimer
-      _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
-    });
-
-    editButton.addEventListener("click", function (e) {
-      clearTimeout(_this2.liveKlipTimer);
-      document.getElementById("my-klip-container").className += " hide";
-      document.getElementById("klip-edit").className += " hide";
-      nextKlip.classList.remove("invisible");
-      prevKlip.classList.remove("invisible");
-      nextKlip.className += " invisible";
-      prevKlip.className += " invisible";
-      document.getElementById("my-edit-container").classList.remove("hide");
-      document.getElementById("klip-cancel-edit").classList.remove("hide");
-    });
-
-    cancelEditButton.addEventListener("click", function (e) {
-      document.getElementById("my-edit-container").className += " hide";
-      document.getElementById("klip-cancel-edit").className += " hide";
-      document.getElementById("my-klip-container").classList.remove("hide");
-      document.getElementById("klip-edit").classList.remove("hide");
-      nextKlip.classList.remove("invisible");
-      prevKlip.classList.remove("invisible");
-
-      // restart liveKlipTimer
-      _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
     });
 
     editTsBack.addEventListener("click", function (e) {
@@ -12711,8 +12694,8 @@ exports.default = View;
 });
 
 ;require.alias("jquery/dist/jquery.js", "jquery");
-require.alias("phoenix/priv/static/phoenix.js", "phoenix");
-require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");require.register("___globals___", function(exports, require, module) {
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
   
 
 // Auto-loaded modules from config.npm.globals.
