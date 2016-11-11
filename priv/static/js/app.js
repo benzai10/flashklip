@@ -11467,8 +11467,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _player = require("./player");
 
 var _player2 = _interopRequireDefault(_player);
@@ -11479,18 +11477,23 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var Video = {
 
+  vidKlips: [],
+  allKlips: [],
+  myKlips: [],
+  allTimeKlips: [],
+  myTimeKlips: [],
+  currentTimeviewKlips: [],
+  currentUserId: 0,
+  activeView: "",
+
   currentLiveKlip: {},
   jumpedKlip: false,
   liveKlip: null,
   nextKlip: {},
   prevKlip: {},
   currentAllKlips: [],
-  currentTimeviewKlips: [],
-  allKlips: [],
   liveKlipTimer: {},
   userVideoId: 0,
-  activeView: "",
-  currentUserId: 0,
   at: 0,
   startTimer: false,
 
@@ -11513,15 +11516,16 @@ var Video = {
   onReady: function onReady(videoId, socket) {
     var _this2 = this;
 
-    var myKlipContainer = document.getElementById("my-klip-container");
+    var liveKlipContainer = document.getElementById("live-klip-container");
     var allKlipsContainer = document.getElementById("all-klips-container");
     var addKlipTab = document.getElementById("add-klip-tab");
-    var klipInput = document.getElementById("klip-input");
-    var postButton = document.getElementById("klip-submit");
-    var hideButton = document.getElementById("klip-hide");
+    var addButton = document.getElementById("klip-submit");
+    var saveButtonInTView = document.getElementById("klip-save-in-timeview");
     var deleteButton = document.getElementById("klip-delete");
+    var hideButton = document.getElementById("klip-hide");
+
+    var klipInput = document.getElementById("klip-input");
     var editButton = document.getElementById("klip-edit");
-    var copyButton = document.getElementById("klip-copy");
     var cancelEditButton = document.getElementById("klip-cancel-edit");
     var updateButton = document.getElementById("klip-update");
     var editTsBack = document.getElementById("klip-edit-ts-back");
@@ -11539,6 +11543,60 @@ var Video = {
     // maybe later change to aggChannel?
     var vidChannel = socket.channel("videos:" + videoId);
 
+    vidChannel.join().receive("ok", function (resp) {
+      var ids = resp.klips.map(function (klip) {
+        return klip.id;
+      });
+      if (ids.length > 0) {
+        vidChannel.params.last_seen_id = Math.max.apply(Math, _toConsumableArray(ids));
+      }
+      // if allKlips is not empty, add newly added klips
+      if (_this2.allKlips.length == 0) {
+        _this2.allKlips = resp.klips;
+      } else {
+        _this2.allKlips.push.apply(_this2.allKlips, resp.klips);
+      }
+      // initialise all klip arrays
+      _this2.vidKlips = resp.klips;
+      _this2.allKlips = _this2.removeCopyOriginals(_this2.vidKlips);
+      _this2.myKlips = _this2.vidKlips.filter(function (klip) {
+        if (klip.copy_from > 0 || klip.copy_from == 0 && klip.user.id == _this2.currentUserId) {
+          return true;
+        }
+      });
+      _this2.allTimeKlips = _this2.allKlips.filter(function (klip) {
+        if (klip.in_timeview == true || klip.copy_from == 0 && klip.user.id != _this2.currentUserId) {
+          return true;
+        }
+      });
+      // sort all arrays
+      _this2.allKlips.sort(function (a, b) {
+        return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+      });
+      _this2.myKlips.sort(function (a, b) {
+        return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+      });
+      _this2.allTimeKlips.sort(function (a, b) {
+        return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+      });
+      // display all klips in the navigator tab
+      allKlipsContainer.innerHTML = "";
+      var i = 0;
+      for (i = 0; i < _this2.allKlips.length; i++) {
+        _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i]);
+      }
+      _this2.addNaviEventListeners(vidChannel);
+      allKlipsContainer.scrollTop = 0;
+      if (_this2.at > 0) {
+        _this2.jumpedKlip = true;
+        _player2.default.seekTo(_this2.at);
+      }
+      _this2.currentTimeviewKlips = _this2.allTimeKlips;
+      _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
+    }).receive("error", function (reason) {
+      return console.log("join failed", reason);
+    });
+
     document.getElementById("timeview-tab").addEventListener("click", function (e) {
       _this2.activeView = "timeview";
     });
@@ -11550,64 +11608,39 @@ var Video = {
     switchOverview.addEventListener("click", function (e) {
       clearTimeout(_this2.liveKlipTimer);
       if (overviewTitle.innerHTML == "ALL KLIPS") {
-        // filter only own klips
-        var userKlips = _this2.allKlips.filter(function (klip) {
-          if (klip.user.id == _this2.currentUserId) {
+        _this2.myTimeKlips = _this2.myKlips.filter(function (klip) {
+          if (klip.in_timeview == true) {
             return true;
           }
         });
-        _this2.currentAllKlips = userKlips;
-        _this2.currentAllKlips.sort(function (a, b) {
-          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-        });
         allKlipsContainer.innerHTML = "";
-        // display all klips in the navigator
         var i = 0;
-        for (i = 0; i < _this2.currentAllKlips.length; i++) {
-          _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
+        for (i = 0; i < _this2.myKlips.length; i++) {
+          _this2.renderNaviKlip(allKlipsContainer, _this2.myKlips[i]);
         }
         _this2.addNaviEventListeners(vidChannel);
         overviewTitle.innerHTML = "MY KLIPS";
         switchOverview.innerHTML = "Load all Klips";
         $('#overview-tab').trigger("click");
-        _this2.currentTimeviewKlips = _this2.currentAllKlips;
+        _this2.currentTimeviewKlips = _this2.myTimeKlips;
       } else {
-        var k;
-
-        (function () {
-          overviewTitle.innerHTML = "ALL KLIPS";
-          switchOverview.innerHTML = "Load my Klips";
-          // filter out original klips where a copy exists
-          var copiedKlips = new Array();
-          for (k in _this2.allKlips) {
-            if (_this2.allKlips[k].copy_from > 0) {
-              copiedKlips.push(_this2.allKlips[k].copy_from);
-            }
+        _this2.allTimeKlips = _this2.allKlips.filter(function (klip) {
+          if (klip.in_timeview == true || klip.copy_from == 0 && klip.user.id != _this2.currentUserId) {
+            return true;
           }
-          _this2.allKlips = _this2.allKlips.filter(function (klip) {
-            if (!copiedKlips.includes(klip.id)) {
-              return true;
-            }
-          });
-          _this2.allKlips.sort(function (a, b) {
-            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-          });
-          allKlipsContainer.innerHTML = "";
-          var i = 0;
-          for (i = 0; i < _this2.allKlips.length; i++) {
-            _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i]);
-          }
-          _this2.addNaviEventListeners(vidChannel);
-          _this2.currentAllKlips = _this2.allKlips;
-          _this2.currentTimeviewKlips = _this2.currentAllKlips.filter(function (klip) {
-            if (klip.in_timeview == true || klip.user_id != _this2.currentUserId) {
-              return true;
-            }
-          });
-          $('#overview-tab').trigger("click");
-        })();
+        });
+        overviewTitle.innerHTML = "ALL KLIPS";
+        switchOverview.innerHTML = "Load my Klips";
+        allKlipsContainer.innerHTML = "";
+        var _i = 0;
+        for (_i = 0; _i < _this2.allKlips.length; _i++) {
+          _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[_i]);
+        }
+        _this2.addNaviEventListeners(vidChannel);
+        $('#overview-tab').trigger("click");
+        _this2.currentTimeviewKlips = _this2.allTimeKlips;
       }
-      _this2.scheduleKlips(myKlipContainer, _this2.currentTimeviewKlips);
+      _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
     });
 
     addKlipTab.addEventListener("click", function (e) {
@@ -11621,12 +11654,13 @@ var Video = {
       newTsDisplay.innerHTML = "[" + _this2.formatTime(saveAt) + "]";
     });
 
-    postButton.addEventListener("click", function (e) {
+    addButton.addEventListener("click", function (e) {
       var payload = {
         content: klipInput.value,
         at: saveAt,
         user_video_id: _this2.userVideoId,
         in_timeview: true,
+        copy_from: 0,
         copy_from_timeview: false
       };
       vidChannel.push("new_klip", payload).receive("error", function (e) {
@@ -11635,7 +11669,7 @@ var Video = {
       klipInput.value = "";
     });
 
-    copyButton.addEventListener("click", function (e) {
+    saveButtonInTView.addEventListener("click", function (e) {
       var payload = {
         content: _this2.currentLiveKlip.content,
         at: _this2.currentLiveKlip.at,
@@ -11649,21 +11683,169 @@ var Video = {
       });
     });
 
-    deleteButton.addEventListener("click", function (e) {
-      clearTimeout(_this2.liveKlipTimer);
-      var conf = confirm("Are you sure?");
-      if (conf == true) {
-        var payload = {
-          id: _this2.currentLiveKlip.id
-        };
-        vidChannel.push("delete_klip", payload).receive("error", function (e) {
-          return console.log(e);
+    vidChannel.on("new_klip", function (resp) {
+      if (resp.copy_from == 0 || resp.user.id == _this2.currentUserId) {
+        // ^original content goes to everyone, copies only to sender
+        clearTimeout(_this2.liveKlipTimer);
+
+        if (resp.redirect == true) {
+          window.location.replace("/watch/" + resp.video_id + "?v=" + resp.video_id + "&at=" + resp.at);
+          return;
+        }
+
+        vidChannel.params.last_seen_id = resp.id;
+
+        // update all & sort klip arrays
+        _this2.vidKlips.push(resp);
+        _this2.allKlips = _this2.removeCopyOriginals(_this2.vidKlips);
+        _this2.myKlips.push(resp);
+        _this2.allTimeKlips.push(resp);
+        _this2.allTimeKlips = _this2.removeCopyOriginals(_this2.allTimeKlips);
+        _this2.myTimeKlips.push(resp);
+        _this2.myTimeKlips = _this2.removeCopyOriginals(_this2.allTimeKlips);
+        _this2.allKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        _this2.myKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        _this2.allTimeKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        _this2.myTimeKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
         });
 
-        // restart liveKlipTimer
-        _this2.scheduleKlips(myKlipContainer, _this2.currentTimeviewKlips);
+        // rendering new views
+        _this2.renderLiveKlip(liveKlipContainer, resp);
+        allKlipsContainer.innerHTML = "";
+        var i = 0;
+        if (overviewTitle.innerHTML == "ALL KLIPS") {
+          for (i = 0; i < _this2.allKlips.length; i++) {
+            _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i], resp.current_scroll_pos);
+          }
+          _this2.currentTimeviewKlips = _this2.allTimeKlips;
+        } else {
+          for (i = 0; i < _this2.myKlips.length; i++) {
+            _this2.renderNaviKlip(allKlipsContainer, _this2.myKlips[i], resp.current_scroll_pos);
+          }
+          _this2.currentTimeviewKlips = _this2.myTimeKlips;
+        }
+        _this2.addNaviEventListeners(vidChannel);
+
+        if (_this2.activeView == "timeview") {
+          $('#timeview-tab').trigger("click");
+        } else {
+          $('#overview-tab').trigger("click");
+        }
+
+        console.log(_this2.currentTimeviewKlips);
+
+        _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
+      } else {
+        // use this section for later, e.g. to update klip likes or so.
+        /* console.log("someone copied some shit!")*/
+      }
+    });
+
+    deleteButton.addEventListener("click", function (e) {
+      var conf = confirm("Are you sure?");
+      if (conf == true) {
+        console.log("from deleteButton: " + _this2.currentLiveKlip.user_id);
+        var payload = {
+          id: _this2.currentLiveKlip.id,
+          user_id: _this2.currentLiveKlip.user.id,
+          copy_from: _this2.currentLiveKlip.copy_from
+        };
+        vidChannel.push("delete_klip", payload).receive("error", function (e) {
+          console.log(e);
+          _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
+        });
       } else {
         return;
+      }
+    });
+
+    vidChannel.on("delete_klip", function (resp) {
+      if (resp.user_id == _this2.currentUserId) {
+        // delete from all arrays
+        _this2.vidKlips = _this2.vidKlips.filter(function (k) {
+          return k.id != resp.id;
+        });
+        _this2.allKlips = _this2.allKlips.filter(function (k) {
+          return k.id != resp.id;
+        });
+        _this2.myKlips = _this2.myKlips.filter(function (k) {
+          return k.id != resp.id;
+        });
+        _this2.allTimeKlips = _this2.allTimeKlips.filter(function (k) {
+          return k.id != resp.id;
+        });
+        _this2.myTimeKlips = _this2.myTimeKlips.filter(function (k) {
+          return k.id != resp.id;
+        });
+        // add original klip to allKlips again
+        var originalKlip = _this2.vidKlips.find(function (k) {
+          return k.id == resp.copy_from;
+        });
+        console.log("------------------");
+        console.log(originalKlip);
+        if (originalKlip) {
+          _this2.allKlips.push(originalKlip);
+          _this2.allTimeKlips.push(originalKlip);
+          _this2.allKlips.sort(function (a, b) {
+            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+          });
+          _this2.allTimeKlips.sort(function (a, b) {
+            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+          });
+          _this2.myKlips.sort(function (a, b) {
+            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+          });
+          _this2.myTimeKlips.sort(function (a, b) {
+            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+          });
+        }
+
+        if (overviewTitle.innerHTML == "ALL KLIPS") {
+          _this2.currentTimeviewKlips = _this2.allTimeKlips;
+        } else {
+          _this2.currentTimeviewKlips = _this2.myTimeKlips;
+        }
+
+        if (originalKlip) {
+          allKlipsContainer.innerHTML = "";
+          var i = 0;
+          if (overviewTitle.innerHTML == "ALL KLIPS") {
+            for (i = 0; i < _this2.allKlips.length; i++) {
+              _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i], resp.current_scroll_pos);
+            }
+          } else {
+            for (i = 0; i < _this2.myKlips.length; i++) {
+              _this2.renderNaviKlip(allKlipsContainer, _this2.myKlips[i], resp.current_scroll_pos);
+            }
+          }
+
+          _this2.addNaviEventListeners(vidChannel);
+          liveKlipContainer.innerHTML = "";
+          if (overviewTitle.innerHTML == "ALL KLIPS") {
+            _this2.renderLiveKlip(liveKlipContainer, originalKlip);
+          }
+        } else {
+          var deletedKlip = document.getElementById("klip-id-" + resp.id);
+          deletedKlip.parentElement.removeChild(deletedKlip);
+
+          // remove deleted klip from live container
+          liveKlipContainer.innerHTML = "";
+          document.getElementById("klip-hide").className += " hide";
+          document.getElementById("klip-delete").className += " hide";
+          document.getElementById("klip-edit").className += " hide";
+          document.getElementById("klip-cancel-edit").className += " hide";
+          document.getElementById("my-edit-container").className += " hide";
+        }
+
+        // restart liveKlipTimer
+        /* this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)*/
       }
     });
 
@@ -11677,7 +11859,84 @@ var Video = {
       });
 
       // restart liveKlipTimer
-      _this2.scheduleKlips(myKlipContainer, _this2.currentTimeviewKlips);
+      _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
+    });
+
+    vidChannel.on("update_klip", function (resp) {
+      if (resp.user.id == _this2.currentUserId) {
+        clearTimeout(_this2.liveKlipTimer);
+
+        if (resp.in_timeview == true) {
+          _this2.liveKlip = resp;
+          _this2.renderLiveKlip(liveKlipContainer, resp);
+        } else {
+          // remove hidden klip from live container
+          liveKlipContainer.innerHTML = "";
+          document.getElementById("klip-hide").className += " hide";
+          document.getElementById("klip-delete").className += " hide";
+          document.getElementById("klip-edit").className += " hide";
+          document.getElementById("klip-cancel-edit").className += " hide";
+          document.getElementById("my-edit-container").className += " hide";
+        }
+        _this2.allKlips = _this2.allKlips.filter(function (k) {
+          return k.id != resp.id;
+        });
+        _this2.allKlips.push(resp);
+        _this2.allKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        _this2.myKlips = _this2.myKlips.filter(function (k) {
+          return k.id != resp.id;
+        });
+        if (resp.in_timeview == true) {
+          _this2.myKlips.push(resp);
+        }
+        _this2.myKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        _this2.allTimeKlips = _this2.allTimeKlips.filter(function (k) {
+          return k.id != resp.id;
+        });
+        if (resp.in_timeview == true) {
+          _this2.allTimeKlips.push(resp);
+        }
+        _this2.myTimeKlips = _this2.myTimeKlips.filter(function (k) {
+          return k.id != resp.id;
+        });
+        if (resp.in_timeview == true) {
+          _this2.myTimeKlips.push(resp);
+        }
+        _this2.allKlips = _this2.removeCopyOriginals(_this2.allKlips);
+        _this2.myKlips = _this2.removeCopyOriginals(_this2.myKlips);
+        _this2.allTimeKlips = _this2.removeCopyOriginals(_this2.allTimeKlips);
+        _this2.myTimeKlips = _this2.removeCopyOriginals(_this2.myTimeKlips);
+        _this2.allKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        _this2.allTimeKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        _this2.myTimeKlips.sort(function (a, b) {
+          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
+        });
+        allKlipsContainer.innerHTML = "";
+
+        if (overviewTitle.innerHTML == "ALL KLIPS") {
+          _this2.currentTimeviewKlips = _this2.allTimeKlips;
+          var i = 0;
+          for (i = 0; i < _this2.allKlips.length; i++) {
+            _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i], resp.current_scroll_pos);
+          }
+        } else {
+          _this2.currentTimeviewKlips = _this2.myTimeKlips;
+          var _i2 = 0;
+          for (_i2 = 0; _i2 < _this2.myKlips.length; _i2++) {
+            _this2.renderNaviKlip(allKlipsContainer, _this2.myKlips[_i2], resp.current_scroll_pos);
+          }
+        }
+        _this2.addNaviEventListeners(vidChannel);
+        _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
+      }
     });
 
     updateButton.addEventListener("click", function (e) {
@@ -11714,7 +11973,7 @@ var Video = {
       }
 
       // restart liveKlipTimer
-      _this2.scheduleKlips(myKlipContainer, _this2.currentTimeviewKlips);
+      _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
     });
 
     editButton.addEventListener("click", function (e) {
@@ -11738,7 +11997,7 @@ var Video = {
       prevKlip.classList.remove("invisible");
 
       // restart liveKlipTimer
-      _this2.scheduleKlips(myKlipContainer, _this2.currentTimeviewKlips);
+      _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
     });
 
     editTsBack.addEventListener("click", function (e) {
@@ -11804,14 +12063,14 @@ var Video = {
 
     prevKlip.addEventListener("click", function (e) {
       _this2.liveKlip = _this2.prevKlip;
-      /* myKlipContainer.innerHTML = ``*/
+      /* liveKlipContainer.innerHTML = ``*/
       _this2.startTimer = true;
       document.getElementById("klip-content-display").className += " white-font";
       document.getElementById("klip-ts-display").className += " white-font";
       _player2.default.seekTo(_this2.prevKlip.at);
     });
 
-    myKlipContainer.addEventListener("click", function (e) {
+    liveKlipContainer.addEventListener("click", function (e) {
       e.preventDefault();
       var seconds = e.target.getAttribute("data-seek") || e.target.parentNode.getAttribute("data-seek") || e.target.parentNode.parentNode.getAttribute("data-seek");
       if (!seconds) {
@@ -11834,255 +12093,19 @@ var Video = {
       _this2.startTimer = true;
       _player2.default.seekTo(_this2.liveKlip.at);
     });
-
-    vidChannel.on("new_klip", function (resp) {
-      clearTimeout(_this2.liveKlipTimer);
-      if (resp.copy_from == 0 || resp.user.id == _this2.currentUserId) {
-        var k;
-
-        var _ret2 = function () {
-
-          if (resp.redirect == true) {
-            window.location.replace("/watch/" + resp.video_id + "?v=" + resp.video_id + "&at=" + resp.at);
-            return {
-              v: void 0
-            };
-          }
-
-          vidChannel.params.last_seen_id = resp.id;
-
-          // add new klip to timeview
-          _this2.currentTimeviewKlips.push(resp);
-          _this2.currentTimeviewKlips.sort(function (a, b) {
-            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-          });
-
-          _this2.liveKlip = resp;
-          _this2.renderLiveKlip(myKlipContainer, resp);
-
-          // sort klips (asc: at) and delete current klipContainer
-          _this2.allKlips.push(resp);
-          _this2.currentAllKlips = _this2.allKlips;
-          // filter out original klips where a copy exists
-          var copiedKlips = new Array();
-
-          for (k in _this2.currentAllKlips) {
-            if (_this2.currentAllKlips[k].copy_from > 0) {
-              copiedKlips.push(_this2.currentAllKlips[k].copy_from);
-            }
-          }
-
-          _this2.currentAllKlips = _this2.currentAllKlips.filter(function (klip) {
-            if (!copiedKlips.includes(klip.id)) {
-              return true;
-            }
-          });
-
-          _this2.currentAllKlips.sort(function (a, b) {
-            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-          });
-
-          allKlipsContainer.innerHTML = "";
-          // display all klips in the navigator
-          var i = 0;
-          for (i = 0; i < _this2.currentAllKlips.length; i++) {
-            _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
-          }
-          _this2.addNaviEventListeners(vidChannel);
-
-          // switch to timeview tab (but not after copy)
-          // for the time being, switch to overview
-          if (_this2.activeView == "timeview") {
-            $('#timeview-tab').trigger("click");
-          } else {
-            $('#overview-tab').trigger("click");
-          }
-          _this2.scheduleKlips(myKlipContainer, _this2.currentTimeviewKlips);
-        }();
-
-        if ((typeof _ret2 === "undefined" ? "undefined" : _typeof(_ret2)) === "object") return _ret2.v;
+  },
+  removeCopyOriginals: function removeCopyOriginals(arr) {
+    var copiedKlips = new Array();
+    for (var k in this.vidKlips) {
+      if (this.vidKlips[k].copy_from > 0) {
+        copiedKlips.push(this.vidKlips[k].copy_from);
       }
-    });
+    }
 
-    vidChannel.on("update_klip", function (resp) {
-      /* console.log(resp.user.id)*/
-      /* console.log(this.currentUserId)*/
-      if (resp.user.id == _this2.currentUserId) {
-        var k;
-
-        (function () {
-
-          if (resp.in_timeview == true) {
-            _this2.liveKlip = resp;
-            _this2.renderLiveKlip(myKlipContainer, resp);
-          } else {
-            // remove hidden klip from live container
-            myKlipContainer.innerHTML = "";
-            document.getElementById("klip-hide").className += " hide";
-            document.getElementById("klip-delete").className += " hide";
-            document.getElementById("klip-edit").className += " hide";
-            document.getElementById("klip-cancel-edit").className += " hide";
-            document.getElementById("my-edit-container").className += " hide";
-          }
-          /* this.allKlips = this.allKlips.filter( klip => {*/
-          /* return klip.id != resp.id*/
-          /* })*/
-          /* this.allKlips.push(resp)*/
-          /* this.allKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});*/
-          _this2.currentAllKlips = _this2.currentAllKlips.filter(function (klip) {
-            return klip.id != resp.id;
-          });
-          _this2.currentAllKlips.push(resp);
-          _this2.currentAllKlips.sort(function (a, b) {
-            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-          });
-          _this2.currentTimeviewKlips = _this2.currentTimeviewKlips.filter(function (klip) {
-            return klip.id != resp.id;
-          });
-          if (resp.in_timeview == true) {
-            _this2.currentTimeviewKlips.push(resp);
-          }
-          // filter out original klips where a copy exists
-          var copiedKlips = new Array();
-          for (k in _this2.currentAllKlips) {
-            if (_this2.allKlips[k].copy_from > 0) {
-              copiedKlips.push(_this2.currentAllKlips[k].copy_from);
-            }
-          }
-          _this2.currentAllKlips = _this2.currentAllKlips.filter(function (klip) {
-            if (!copiedKlips.includes(klip.id)) {
-              return true;
-            }
-          });
-          _this2.currentAllKlips.sort(function (a, b) {
-            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-          });
-          _this2.currentTimeviewKlips.sort(function (a, b) {
-            return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-          });
-          allKlipsContainer.innerHTML = "";
-          // display all klips in the navigator
-          var i = 0;
-          for (i = 0; i < _this2.currentAllKlips.length; i++) {
-            _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i], resp.current_scroll_pos);
-          }
-          _this2.addNaviEventListeners(vidChannel);
-        })();
+    return arr.filter(function (klip) {
+      if (!copiedKlips.includes(klip.id)) {
+        return true;
       }
-    });
-
-    vidChannel.on("delete_klip", function (resp) {
-      // remove deleted klip from array
-      _this2.allKlips = _this2.allKlips.filter(function (klip) {
-        return klip.id != resp.id;
-      });
-
-      _this2.currentAllKlips = _this2.allKlips;
-
-      // filter out original klips where a copy exists
-      var copiedKlips = new Array();
-
-      for (var k in _this2.currentAllKlips) {
-        if (_this2.currentAllKlips[k].copy_from > 0) {
-          copiedKlips.push(_this2.currentAllKlips[k].copy_from);
-        }
-      }
-
-      _this2.currentAllKlips = _this2.currentAllKlips.filter(function (klip) {
-        if (!copiedKlips.includes(klip.id)) {
-          return true;
-        }
-      });
-
-      // filter only own klips when my klips view is active
-      if (overviewTitle.innerHTML == "MY KLIPS") {
-        var userKlips = _this2.allKlips.filter(function (klip) {
-          if (klip.user.id == _this2.currentUserId) {
-            return true;
-          }
-        });
-        _this2.currentAllKlips = userKlips;
-        _this2.currentAllKlips.sort(function (a, b) {
-          return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-        });
-      }
-
-      // remove deleted klip from navi container
-      var deletedKlip = document.getElementById("klip-id-" + resp.id);
-      deletedKlip.parentElement.removeChild(deletedKlip);
-
-      // remove deleted klip from timeview
-      _this2.currentTimeviewKlips = _this2.currentTimeviewKlips.filter(function (klip) {
-        return klip.id != resp.id;
-      });
-
-      // remove deleted klip from live container
-      myKlipContainer.innerHTML = "";
-      document.getElementById("klip-hide").className += " hide";
-      document.getElementById("klip-delete").className += " hide";
-      document.getElementById("klip-edit").className += " hide";
-      document.getElementById("klip-cancel-edit").className += " hide";
-      document.getElementById("my-edit-container").className += " hide";
-    });
-
-    vidChannel.join().receive("ok", function (resp) {
-      var ids = resp.klips.map(function (klip) {
-        return klip.id;
-      });
-      if (ids.length > 0) {
-        vidChannel.params.last_seen_id = Math.max.apply(Math, _toConsumableArray(ids));
-      }
-      // if allKlips is not empty, add newly added klips
-      if (_this2.allKlips.length == 0) {
-        _this2.allKlips = resp.klips;
-      } else {
-        _this2.allKlips.push.apply(_this2.allKlips, resp.klips);
-      }
-      _this2.currentAllKlips = _this2.allKlips;
-      // filter out original klips where a copy exists
-      var copiedKlips = new Array();
-      for (var k in _this2.allKlips) {
-        if (_this2.allKlips[k].copy_from > 0) {
-          copiedKlips.push(_this2.allKlips[k].copy_from);
-        }
-      }
-      _this2.currentAllKlips = _this2.allKlips.filter(function (klip) {
-        if (!copiedKlips.includes(klip.id)) {
-          return true;
-        }
-      });
-      // filter only own klips if "MY KLIPS" is active
-      if (overviewTitle.innerHTML == "MY KLIPS") {
-        var userKlips = _this2.allKlips.filter(function (klip) {
-          if (klip.user.id == _this2.currentUserId) {
-            return true;
-          }
-        });
-        _this2.currentAllKlips = userKlips;
-      }
-      _this2.currentAllKlips.sort(function (a, b) {
-        return a.at > b.at ? 1 : b.at > a.at ? -1 : 0;
-      });
-      // display all klips in the navigator tabs
-      allKlipsContainer.innerHTML = "";
-      var i = 0;
-      for (i = 0; i < _this2.currentAllKlips.length; i++) {
-        _this2.renderNaviKlip(allKlipsContainer, _this2.currentAllKlips[i]);
-      }
-      _this2.addNaviEventListeners(vidChannel);
-      allKlipsContainer.scrollTop = 0;
-      if (_this2.at > 0) {
-        _this2.jumpedKlip = true;
-        _player2.default.seekTo(_this2.at);
-      }
-      _this2.currentTimeviewKlips = _this2.currentAllKlips.filter(function (klip) {
-        if (klip.in_timeview == true || klip.copy_from == 0) {
-          return true;
-        }
-      });
-      _this2.scheduleKlips(myKlipContainer, _this2.currentTimeviewKlips);
-    }).receive("error", function (reason) {
-      return console.log("join failed", reason);
     });
   },
   esc: function esc(str) {
@@ -12090,7 +12113,7 @@ var Video = {
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
   },
-  renderLiveKlip: function renderLiveKlip(myKlipContainer, _ref) {
+  renderLiveKlip: function renderLiveKlip(liveKlipContainer, _ref) {
     var user = _ref.user;
     var content = _ref.content;
     var at = _ref.at;
@@ -12099,7 +12122,7 @@ var Video = {
 
     var template = document.createElement("div");
 
-    myKlipContainer.innerHTML = "\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <div class=\"callout klip-callout\">\n        <p id=\"klip-content-display\">" + this.esc(content) + "</p>\n        <hr>\n        <span class=\"timestamp\" id=\"klip-ts-display\">\n            [" + this.formatTime(at) + "]\n        </span>\n      </div>\n    </a>\n    ";
+    liveKlipContainer.innerHTML = "\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <div class=\"callout klip-callout\">\n        <p id=\"klip-content-display\">" + this.esc(content) + "</p>\n        <hr>\n        <span class=\"timestamp\" id=\"klip-ts-display\">\n            [" + this.formatTime(at) + "]\n        </span>\n        <span class=\"username\">\n          by " + this.esc(user.username) + "\n        </span>\n      </div>\n    </a>\n    ";
 
     if (this.jumpedKlip == true) {
       if (this.at > at) {
@@ -12117,8 +12140,8 @@ var Video = {
       document.getElementById("klip-hide").classList.remove("hide");
       document.getElementById("klip-delete").classList.remove("hide");
       document.getElementById("klip-edit").classList.remove("hide");
-      document.getElementById("klip-copy").classList.remove("hide");
-      document.getElementById("klip-copy").className += " hide";
+      document.getElementById("klip-save-in-timeview").classList.remove("hide");
+      document.getElementById("klip-save-in-timeview").className += " hide";
       document.getElementById("klip-input-edit").value = this.esc(content);
     } else {
       document.getElementById("klip-hide").classList.remove("hide");
@@ -12127,7 +12150,7 @@ var Video = {
       document.getElementById("klip-delete").className += " hide";
       document.getElementById("klip-hide").className += " hide";
       document.getElementById("klip-edit").className += " hide";
-      document.getElementById("klip-copy").classList.remove("hide");
+      document.getElementById("klip-save-in-timeview").classList.remove("hide");
     }
 
     document.getElementById("klip-prev").classList.remove("invisible");
@@ -12145,6 +12168,7 @@ var Video = {
     var user = _ref2.user;
     var content = _ref2.content;
     var at = _ref2.at;
+    var copy_from = _ref2.copy_from;
     var in_timeview = _ref2.in_timeview;
 
     var template = document.createElement("div");
@@ -12180,22 +12204,18 @@ var Video = {
       btnTimeviewClass = " hide";
     }
 
-    template.innerHTML = "\n  <div class=\"callout klip-callout navi-callout " + this.esc(divTimeviewClass) + "\">\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <p>" + this.esc(content) + "</p>\n      <hr>\n    </a>\n    <span class=\"timestamp\">\n        [" + this.formatTime(at) + "]\n    </span>\n    <span class=\"username\">\n      by " + this.esc(user.username) + "\n    </span>\n    <span class=\"float-right\">\n    <button type=\"button\" class=\"tiny hollow button navi-button " + this.esc(btnTimeviewClass) + "\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnTimeviewAction) + "\">\n      " + this.esc(btnTimeviewCaption) + "\n    </button>\n    <button type=\"button\" class=\"tiny hollow button navi-button\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnAction) + "\">\n      " + this.esc(btnCaption) + "\n    </button>\n    </span>\n  </div>\n    ";
+    template.innerHTML = "\n  <div class=\"callout klip-callout navi-callout " + this.esc(divTimeviewClass) + "\">\n    <a href=\"#\" data-seek=\"" + this.esc(at) + "\">\n      <p>" + this.esc(content) + "</p>\n      <hr>\n    </a>\n    <span class=\"timestamp\">\n        [" + this.formatTime(at) + "]\n    </span>\n    <span class=\"username\">\n      by " + this.esc(user.username) + "\n    </span>\n    <span class=\"float-right\">\n      <button type=\"button\" class=\"tiny hollow button navi-button\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-copy-from=\"" + this.esc(copy_from) + "\" data-klip-action=\"" + this.esc(btnAction) + "\">\n        " + this.esc(btnCaption) + "\n      </button>\n      <button type=\"button\" class=\"tiny hollow button navi-button " + this.esc(btnTimeviewClass) + "\" data-video-id=\"" + this.esc(this.userVideoId) + "\" data-user-id=\"" + this.esc(user.id) + "\" data-klip-content=\"" + this.esc(content) + "\" data-klip-id=\"" + this.esc(id) + "\" data-klip-action=\"" + this.esc(btnTimeviewAction) + "\">\n        " + this.esc(btnTimeviewCaption) + "\n      </button>\n    </span>\n  </div>\n    ";
 
     allKlipsContainer.appendChild(template);
-    if (currentScrollPos) {
-      console.log(currentScrollPos);
-    }
-    /* allKlipsContainer.scrollTop = allKlipsContainer.scrollHeight*/
     allKlipsContainer.scrollTop = currentScrollPos;
   },
-  scheduleKlips: function scheduleKlips(myKlipContainer, klips) {
+  scheduleKlips: function scheduleKlips(liveKlipContainer, klips) {
     var _this3 = this;
 
-    // get last klip before current time and display it
     this.liveKlipTimer = setTimeout(function () {
 
       var ctime = _player2.default.getCurrentTime();
+
       var nowKlip = {};
       _this3.nextKlip = klips.filter(function (klip) {
         if (klip.at > ctime) {
@@ -12229,20 +12249,20 @@ var Video = {
 
       if (nowKlip) {
         _this3.currentLiveKlip = nowKlip;
-        _this3.renderLiveKlip(myKlipContainer, nowKlip);
+        _this3.renderLiveKlip(liveKlipContainer, nowKlip);
       } else {
-        document.getElementById("my-klip-container").innerHTML = "";
+        document.getElementById("live-klip-container").innerHTML = "";
         document.getElementById("klip-hide").classList.remove("hide");
         document.getElementById("klip-edit").classList.remove("hide");
         document.getElementById("klip-delete").classList.remove("hide");
-        document.getElementById("klip-copy").classList.remove("hide");
+        document.getElementById("klip-save-in-timeview").classList.remove("hide");
         document.getElementById("klip-edit").className += " hide";
         document.getElementById("klip-hide").className += " hide";
         document.getElementById("klip-delete").className += " hide";
-        document.getElementById("klip-copy").className += " hide";
+        document.getElementById("klip-save-in-timeview").className += " hide";
       }
 
-      _this3.scheduleKlips(myKlipContainer, _this3.currentTimeviewKlips);
+      _this3.scheduleKlips(liveKlipContainer, _this3.currentTimeviewKlips);
     }, 500);
   },
   addNaviEventListeners: function addNaviEventListeners(vidChannel) {
@@ -12260,6 +12280,8 @@ var Video = {
         var id = e.target.getAttribute("data-klip-id") || e.target.parentNode.getAttribute("data-klip-id");
 
         var userId = e.target.getAttribute("data-user-id") || e.target.parentNode.getAttribute("data-user-id");
+
+        var copyFrom = e.target.getAttribute("data-copy-from") || e.target.parentNode.getAttribute("data-copy-from");
 
         var videoId = e.target.getAttribute("data-video-id") || e.target.parentNode.getAttribute("data-video-id");
 
@@ -12303,12 +12325,14 @@ var Video = {
           var conf = confirm("Are you sure?");
           if (conf == true) {
             var _payload3 = {
-              id: id
+              id: id,
+              user_id: userId,
+              copy_from: copyFrom,
+              current_scroll_pos: currentScrollPos
             };
             vidChannel.push("delete_klip", _payload3).receive("error", function (e) {
               return console.log(e);
             });
-            // restart liveKlipTimer
           } else {
             return;
           }
@@ -12687,8 +12711,8 @@ exports.default = View;
 });
 
 ;require.alias("jquery/dist/jquery.js", "jquery");
-require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
-require.alias("phoenix/priv/static/phoenix.js", "phoenix");require.register("___globals___", function(exports, require, module) {
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");require.register("___globals___", function(exports, require, module) {
   
 
 // Auto-loaded modules from config.npm.globals.

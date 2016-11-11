@@ -5,7 +5,6 @@ defmodule Flashklip.VideoChannel do
   require Logger
 
   def join("videos:" <> video_id, params, socket) do
-    # at = params["at"] || 0
     socket = assign(socket, :at, params["at"])
     last_seen_id = params["last_seen_id"] || 0
     video_id = String.to_integer(video_id)
@@ -14,14 +13,13 @@ defmodule Flashklip.VideoChannel do
       Repo.get!(Flashklip.Metavideo, video_id)
       |> Repo.preload(:videos)
 
-      # klips_query = from k in Flashklip.Klip, where: k.id > ^last_seen_id
-      metavideo_klips =
-        metavideo.videos
-        |> Repo.preload(klips: from(k in Flashklip.Klip,
-          where: k.id > ^last_seen_id and
-          (k.copy_from == 0 or
-          (k.user_id == ^user_id and k.copy_from > 0))
-        ))
+    metavideo_klips =
+      metavideo.videos
+      |> Repo.preload(
+      klips: from(k in Flashklip.Klip,
+        where: k.id > ^last_seen_id and
+        (k.copy_from == 0 or (k.user_id == ^user_id and k.copy_from > 0))
+      ))
 
       klips = Enum.flat_map(metavideo_klips, fn(v) ->
         v.klips
@@ -88,7 +86,8 @@ defmodule Flashklip.VideoChannel do
             copy_from: klip.copy_from,
             at: klip.at,
             in_timeview: true,
-            copy_from_timeview: params["copy_from_timeview"]
+            copy_from_timeview: params["copy_from_timeview"],
+            current_scroll_pos: params["current_scroll_pos"]
           }
           {:reply, :ok, socket}
 
@@ -123,13 +122,16 @@ defmodule Flashklip.VideoChannel do
   end
 
   def handle_in("delete_klip", params, _user, socket) do
-    # why do I have to get the record first before deleting??
     klip = Flashklip.Repo.get!(Flashklip.Klip, params["id"])
     # add delete restriction here if user != current_user
 
     Flashklip.Repo.delete!(klip)
 
-    broadcast! socket, "delete_klip", %{id: params["id"]}
+    broadcast! socket, "delete_klip", %{
+      id: params["id"],
+      user_id: params["user_id"],
+      copy_from: params["copy_from"]
+    }
     {:reply, :ok, socket}
   end
 end

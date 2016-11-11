@@ -4,6 +4,7 @@
     <% end %>
   </div>
 </div>
+
 <div class="row" id="tabs-container">
   <ul class="tabs" data-tabs id="klipTabs">
     <li class="tabs-title is-active" id="timeview-tab">
@@ -33,16 +34,18 @@
     <% end %>
   </ul>
 </div>
+
 <div class="row">
   <div class="tabs-content" data-tabs-content="klipTabs">
     <div class="tabs-panel is-active tabs-panel-watchview" id="live">
-      <div id="my-klip-container">
+      <div id="live-klip-container">
         <%= if !@current_user do %>
           <p>Timeview is only available for logged in users.</p>
           <p>Choose 'ALL KLIPS' to see klips. Click a klip to jump directly to the timestamp.</p>
           <p>Please log in or register an account. You will then be able to add and save your own klips!</p>
         <% end %>
       </div>
+
       <div id="my-edit-container" class="hide">
         <div class="callout klip-callout">
           <div class="input-group">
@@ -63,16 +66,20 @@
           </div>
         </div>
       </div>
-      <button type="button" class="small hollow disabled button <%= @show %>" id="klip-prev">Prev Klip</button>
-      <button type="button" class="small hollow button <%= @show %>" id="klip-next">Next Klip</button>
-      <span class="float-right <%= @show %>">
-        <button type="button" class="alert small hollow button hide" id="klip-delete">Delete</button>
-        <button type="button" class="small hollow button hide" id="klip-hide">Hide</button>
-        <button type="button" class="small hollow button hide" id="klip-edit">Edit</button>
-        <button type="button" class="small hollow button hide" id="klip-cancel-edit">Cancel Edit</button>
-        <button type="button" class="small hollow button hide" id="klip-copy">Save</button>
-      </span>
+
+      <div id="my-edit-buttons" class="">
+        <button type="button" class="small hollow disabled button <%= @show %>" id="klip-prev">Prev Klip</button>
+        <button type="button" class="small hollow button <%= @show %>" id="klip-next">Next Klip</button>
+        <span class="float-right <%= @show %>">
+          <button type="button" class="alert small hollow button hide" id="klip-delete">Delete</button>
+          <button type="button" class="small hollow button hide" id="klip-hide">Hide</button>
+          <button type="button" class="small hollow button hide" id="klip-edit">Edit</button>
+          <button type="button" class="small hollow button hide" id="klip-cancel-edit">Cancel Edit</button>
+          <button type="button" class="small hollow button hide" id="klip-save-in-timeview">Save</button>
+        </span>
+      </div>
     </div>
+
     <div class="tabs-panel tabs-panel-watchview" id="navi">
       <div id="all-klips-container">
         <%= if !@current_user do %>
@@ -82,6 +89,7 @@
         <% end %>
       </div>
     </div>
+
     <div class="tabs-panel tabs-panel-watchview" id="add-klip">
       <div class="callout klip-callout">
         <div class="input-group">

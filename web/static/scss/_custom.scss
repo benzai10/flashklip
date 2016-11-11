@@ -1,6 +1,66 @@
 // Put custom styles here
+
+// ***** OVERALL PAGE STYLES *****
 body {
   font-family: 'Lato', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  color: dimgray;
+}
+
+.column {
+  max-width: 680px;
+}
+
+
+.top-bar {
+  padding-left: 0px;
+  padding-right: 0px;
+
+  li {
+    color: dimgray;
+  }
+}
+
+.menu .vertical {
+  text-align: center;
+  padding: 12px;
+}
+
+.alert-message {
+  color: #FF4136;
+}
+
+#tags-input {
+  box-shadow: none;
+  border: 1px solid gainsboro;
+  border-radius: 0px;
+}
+
+.alerts {
+  .callout {
+    background-color: white;
+  }
+  .alert-info {
+    border-color: #2ECC40;
+    color: #2ECC40;
+    .close-button {
+      color: #2ECC40;
+    }
+  }
+  .alert-error {
+    border-color: #FF4136;
+    color: #FF4136;
+    .close-button {
+      color: #FF4136;
+    }
+  }
+}
+
+.custom-field-label {
+  color: dimgray;
+  font-size: 0.8em;
 }
 
 .page-footer {
@@ -14,15 +74,7 @@ body {
   }
 }
 
-h1, h2, h3, h4, h5, h6, p {
-  color: dimgray;
-}
-
-.index-title {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
+// ***** HOMEPAGE STYLES *****
 .orbit-text {
   position: absolute;
   top: 30px;
@@ -40,9 +92,9 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 
-.menu .vertical {
-  text-align: center;
-  padding: 12px;
+.accordion-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
 }
 
 .cta-button {
@@ -51,16 +103,9 @@ h1, h2, h3, h4, h5, h6, p {
   font-family: 'Oswald', sans-serif;
 }
 
-.alert-message {
-  color: #FF4136;
-}
-
-.pop-tag-button {
-  margin-bottom: 6px;
-}
-
-#pop-tags-title {
-  margin-top: 20px;
+.index-title {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .reset-filter-button {
@@ -83,23 +128,18 @@ h1, h2, h3, h4, h5, h6, p {
   margin-top: 12px;
 }
 
+.pop-tag-button {
+  margin-bottom: 6px;
+}
+
+#pop-tags-title {
+  margin-top: 20px;
+}
+
 .small-text {
   padding-top: 4px;
   font-size: 13px;
   color: grey;
-}
-
-.top-bar {
-  padding-left: 0px;
-  padding-right: 0px;
-
-  li {
-    color: dimgray;
-  }
-}
-
-.column {
-  max-width: 680px;
 }
 
 .tabs-panel {
@@ -119,6 +159,66 @@ h1, h2, h3, h4, h5, h6, p {
   .tag-button {
     margin-bottom: 4px;
   }
+}
+
+.thumbnail {
+  border: 0;
+}
+
+.youtube-thumbnail {
+  img {
+    width: 177px;
+    height: 100px;
+  }
+}
+
+.video-added {
+  font-size: 12px;
+  color: grey;
+  margin-bottom: 10px;
+}
+
+.klip-thumbnail-column {
+  padding-left: 0px;
+}
+
+.klips-thumbnail {
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+// ***** EDIT VIDEO PAGE *****
+
+.tag-button {
+  margin-bottom: 0px;
+}
+
+#new-video-button {
+  margin-bottom: 0;
+}
+
+.klip-ticker-content {
+  font-size: 18px;
+  color: dimgray;
+  font-weight: 700;
+}
+
+.video-klips-count {
+  font-size: 14px;
+}
+
+.media-object-section {
+  hr {
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+}
+
+// ***** WATCH VIDEO PAGE *****
+.flex-video {
+  margin-bottom: 0;
 }
 
 #add-klip {
@@ -149,78 +249,7 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 
-.tag-button {
-  margin-bottom: 0px;
-}
-
-#new-video-button {
-  margin-bottom: 0;
-}
-
-.accordion-title {
-  font-family: 'Oswald', sans-serif;
-  font-size: 18px;
-}
-
-/* .klips-ticker { */
-/*   max-height: 340px; */
-/*   overflow-y: scroll; */
-/* } */
-
-.video-menu {
-  z-index: 9999;
-}
-
-.thumbnail {
-  border: 0;
-}
-
-.youtube-thumbnail {
-  img {
-    width: 177px;
-    height: 100px;
-  }
-}
-
-.klip-thumbnail-column {
-  padding-left: 0px;
-}
-
-.klips-thumbnail {
-  img {
-    width: 100%;
-    height: auto;
-  }
-}
-
-.klip-ticker-content {
-  font-size: 18px;
-  color: dimgray;
-  font-weight: 700;
-}
-
-.video-added {
-  font-size: 12px;
-  color: grey;
-  margin-bottom: 10px;
-}
-
-.video-klips-count {
-  font-size: 14px;
-}
-
-.media-object-section {
-  hr {
-    margin-top: 4px;
-    margin-bottom: 4px;
-  }
-}
-
-.flex-video {
-  margin-bottom: 0;
-}
-
-#my-klip-container {
+#live-klip-container {
   min-height: 60px;
   margin-bottom: 12px;
 }
@@ -332,37 +361,6 @@ h1, h2, h3, h4, h5, h6, p {
   p {
     color: white;
   }
-}
-
-#tags-input {
-  box-shadow: none;
-  border: 1px solid gainsboro;
-  border-radius: 0px;
-}
-
-.alerts {
-  .callout {
-    background-color: white;
-  }
-  .alert-info {
-    border-color: #2ECC40;
-    color: #2ECC40;
-    .close-button {
-      color: #2ECC40;
-    }
-  }
-  .alert-error {
-    border-color: #FF4136;
-    color: #FF4136;
-    .close-button {
-      color: #FF4136;
-    }
-  }
-}
-
-.custom-field-label {
-  color: dimgray;
-  font-size: 0.8em;
 }
 
 /* Responsive: Portrait tablets and up */

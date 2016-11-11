@@ -4480,6 +4480,49 @@ table.hover tbody tr:nth-of-type(even):hover {
 body {
   font-family: 'Lato', sans-serif; }
 
+h1, h2, h3, h4, h5, h6, p {
+  color: dimgray; }
+
+.column, .columns {
+  max-width: 680px; }
+
+.top-bar {
+  padding-left: 0px;
+  padding-right: 0px; }
+  .top-bar li {
+    color: dimgray; }
+
+.menu .vertical {
+  text-align: center;
+  padding: 12px; }
+
+.alert-message {
+  color: #FF4136; }
+
+#tags-input {
+  box-shadow: none;
+  border: 1px solid gainsboro;
+  border-radius: 0px; }
+
+.alerts .callout {
+  background-color: white; }
+
+.alerts .alert-info {
+  border-color: #2ECC40;
+  color: #2ECC40; }
+  .alerts .alert-info .close-button {
+    color: #2ECC40; }
+
+.alerts .alert-error {
+  border-color: #FF4136;
+  color: #FF4136; }
+  .alerts .alert-error .close-button {
+    color: #FF4136; }
+
+.custom-field-label {
+  color: dimgray;
+  font-size: 0.8em; }
+
 .page-footer {
   margin-top: 60px;
   min-height: 100px; }
@@ -4487,13 +4530,6 @@ body {
     padding-top: 40px;
     color: #0074D9;
     font-size: 12px; }
-
-h1, h2, h3, h4, h5, h6, p {
-  color: dimgray; }
-
-.index-title {
-  margin-top: 10px;
-  margin-bottom: 10px; }
 
 .orbit-text {
   position: absolute;
@@ -4509,23 +4545,18 @@ h1, h2, h3, h4, h5, h6, p {
     font-weight: 100;
     color: #ffffff; }
 
-.menu .vertical {
-  text-align: center;
-  padding: 12px; }
+.accordion-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px; }
 
 .cta-button {
   margin-top: 30px;
   margin-bottom: 20px;
   font-family: 'Oswald', sans-serif; }
 
-.alert-message {
-  color: #FF4136; }
-
-.pop-tag-button {
-  margin-bottom: 6px; }
-
-#pop-tags-title {
-  margin-top: 20px; }
+.index-title {
+  margin-top: 10px;
+  margin-bottom: 10px; }
 
 .reset-filter-button {
   margin-left: 8px; }
@@ -4542,19 +4573,16 @@ h1, h2, h3, h4, h5, h6, p {
 #my-tabs {
   margin-top: 12px; }
 
+.pop-tag-button {
+  margin-bottom: 6px; }
+
+#pop-tags-title {
+  margin-top: 20px; }
+
 .small-text {
   padding-top: 4px;
   font-size: 13px;
   color: grey; }
-
-.top-bar {
-  padding-left: 0px;
-  padding-right: 0px; }
-  .top-bar li {
-    color: dimgray; }
-
-.column, .columns {
-  max-width: 680px; }
 
 .tabs-panel {
   padding-left: 10px;
@@ -4569,6 +4597,46 @@ h1, h2, h3, h4, h5, h6, p {
     padding: 4px; }
   .tabs-panel-watchview .tag-button {
     margin-bottom: 4px; }
+
+.thumbnail {
+  border: 0; }
+
+.youtube-thumbnail img {
+  width: 177px;
+  height: 100px; }
+
+.video-added {
+  font-size: 12px;
+  color: grey;
+  margin-bottom: 10px; }
+
+.klip-thumbnail-column {
+  padding-left: 0px; }
+
+.klips-thumbnail img {
+  width: 100%;
+  height: auto; }
+
+.tag-button {
+  margin-bottom: 0px; }
+
+#new-video-button {
+  margin-bottom: 0; }
+
+.klip-ticker-content {
+  font-size: 18px;
+  color: dimgray;
+  font-weight: 700; }
+
+.video-klips-count {
+  font-size: 14px; }
+
+.media-object-section hr {
+  margin-top: 4px;
+  margin-bottom: 4px; }
+
+.flex-video {
+  margin-bottom: 0; }
 
 #add-klip .callout {
   border: none; }
@@ -4590,58 +4658,7 @@ h1, h2, h3, h4, h5, h6, p {
   #edit-video #overview-switch {
     margin-top: 3px; }
 
-.tag-button {
-  margin-bottom: 0px; }
-
-#new-video-button {
-  margin-bottom: 0; }
-
-.accordion-title {
-  font-family: 'Oswald', sans-serif;
-  font-size: 18px; }
-
-/* .klips-ticker { */
-/*   max-height: 340px; */
-/*   overflow-y: scroll; */
-/* } */
-.video-menu {
-  z-index: 9999; }
-
-.thumbnail {
-  border: 0; }
-
-.youtube-thumbnail img {
-  width: 177px;
-  height: 100px; }
-
-.klip-thumbnail-column {
-  padding-left: 0px; }
-
-.klips-thumbnail img {
-  width: 100%;
-  height: auto; }
-
-.klip-ticker-content {
-  font-size: 18px;
-  color: dimgray;
-  font-weight: 700; }
-
-.video-added {
-  font-size: 12px;
-  color: grey;
-  margin-bottom: 10px; }
-
-.video-klips-count {
-  font-size: 14px; }
-
-.media-object-section hr {
-  margin-top: 4px;
-  margin-bottom: 4px; }
-
-.flex-video {
-  margin-bottom: 0; }
-
-#my-klip-container {
+#live-klip-container {
   min-height: 60px;
   margin-bottom: 12px; }
 
@@ -4716,30 +4733,6 @@ h1, h2, h3, h4, h5, h6, p {
     color: white; }
   .edit-tags-info p {
     color: white; }
-
-#tags-input {
-  box-shadow: none;
-  border: 1px solid gainsboro;
-  border-radius: 0px; }
-
-.alerts .callout {
-  background-color: white; }
-
-.alerts .alert-info {
-  border-color: #2ECC40;
-  color: #2ECC40; }
-  .alerts .alert-info .close-button {
-    color: #2ECC40; }
-
-.alerts .alert-error {
-  border-color: #FF4136;
-  color: #FF4136; }
-  .alerts .alert-error .close-button {
-    color: #FF4136; }
-
-.custom-field-label {
-  color: dimgray;
-  font-size: 0.8em; }
 
 /* Responsive: Portrait tablets and up */
 /* @media screen and (min-width: 768px) { */
