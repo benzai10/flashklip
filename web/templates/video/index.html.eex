@@ -18,6 +18,9 @@
     </div>
     <h6 id="pop-tags-title">Popular Tags</h6>
     <hr>
+    <%= if Enum.count(@popular_tags) == 0 do %>
+      <p>You don't have any tagged videos yet</p>
+    <% end %>
     <%= for tag <- @popular_tags do %>
       <span>
         <% pop_tag_caption = Enum.at(tag, 0) <> " [" <> Integer.to_string(Enum.at(tag, 1)) <> "]"  %>
@@ -49,6 +52,11 @@
   <div class="tabs-content" data-tabs-content="my-tabs">
     <div class="tabs-panel is-active" id="videos">
       <div class="row small-up-1 medium-up-2 large-up-2">
+        <%= if Enum.count(@videos) == 0 do %>
+          <div class="callout info-panel-callout">
+            <p>Click on the 'Add Video' button or explore videos <%= link "here", to: page_path(@conn, :explore) %></p>
+          </div>
+        <% end %>
         <%= for video <- @videos do %>
           <div class="columns">
             <div class="callout video-callout">
@@ -88,6 +96,11 @@
         </div>
       <% else %>
         <div class="row small-up-1 medium-up-2 large-up-2">
+        <%= if Enum.count(@klips) == 0 do %>
+          <div class="callout info-panel-callout">
+            <p>Click on the 'Add Video' button or explore existing videos <%= link "here", to: page_path(@conn, :explore) %></p>
+          </div>
+        <% end %>
         <%= for klip <- @klips do %>
           <% video = Enum.find(@videos, fn(v) -> v.id == klip.video_id end) %>
           <div class="columns">

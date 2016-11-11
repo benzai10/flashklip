@@ -11583,10 +11583,10 @@ var Video = {
         }
         _this2.addNaviEventListeners(vidChannel);
         /* allKlipsContainer.scrollTop = 0*/
-        /* if (this.at > 0) {*/
-        /* this.jumpedKlip = true*/
-        /* Player.seekTo(this.at)*/
-        /* }*/
+        if (_this2.at > 0) {
+          _this2.jumpedKlip = true;
+          _player2.default.seekTo(_this2.at);
+        }
         _this2.currentTimeviewKlips = _this2.allTimeKlips;
         _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
       } else {
@@ -11864,6 +11864,7 @@ var Video = {
       document.getElementById("live-klip-container").className += " hide";
       document.getElementById("klip-edit").className += " hide";
       document.getElementById("klip-hide").className += " hide";
+      document.getElementById("klip-delete").className += " hide";
       nextKlip.classList.remove("invisible");
       prevKlip.classList.remove("invisible");
       nextKlip.className += " invisible";

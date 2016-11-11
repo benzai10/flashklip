@@ -33,10 +33,19 @@ defmodule Flashklip.VideoController do
       |> List.to_string
       |> String.replace_trailing(", ", "")
 
-    popular_tags_query = "select unnest(tags), count(tags) from metavideos where id in" <> "(" <> metavideos_ids <> ")" <> " group by unnest(tags) order by count desc limit 30;"
+    if String.length(metavideos_ids) > 0 do
 
-    # popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, ["(" <> metavideos_ids <> ")"]).rows
-    popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+      popular_tags_query = "select unnest(tags), count(tags) from metavideos where id in" <> "(" <> metavideos_ids <> ")" <> " group by unnest(tags) order by count desc limit 30;"
+      popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+    else
+      popular_tags = %{}
+    end
+
+    # if popular_tags? do
+    #   popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+    # else
+    #   popular_tags = %{}
+    # end
 
     render(conn, "index.html", videos: videos, klips: klips, metavideos: metavideos, popular_tags: popular_tags)
   end

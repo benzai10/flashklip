@@ -67,15 +67,18 @@ defmodule Flashklip.PageController do
 
       if current_user do
         not_copied_klips_query = from k in Klip,
-          where: k.copy_from == 0 and k.user_id != ^current_user.id
+          where: k.copy_from == 0 and k.user_id != ^current_user.id,
+          order_by: [desc: :updated_at]
 
         own_copied_klips_query = from k in Klip,
-          where: k.user_id == ^current_user.id and k.copy_from > 0
+          where: k.user_id == ^current_user.id and k.copy_from > 0,
+          order_by: [desc: :updated_at]
 
         klips_query = from k in not_copied_klips_query,
           left_join: o in subquery(own_copied_klips_query),
           on: k.id == o.copy_from,
           where: is_nil(o.copy_from),
+          order_by: [desc: :updated_at],
           limit: 30
 
         klips =
