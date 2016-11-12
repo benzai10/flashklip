@@ -25,6 +25,7 @@ defmodule Flashklip.Router do
     resources "/sessions", SessionController, only: [:new, :create, :show]
     resources "/session", SessionController, only: [:delete], singleton: true
     get "/watch/:id", WatchController, :show
+    get "/.well-known/acme-challenge/:id", PageController, :letsencrypt
   end
 
   # Other scopes may use custom stacks.
