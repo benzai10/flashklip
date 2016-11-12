@@ -2,7 +2,7 @@
   <div class="callout edit-tags-info">
     <h4>Edit Tags</h4>
     <p>Specifiy tags (maximum 10) to enable filtering.</p>
-    <p>To enter tags, seperate each tag with a comma or use the return/go key.</p>
+    <p>To enter tags, seperate each tag with a comma or use the return/go key. Separation with comma doesn't work on mobile.</p>
   </div>
 </div>
 

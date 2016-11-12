@@ -4,6 +4,7 @@ defmodule Flashklip.PageController do
   alias Flashklip.{
     User,
     Metavideo,
+    Video,
     Klip
   }
 
@@ -20,6 +21,12 @@ defmodule Flashklip.PageController do
     metavideos =
       Repo.all(metavideo_query)
       |> Repo.preload(:videos)
+
+    # videos =
+    #   metavideos
+    #   |> Enum.map(fn(x) -> Map.fetch!(x, :videos) end)
+    #   |> List.flatten
+    videos = Repo.all(Video)
 
     if current_user do
       not_copied_klips_query = from k in Klip,
@@ -52,7 +59,7 @@ defmodule Flashklip.PageController do
       changeset = Flashklip.User.username_changeset(current_user, _params)
     end
 
-    render(conn, "index.html", metavideos: metavideos, klips: klips, changeset: changeset)
+    render(conn, "index.html", metavideos: metavideos, videos: videos, klips: klips, changeset: changeset)
   end
 
   def explore(conn, params, current_user) do
@@ -64,6 +71,12 @@ defmodule Flashklip.PageController do
       metavideos =
         Repo.all(metavideo_query)
         |> Repo.preload(:videos)
+
+      # videos =
+      #   metavideos
+      #   |> Enum.map(fn(x) -> Map.fetch!(x, :videos) end)
+      #   |> List.flatten
+      videos = Repo.all(Video)
 
       if current_user do
         not_copied_klips_query = from k in Klip,
@@ -99,13 +112,19 @@ defmodule Flashklip.PageController do
 
       popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
-      render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, klips: klips)
+      render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, videos: videos, klips: klips)
     else
       query = from m in Metavideo,
         where: ^search_tag in m.tags
       metavideos =
         Repo.all(query)
         |> Repo.preload(:videos)
+
+      # videos =
+      #   metavideos
+      #   |> Enum.map(fn(x) -> Map.fetch!(x, :videos) end)
+      #   |> List.flatten
+      videos = Repo.all(Video)
 
       metavideos_ids =
         metavideos
@@ -118,7 +137,7 @@ defmodule Flashklip.PageController do
       # popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, ["(" <> metavideos_ids <> ")"]).rows
       popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
-      render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, klips: nil)
+      render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, videos: videos, klips: nil)
     end
 
   end

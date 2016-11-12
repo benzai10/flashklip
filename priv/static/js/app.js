@@ -11484,6 +11484,7 @@ var Video = {
   myTimeKlips: [],
   currentTimeviewKlips: [],
   currentUserId: 0,
+  videoUserId: 0,
   activeView: "",
 
   currentLiveKlip: {},
@@ -11506,11 +11507,27 @@ var Video = {
     var playerId = element.getAttribute("data-player-id");
     var videoId = element.getAttribute("data-id");
     this.userVideoId = element.getAttribute("data-user-video-id");
+    this.videoUserId = element.getAttribute("data-video-user-id");
     this.currentUserId = element.getAttribute("data-user-id");
     this.at = element.getAttribute("data-at");
     socket.connect();
     _player2.default.init(element.id, playerId, function () {
-      _this.onReady(videoId, socket);
+      if (_this.currentUserId > 0 && _this.videoUserId == _this.currentUserId) {
+        _this.onReady(videoId, socket);
+      } else {
+        if (_this.at > 0) {
+          _player2.default.seekTo(_this.at);
+        }
+
+        Array.from(document.getElementsByClassName("klip-callout")).forEach(function (element) {
+          element.addEventListener('click', function (e) {
+            var seekAt = e.target.parentNode.firstElementChild.getAttribute("data-seek") || e.target.parentNode.parentNode.firstElementChild.getAttribute("data-seek");
+
+            console.log(seekAt);
+            _player2.default.seekTo(seekAt);
+          });
+        });
+      }
     });
   },
   onReady: function onReady(videoId, socket) {
@@ -11542,6 +11559,7 @@ var Video = {
 
     // maybe later change to aggChannel?
     var vidChannel = socket.channel("videos:" + videoId);
+    console.log(vidChannel);
 
     vidChannel.join().receive("ok", function (resp) {
       var ids = resp.klips.map(function (klip) {

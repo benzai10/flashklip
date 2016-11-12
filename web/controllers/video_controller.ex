@@ -41,12 +41,6 @@ defmodule Flashklip.VideoController do
       popular_tags = %{}
     end
 
-    # if popular_tags? do
-    #   popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
-    # else
-    #   popular_tags = %{}
-    # end
-
     render(conn, "index.html", videos: videos, klips: klips, metavideos: metavideos, popular_tags: popular_tags)
   end
 

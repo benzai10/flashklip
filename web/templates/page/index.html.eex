@@ -21,6 +21,7 @@
   conn: @conn,
   current_user: @current_user,
   metavideos: @metavideos,
+  videos: @videos,
   klips: @klips,
   panel_title: "Discover Flashklip",
   video_tab_title: "LATEST VIDEOS",

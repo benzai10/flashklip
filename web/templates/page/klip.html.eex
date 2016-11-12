@@ -1,5 +1,9 @@
-<%= if !is_nil(@current_user) && @klip.user_id == @current_user.id do %>
-  <a href="<%= watch_path(@conn, :show, @klip.video, v: @klip.video_id, at: @klip.at) %>">
+<%= if !is_nil(@current_user) do %>
+  <%= if is_nil(@klip_video_id) do %>
+    <a href="<%= watch_path(@conn, :show, @metavideo, v: 0, at: @klip.at) %>">
+  <% else %>
+    <a href="<%= watch_path(@conn, :show, @klip_video_id, v: @klip_video_id, at: @klip.at) %>">
+  <% end %>
 <% else %>
   <a href="<%= watch_path(@conn, :show, @metavideo, v: 0, at: @klip.at) %>">
 <% end %>

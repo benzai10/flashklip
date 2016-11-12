@@ -1,5 +1,5 @@
-<a href="#" data-seek="<%= @klip.at %>">
-  <div class="callout klip-callout">
+<a href="#">
+  <div class="callout klip-callout" data-seek="<%= @klip.at %>">
     <p><%= @klip.content %></p>
     <hr>
     <span class="timestamp">

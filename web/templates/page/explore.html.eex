@@ -30,6 +30,7 @@
   conn: @conn,
   current_user: @current_user,
   metavideos: @metavideos,
+  videos: @videos,
   klips: @klips,
   panel_title: video_tab_title,
   video_tab_title: "VIDEOS",

@@ -19,7 +19,7 @@
     <%= if @with_tag_info == true do %>
       <div class="callout edit-tags-info">
         <p>Specifiy tags (maximum 10) to categorise the entry.</p>
-        <p>To enter tags, seperate each tag with a comma or use the return/go key.</p>
+        <p>To enter tags, seperate each tag with a comma or use the return/go key. Separation with comma doesn't work on mobile.</p>
       </div>
     <% end %>
     <span class="custom-field-label">Tags</span>

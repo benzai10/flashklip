@@ -1,6 +1,6 @@
 <div class="row" id="video-player">
   <div class="flex-video widescreen">
-    <%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video_id, user_id: @user_id, at: @at] do %>
+    <%= content_tag :div, id: "video", data: [id: @video.id, player_id: player_id(@video), user_video_id: @user_video_id, user_id: @user_id, at: @at, video_user_id: @video_user_id] do %>
     <% end %>
   </div>
 </div>
@@ -13,7 +13,7 @@
     <li class="tabs-title" id="overview-tab">
       <a href="#navi" id="overview-title">ALL KLIPS</a>
     </li>
-    <%= if @current_user do %>
+    <%= if @current_user && @video_user_id == @current_user.id do %>
       <li class="tabs-title <%= @show %>" id="add-klip-tab">
         <a href="#add-klip">ADD KLIP</a>
       </li>
@@ -26,7 +26,7 @@
         <a href="#edit-video"><i class="fi-widget"></i></a>
       </li>
     <% else %>
-      <%= if @current_user do %>
+      <%= if @current_user && @video_user_id == @current_user.id do %>
         <li class="tabs-title <%= @show %> float-right" id="add-klip-tab">
           <a href="#edit-video"><i class="fi-widget"></i></a>
         </li>
@@ -43,6 +43,10 @@
           <p>Timeview is only available for logged in users.</p>
           <p>Choose 'ALL KLIPS' to see klips. Click a klip to jump directly to the timestamp.</p>
           <p>Please log in or register an account. You will then be able to add and save your own klips!</p>
+        <% else %>
+          <%= if @user_id != @video_user_id do %>
+            <p>The Timeview is only available for your own videos.</p>
+          <% end %>
         <% end %>
       </div>
 
@@ -82,7 +86,8 @@
 
     <div class="tabs-panel tabs-panel-watchview" id="navi">
       <div id="all-klips-container">
-        <%= if !@current_user do %>
+        <%= if !@current_user || @current_user.id != @user_video_id do %>
+        <%#= if !@current_user do %>
           <%= for klip <- @klips do %>
             <%= render "klip.html", klip: klip %>
           <% end %>
@@ -126,55 +131,59 @@
       </div>
     </div>
 
-    <div class="tabs-panel tabs-panel-watchview" id="edit-video">
-      <div class="callout">
+    <%= if @current_user && @video_user_id == @current_user.id do %>
+      <div class="tabs-panel tabs-panel-watchview" id="edit-video">
+        <div class="callout">
 
-        <div class="row">
-          <div class="small-8 columns small-text">
-            <p>Save Klips and determine which Klips show up in the Timeview in your individual Klips view.</p>
+          <div class="row">
+            <div class="small-8 columns small-text">
+              <p>Save Klips and determine which Klips show up in the Timeview in your individual Klips view.</p>
+            </div>
+            <div class="small-4 columns">
+              <button id="overview-switch" class="float-right hollow small button">Load my Klips</button>
+            </div>
+            <hr>
           </div>
-          <div class="small-4 columns">
-            <button id="overview-switch" class="float-right hollow small button">Load my Klips</button>
-          </div>
-          <hr>
-        </div>
 
-        <div class="row">
-          <h6>Video Tags</h6>
-          <div class="small-8 columns">
-            <%= if @video.tags && Enum.count(@video.tags) > 0 do %>
-              <%= for tag <-
-              Enum.join(@video.tags, ",") |> String.split(",") do %>
-                <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+          <div class="row">
+            <h6>Video Tags</h6>
+            <div class="small-8 columns">
+              <%= if @video.tags && Enum.count(@video.tags) > 0 do %>
+                <%= for tag <-
+                Enum.join(@video.tags, ",") |> String.split(",") do %>
+                  <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow small button tag-button" %>
+                <% end %>
               <% end %>
-            <% end %>
+            </div>
+            <div class="small-4 columns">
+              <%#= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
+              <%= if !is_nil(@user_video) do %>
+                <%= link "Edit Tags", to: video_path(@conn, :edit, @user_video),
+                class: "hollow small button float-right" %>
+              <% end %>
+            </div>
+            <hr>
           </div>
-          <div class="small-4 columns">
-            <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
-              <%= link "Edit Tags", to: video_path(@conn, :edit, @user_video),
-              class: "hollow small button float-right" %>
-            <% end %>
-          </div>
-          <hr>
-        </div>
 
-        <div class="row">
-          <div class="small-8 columns small-text">
-            <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
-              <p>Delete will remove the video from your playlist. Your klips will be deleted.</p>
-            <% end %>
-          </div>
-          <div class="small-2 columns">
-            <%= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
-              <%= link "Delete", to: video_path(@conn, :delete, @user_video),
-              method: :delete,
-              data: [confirm: "Are you sure?"],
-              class: "alert small hollow button float-right" %>
-            <% end %>
+          <div class="row">
+            <div class="small-8 columns small-text">
+              <%#= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
+              <%= if !is_nil(@user_video) do %>
+                <p>Delete will remove the video from your playlist. Your klips will be deleted.</p>
+              <% end %>
+            </div>
+            <div class="small-2 columns">
+              <%#= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
+              <%= if !is_nil(@user_video) do %>
+                <%= link "Delete", to: video_path(@conn, :delete, @user_video),
+                method: :delete,
+                data: [confirm: "Are you sure?"],
+                class: "alert small hollow button float-right" %>
+              <% end %>
+            </div>
           </div>
         </div>
-
       </div>
-    </div>
+    <% end %>
   </div>
 </div>

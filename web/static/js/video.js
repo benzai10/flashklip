@@ -9,6 +9,7 @@ let Video = {
   myTimeKlips: [],
   currentTimeviewKlips: [],
   currentUserId: 0,
+  videoUserId: 0,
   activeView: "",
 
   currentLiveKlip: {},
@@ -26,11 +27,29 @@ let Video = {
     let playerId = element.getAttribute("data-player-id")
     let videoId = element.getAttribute("data-id")
     this.userVideoId = element.getAttribute("data-user-video-id")
+    this.videoUserId = element.getAttribute("data-video-user-id")
     this.currentUserId = element.getAttribute("data-user-id")
     this.at = element.getAttribute("data-at")
     socket.connect()
     Player.init(element.id, playerId, () => {
-      this.onReady(videoId, socket)
+      if (this.currentUserId > 0 && this.videoUserId == this.currentUserId) {
+        this.onReady(videoId, socket)
+      } else {
+        if (this.at > 0) {
+          Player.seekTo(this.at)
+        }
+
+        Array.from(document.getElementsByClassName("klip-callout")).forEach(function(element) {
+          element.addEventListener('click', e => {
+            let seekAt =
+              e.target.parentNode.firstElementChild.getAttribute("data-seek") ||
+              e.target.parentNode.parentNode.firstElementChild.getAttribute("data-seek")
+
+            console.log(seekAt)
+            Player.seekTo(seekAt)
+          })
+        })
+      }
     })
   },
 
@@ -61,6 +80,7 @@ let Video = {
 
     // maybe later change to aggChannel?
     let vidChannel        = socket.channel("videos:" + videoId)
+    console.log(vidChannel)
 
     vidChannel.join()
       .receive("ok", resp => {
