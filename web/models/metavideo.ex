@@ -64,7 +64,7 @@ defmodule Flashklip.Metavideo do
       |> get_in(["id"])
     # send the API call
     {:ok, {{_, resp, _}, _, body}} =
-      :httpc.request(String.to_char_list("https://www.googleapis.com/youtube/v3/videos?id=" <> youtube_video_id <> "&key=" <> "AIzaSyDTeV8UtwCWOXATwMrlOvZf0id4On_O4Qc" <> "&part=snippet&fields=items(snippet(title))"))
+      :httpc.request(String.to_char_list("https://www.googleapis.com/youtube/v3/videos?id=" <> youtube_video_id <> "&key=" <> Application.get_env(:flashklip, :youtube_api_key) <> "&part=snippet&fields=items(snippet(title))"))
     # if resp code = 200, dissect title
     if resp == 200 do
       title =

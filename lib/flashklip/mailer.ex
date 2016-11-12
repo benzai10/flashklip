@@ -1,14 +1,12 @@
 defmodule Flashklip.Mailer do
   alias Flashklip.{Endpoint, Router, User}
   use Mailgun.Client,
-    # domain: Application.get_env(:flashklip, :mailgun_domain),
-    # key: Application.get_env(:flashklip, :mailgun_key)
-    domain: "https://api.mailgun.net/v3/flashklip.com",
-    key: "key-7b853c6aed26bb87539ad3ae783d2b7a"
+    domain: Application.get_env(:flashklip, :mailgun_domain),
+    key: Application.get_env(:flashklip, :mailgun_key)
 
   def send_login_token(%User{email: email, access_token: token}) do
     send_email to: email,
-      from: "hello@flashklip.com",
+      from: "no-reply@flashklip.com",
       subject: "Your token",
       text: "Access your account #{token_url(token)}"
   end
