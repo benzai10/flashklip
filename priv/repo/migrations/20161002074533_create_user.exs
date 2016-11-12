@@ -4,7 +4,7 @@ defmodule Flashklip.Repo.Migrations.CreateUser do
   def change do
 		create table(:users) do
 			add :email, :string
-			add :username, :string, null: false
+			add :username, :string
 
 			timestamps
 		end
