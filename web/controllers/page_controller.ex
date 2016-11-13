@@ -142,7 +142,7 @@ defmodule Flashklip.PageController do
 
   end
 
-  def letsencrypt(conn, %{"id" => id}) do
+  def letsencrypt(conn, %{"id" => id}, _user) do
     text conn, "#{id}" <> "." <> Application.get_env(:flashklip, :letsencrypt_key)
   end
 end
