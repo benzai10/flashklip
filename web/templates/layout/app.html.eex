@@ -34,9 +34,10 @@
                       </span>
                     </a>
                     <ul class="menu vertical">
-                      <li><%= link "Sign out", to: session_path(@conn, :delete), method: "delete" %></li>
+                      <%= link to: session_path(@conn, :delete), method: "delete" do %>
+                        <li>Sign out</li>
+                      <% end %>
                     </ul>
-                  </li>
                   <%= if Enum.at(@conn.path_info, 0) == "my" do %>
                     <li><%= link "All Flashklips", to: page_path(@conn, :explore) %></li>
                   <% else %>
