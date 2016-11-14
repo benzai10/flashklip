@@ -111,49 +111,50 @@ defmodule Flashklip.PageController do
       popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
       render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, videos: videos, klips: klips)
-    end
+    else
+      if !is_nil(params["tag"]) do
+        videos = Repo.all(Video)
 
-    if !is_nil(params["tag"]) do
-      query = from m in Metavideo,
-        where: ^search_tag in m.tags
-      metavideos =
-        Repo.all(query)
-        |> Repo.preload(:videos)
+        query = from m in Metavideo,
+          where: ^search_tag in m.tags
+        metavideos =
+          Repo.all(query)
+          |> Repo.preload(:videos)
 
-      metavideos_ids =
-        metavideos
-        |> Enum.map(&(Integer.to_string(&1.id) <> ", " ))
-        |> List.to_string
-        |> String.replace_trailing(", ", "")
+        metavideos_ids =
+          metavideos
+          |> Enum.map(&(Integer.to_string(&1.id) <> ", " ))
+          |> List.to_string
+          |> String.replace_trailing(", ", "")
 
-      popular_tags_query = "select unnest(tags), count(tags) from metavideos where id in" <> "(" <> metavideos_ids <> ")" <> " group by unnest(tags) order by count desc limit 30;"
+        popular_tags_query = "select unnest(tags), count(tags) from metavideos where id in" <> "(" <> metavideos_ids <> ")" <> " group by unnest(tags) order by count desc limit 30;"
 
-      # popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, ["(" <> metavideos_ids <> ")"]).rows
-      popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+        # popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, ["(" <> metavideos_ids <> ")"]).rows
+        popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
-      render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, videos: videos, klips: nil)
-    end
-
-    if !is_nil(params["search"]) do
-      query = from k in Klip,
-        where: ilike(k.content, ^("%" <> search_string <> "%"))
-
-      klips =
-        Repo.all(query)
-      |> Repo.preload([:user, {:video, :metavideo}])
-
-      if current_user do
-        video_query = from v in Video, where: v.user_id == ^current_user.id
+        render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, videos: videos, klips: nil)
       else
-        video_query = from v in Video
-      end
-      videos = Repo.all(video_query)
+        # if !is_nil(params["search"]) do
+        query = from k in Klip,
+          where: ilike(k.content, ^("%" <> search_string <> "%"))
 
-      render(conn, "search_results.html", videos: videos, klips: klips)
+        klips =
+          Repo.all(query)
+          |> Repo.preload([:user, {:video, :metavideo}])
+
+        if current_user do
+          video_query = from v in Video, where: v.user_id == ^current_user.id
+        else
+          video_query = from v in Video
+        end
+        videos = Repo.all(video_query)
+
+        render(conn, "search_results.html", videos: videos, klips: klips)
+      end
     end
   end
 
-  # def letsencrypt(conn, %{"id" => id}, current_user) do
-  #   render(conn, "letsencrypt.html", id: id)
-  # end
+  def letsencrypt(conn, %{"id" => id}, current_user) do
+    render(conn, "letsencrypt.html", id: id)
+  end
 end
