@@ -42,7 +42,7 @@
                 <span>
                   <%= for tag <-
                   Enum.join(metavideo.tags, ",") |> String.split(",") do %>
-                    <%=  link tag, to: page_path(@conn, :explore, search: tag), class: "hollow tiny button tag-button" %>
+                    <%=  link tag, to: page_path(@conn, :explore, tag: tag), class: "hollow tiny button tag-button" %>
                   <% end %>
                 </span>
               <% end %>
@@ -69,7 +69,7 @@
                 <span>
                   <%= for tag <-
                   Enum.join(metavideo.tags, ",") |> String.split(",") do %>
-                    <%=  link tag, to: page_path(@conn, :explore, search: tag), class: "hollow tiny button tag-button" %>
+                    <%=  link tag, to: page_path(@conn, :explore, tag: tag), class: "hollow tiny button tag-button" %>
                   <% end %>
                 </span>
               <% end %>
