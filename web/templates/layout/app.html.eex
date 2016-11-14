@@ -28,16 +28,10 @@
                 <ul class="dropdown menu" data-dropdown-menu>
                   <li><%= link "Home", to: page_path(@conn, :index), class: "nav-home" %></li>
                   <li>
-                    <a href="#">
-                      <span id="nav-username">
-                        <%= @current_user.username %>
-                      </span>
-                    </a>
-                    <ul class="menu vertical">
-                      <%= link to: session_path(@conn, :delete), method: "delete" do %>
-                        <li>Sign out</li>
-                      <% end %>
-                    </ul>
+                    <span id="nav-username">
+                      <%= @current_user.username %>
+                    </span>
+                  </li>
                   <%= if Enum.at(@conn.path_info, 0) == "my" do %>
                     <li><%= link "All Flashklips", to: page_path(@conn, :explore) %></li>
                   <% else %>
