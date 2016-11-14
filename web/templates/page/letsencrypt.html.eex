@@ -1,0 +1,3 @@
+<div>
+  <%= @id <> "." <> Application.get_env(:flashklip, :letsencrypt_key) %>
+</div>

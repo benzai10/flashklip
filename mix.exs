@@ -19,7 +19,7 @@ defmodule Flashklip.Mixfile do
   def application do
     [mod: {Flashklip, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger,
-                    :gettext, :phoenix_ecto, :postgrex, :comeonin]]
+                    :gettext, :phoenix_ecto, :postgrex, :comeonin, :scrivener_ecto]]
   end
 
   # Specifies which paths to compile per environment.
@@ -41,7 +41,9 @@ defmodule Flashklip.Mixfile do
      {:mailgun, "~> 0.1.2"},
      {:poison, "~> 2.1", override: true},
      {:comeonin, "~> 2.5"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:scrivener_ecto, "~> 1.0"}
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

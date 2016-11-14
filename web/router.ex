@@ -18,6 +18,7 @@ defmodule Flashklip.Router do
   scope "/", Flashklip do
     pipe_through :browser # Use the default browser stack
 
+    get "/.well-known/acme-challenge/:id", PageController, :letsencrypt
     get "/", PageController, :index
     get "/explore", PageController, :explore
     # post "/explore", PageController, :explore
@@ -26,7 +27,6 @@ defmodule Flashklip.Router do
     resources "/sessions", SessionController, only: [:new, :create, :show]
     resources "/session", SessionController, only: [:delete], singleton: true
     get "/watch/:id", WatchController, :show
-    get "/.well-known/acme-challenge/:id", PageController, :letsencrypt
   end
 
   # Other scopes may use custom stacks.
@@ -38,7 +38,6 @@ defmodule Flashklip.Router do
     # pipe_through [:browser, :authenticate_user]
     pipe_through [:browser]
 
-    get "/videos/search", VideoController, :search
     resources "/videos", VideoController
   end
 
