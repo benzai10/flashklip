@@ -20,6 +20,7 @@ defmodule Flashklip.Router do
 
     get "/", PageController, :index
     get "/explore", PageController, :explore
+    # post "/explore", PageController, :explore
 		resources "/users", UserController, only: [:index, :show, :new, :create, :update]
     # resources "/sessions", SessionController, only: [:new, :create, :delete]
     resources "/sessions", SessionController, only: [:new, :create, :show]
@@ -37,6 +38,7 @@ defmodule Flashklip.Router do
     # pipe_through [:browser, :authenticate_user]
     pipe_through [:browser]
 
+    get "/videos/search", VideoController, :search
     resources "/videos", VideoController
   end
 

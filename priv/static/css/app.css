@@ -4564,10 +4564,18 @@ h1, h2, h3, h4, h5, h6, p {
 .dashboard-callout {
   margin-bottom: 40px; }
   .dashboard-callout hr {
-    margin-top: 0px; }
+    margin-top: 0px;
+    margin-bottom: 10px; }
+  .dashboard-callout .search-title {
+    margin-top: 10px; }
 
 .featured-callout {
   margin-bottom: 40px; }
+  .featured-callout hr {
+    margin-top: 0px;
+    margin-bottom: 10px; }
+  .featured-callout .search-title {
+    margin-top: 10px; }
 
 .info-panel-callout {
   margin-left: 20px;
@@ -4603,6 +4611,12 @@ h1, h2, h3, h4, h5, h6, p {
     padding: 4px; }
   .tabs-panel-watchview .tag-button {
     margin-bottom: 4px; }
+
+.klips-search-results {
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 0px;
+  padding-bottom: 0px; }
 
 .thumbnail {
   border: 0; }

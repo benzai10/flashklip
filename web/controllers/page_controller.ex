@@ -1,5 +1,6 @@
 defmodule Flashklip.PageController do
   use Flashklip.Web, :controller
+  require IEx
 
   alias Flashklip.{
     User,
@@ -63,8 +64,9 @@ defmodule Flashklip.PageController do
   end
 
   def explore(conn, params, current_user) do
-    search_tag = params["search"]
-    if is_nil(search_tag) do
+    search_tag = params["tag"]
+    search_string = params["search"]["search"]
+    if is_nil(search_tag) && is_nil(search_string) do
       metavideo_query = from m in Metavideo,
         order_by: [desc: :updated_at]
 
@@ -72,10 +74,6 @@ defmodule Flashklip.PageController do
         Repo.all(metavideo_query)
         |> Repo.preload(:videos)
 
-      # videos =
-      #   metavideos
-      #   |> Enum.map(fn(x) -> Map.fetch!(x, :videos) end)
-      #   |> List.flatten
       videos = Repo.all(Video)
 
       if current_user do
@@ -113,18 +111,14 @@ defmodule Flashklip.PageController do
       popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
       render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, videos: videos, klips: klips)
-    else
+    end
+
+    if !is_nil(params["tag"]) do
       query = from m in Metavideo,
         where: ^search_tag in m.tags
       metavideos =
         Repo.all(query)
         |> Repo.preload(:videos)
-
-      # videos =
-      #   metavideos
-      #   |> Enum.map(fn(x) -> Map.fetch!(x, :videos) end)
-      #   |> List.flatten
-      videos = Repo.all(Video)
 
       metavideos_ids =
         metavideos
@@ -140,6 +134,23 @@ defmodule Flashklip.PageController do
       render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, videos: videos, klips: nil)
     end
 
+    if !is_nil(params["search"]) do
+      query = from k in Klip,
+        where: ilike(k.content, ^("%" <> search_string <> "%"))
+
+      klips =
+        Repo.all(query)
+      |> Repo.preload([:user, {:video, :metavideo}])
+
+      if current_user do
+        video_query = from v in Video, where: v.user_id == ^current_user.id
+      else
+        video_query = from v in Video
+      end
+      videos = Repo.all(video_query)
+
+      render(conn, "search_results.html", videos: videos, klips: klips)
+    end
   end
 
   def letsencrypt(conn, %{"id" => id}, _user) do

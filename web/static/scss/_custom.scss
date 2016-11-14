@@ -116,11 +116,22 @@ h1, h2, h3, h4, h5, h6, p {
   margin-bottom: 40px;
   hr {
     margin-top: 0px;
+    margin-bottom: 10px;
+  }
+  .search-title {
+    margin-top: 10px;
   }
 }
 
 .featured-callout {
   margin-bottom: 40px;
+  hr {
+    margin-top: 0px;
+    margin-bottom: 10px;
+  }
+  .search-title {
+    margin-top: 10px;
+  }
 }
 
 .info-panel-callout {
@@ -167,6 +178,13 @@ h1, h2, h3, h4, h5, h6, p {
   .tag-button {
     margin-bottom: 4px;
   }
+}
+
+.klips-search-results {
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 .thumbnail {

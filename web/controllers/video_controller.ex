@@ -12,36 +12,53 @@ defmodule Flashklip.VideoController do
   end
 
   def index(conn, params, user) do
-    search_tag = params["search"]
-    if is_nil(search_tag) do
+    search_tag = params["tag"]
+    search_string = params["search"]["search"]
+    if is_nil(search_tag) && is_nil(search_string) do
       videos =
         Repo.all(user_videos(user))
         |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
     else
-      videos =
-        Repo.all(user_videos_filtered(user, search_tag))
-        |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
+      if !is_nil(search_tag) do
+        videos =
+          Repo.all(user_videos_filtered(user, search_tag))
+          |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
+      end
     end
 
-    klips = Enum.flat_map(videos, fn(v) -> v.klips end)
+    if is_nil(search_string) do
+      klips = Enum.flat_map(videos, fn(v) -> v.klips end)
 
-    metavideos = Enum.map(videos, fn(v) -> v.metavideo end)
+      metavideos = Enum.map(videos, fn(v) -> v.metavideo end)
 
-    metavideos_ids =
-      metavideos
-      |> Enum.map(&(Integer.to_string(&1.id) <> ", " ))
-      |> List.to_string
-      |> String.replace_trailing(", ", "")
+      metavideos_ids =
+        metavideos
+        |> Enum.map(&(Integer.to_string(&1.id) <> ", " ))
+        |> List.to_string
+        |> String.replace_trailing(", ", "")
 
-    if String.length(metavideos_ids) > 0 do
+      if String.length(metavideos_ids) > 0 do
 
-      popular_tags_query = "select unnest(tags), count(tags) from metavideos where id in" <> "(" <> metavideos_ids <> ")" <> " group by unnest(tags) order by count desc limit 30;"
-      popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+        popular_tags_query = "select unnest(tags), count(tags) from metavideos where id in" <> "(" <> metavideos_ids <> ")" <> " group by unnest(tags) order by count desc limit 30;"
+        popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+      else
+        popular_tags = %{}
+      end
+
+      render(conn, "index.html", videos: videos, klips: klips, metavideos: metavideos, popular_tags: popular_tags)
     else
-      popular_tags = %{}
+      query = from k in Flashklip.Klip,
+        where: ilike(k.content, ^("%" <> search_string <> "%")) and k.user_id == ^user.id
+      klips =
+        Repo.all(query)
+        |> Repo.preload([:user, {:video, :metavideo}])
+
+      video_query = from v in Video, where: v.user_id == ^user.id
+      videos = Repo.all(video_query)
+
+      render(conn, "search_results.html", videos: videos, klips: klips)
     end
 
-    render(conn, "index.html", videos: videos, klips: klips, metavideos: metavideos, popular_tags: popular_tags)
   end
 
   def new(conn, _params, user) do

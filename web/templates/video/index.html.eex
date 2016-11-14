@@ -16,7 +16,7 @@
         <span class="video-klips-count badge"><%= Enum.count(@klips) %></span> Klips
       </div>
     </div>
-    <h6 id="pop-tags-title">Popular Tags</h6>
+    <h6 id="pop-tags-title">Tags</h6>
     <hr>
     <%= if Enum.count(@popular_tags) == 0 do %>
       <p>You don't have any tagged videos yet</p>
@@ -24,14 +24,24 @@
     <%= for tag <- @popular_tags do %>
       <span>
         <% pop_tag_caption = Enum.at(tag, 0) <> " [" <> Integer.to_string(Enum.at(tag, 1)) <> "]"  %>
-      <%=  link pop_tag_caption, to: video_path(@conn, :index, search: Enum.at(tag, 0)), class: "hollow small button pop-tag-button" %>
+      <%=  link pop_tag_caption, to: video_path(@conn, :index, tag: Enum.at(tag, 0)), class: "hollow small button pop-tag-button" %>
       </span>
+    <% end %>
+    <h6 class="search-title">Search in Klips</h6>
+    <hr>
+    <%= form_for @conn, video_path(@conn, :index), [method: "get", as: :search], fn f -> %>
+    <div class="input-group">
+      <%= text_input f, :search, class: "input-group-field" %>
+      <div class="input-group-button">
+        <%= submit "Search", class: "hollow button" %>
+      </div>
+    </div>
     <% end %>
   </div>
 </div>
 
-<%= if @conn.params["search"] do %>
-  <% panel_title = "Filter on '" <> @conn.params["search"] <> "'" %>
+<%= if @conn.params["tag"] do %>
+  <% panel_title = "Filter on '" <> @conn.params["tag"] <> "'" %>
 <% else %>
   <% panel_title = "Resources" %>
 <% end %>
@@ -39,7 +49,7 @@
 <div class="row">
   <h4>
     <%= panel_title %>
-    <%= if @conn.params["search"] do %>
+    <%= if @conn.params["tag"] do %>
       <%= link "Reset Filter", to: page_path(@conn, :explore), class: "float-right button reset-filter-button" %>
     <% end %>
     <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
@@ -79,7 +89,7 @@
                   <span>
                     <%= for tag <-
                     Enum.join(video.metavideo.tags, ",") |> String.split(",") do %>
-                      <%=  link tag, to: video_path(@conn, :index, search: tag), class: "hollow tiny button tag-button" %>
+                      <%=  link tag, to: video_path(@conn, :index, tag: tag), class: "hollow tiny button tag-button" %>
                     <% end %>
                   </span>
                 <% end %>
@@ -90,9 +100,9 @@
       </div>
     </div>
     <div class="tabs-panel" id="klips">
-      <%= if @conn.params["search"] do %>
+      <%= if @conn.params["tag"] do %>
         <div class="callout">
-          Search for Klips is not implemented yet. Coming soon...
+          Search for tags in Klips is not implemented yet. Please use the 'Search in Kips' field above.
         </div>
       <% else %>
         <div class="row small-up-1 medium-up-2 large-up-2">
