@@ -11805,8 +11805,6 @@ var Video = {
         var originalKlip = _this2.vidKlips.find(function (k) {
           return k.id == resp.copy_from;
         });
-        console.log("------------------");
-        console.log(originalKlip);
         if (originalKlip) {
           _this2.allKlips.push(originalKlip);
           _this2.allTimeKlips.push(originalKlip);

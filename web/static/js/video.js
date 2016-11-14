@@ -306,8 +306,6 @@ let Video = {
         this.myTimeKlips = this.myTimeKlips.filter(k => {return k.id != resp.id})
         // add original klip to allKlips again
         let originalKlip = this.vidKlips.find(k => {return k.id == resp.copy_from})
-        console.log("------------------")
-        console.log(originalKlip)
         if (originalKlip) {
           this.allKlips.push(originalKlip)
           this.allTimeKlips.push(originalKlip)

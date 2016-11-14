@@ -6,15 +6,19 @@
 </div>
 
 <div class="row small-up-1 medium-up-2 large-up-2">
-  <%= for klip <- @klips do %>
-    <div class="columns klips-search-results">
-      <%= render "klip.html",
-      conn: @conn,
-      current_user: @current_user,
-      klip_video_id: klip.video_id,
-      klip: klip,
-      metavideo: klip.video.metavideo %>
-    </div>
+  <%= if Enum.count(@klips) == 0 do %>
+    <p>Sorry, no search results found.</p>
+  <% else %>
+    <%= for klip <- @klips do %>
+      <div class="columns klips-search-results">
+        <%= render "klip.html",
+        conn: @conn,
+        current_user: @current_user,
+        klip_video_id: klip.video_id,
+        klip: klip,
+        metavideo: klip.video.metavideo %>
+      </div>
+    <% end %>
   <% end %>
 </div>
 
