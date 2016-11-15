@@ -17,17 +17,16 @@ defmodule Flashklip.PageController do
   def index(conn, _params, current_user) do
     metavideo_query = from m in Metavideo,
       order_by: [desc: :updated_at],
-      limit: 30
+      limit: 50
 
     metavideos =
       Repo.all(metavideo_query)
       |> Repo.preload(:videos)
 
-    # videos =
-    #   metavideos
-    #   |> Enum.map(fn(x) -> Map.fetch!(x, :videos) end)
-    #   |> List.flatten
-    videos = Repo.all(Video)
+    videos_query = from v in Video,
+      limit: 50
+
+    videos = Repo.all(videos_query)
 
     if current_user do
       not_copied_klips_query = from k in Klip,
@@ -40,7 +39,7 @@ defmodule Flashklip.PageController do
         left_join: o in subquery(own_copied_klips_query),
         on: k.id == o.copy_from,
         where: is_nil(o.copy_from),
-        limit: 30
+        limit: 50
 
       klips =
         Repo.all(klips_query)
@@ -49,7 +48,7 @@ defmodule Flashklip.PageController do
       klips_query = from k in Klip,
         where: k.copy_from == 0,
         order_by: [desc: :updated_at],
-        limit: 30
+        limit: 50
 
       klips =
         Repo.all(klips_query)
@@ -68,7 +67,8 @@ defmodule Flashklip.PageController do
     search_string = params["search"]["search"]
     if is_nil(search_tag) && is_nil(search_string) do
       metavideo_query = from m in Metavideo,
-        order_by: [desc: :updated_at]
+        order_by: [desc: :updated_at],
+        limit: 50
 
       metavideos =
         Repo.all(metavideo_query)
@@ -90,7 +90,7 @@ defmodule Flashklip.PageController do
           on: k.id == o.copy_from,
           where: is_nil(o.copy_from),
           order_by: [desc: :updated_at],
-          limit: 30
+          limit: 50
 
         klips =
           Repo.all(klips_query)
@@ -99,7 +99,7 @@ defmodule Flashklip.PageController do
           klips_query = from k in Klip,
             where: k.copy_from == 0,
             order_by: [desc: :updated_at],
-            limit: 30
+            limit: 50
 
           klips =
             Repo.all(klips_query)
@@ -116,7 +116,9 @@ defmodule Flashklip.PageController do
         videos = Repo.all(Video)
 
         query = from m in Metavideo,
-          where: ^search_tag in m.tags
+          where: ^search_tag in m.tags,
+          limit: 50
+
         metavideos =
           Repo.all(query)
           |> Repo.preload(:videos)
@@ -136,7 +138,8 @@ defmodule Flashklip.PageController do
       else
         # if !is_nil(params["search"]) do
         query = from k in Klip,
-          where: ilike(k.content, ^("%" <> search_string <> "%"))
+          where: ilike(k.content, ^("%" <> search_string <> "%")),
+          limit: 50
 
         klips =
           Repo.all(query)
