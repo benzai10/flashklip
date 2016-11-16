@@ -11,6 +11,7 @@ let Video = {
   currentUserId: 0,
   videoUserId: 0,
   activeView: "",
+  pendingEdit: false,
 
   currentLiveKlip: {},
   jumpedKlip: false,
@@ -62,6 +63,7 @@ let Video = {
     let hideButton        = document.getElementById("klip-hide")
     let editButton        = document.getElementById("klip-edit")
     let cancelEditButton  = document.getElementById("klip-cancel-edit")
+    let editKlipTab       = document.getElementById("edit-klip-tab")
 
     let klipInput         = document.getElementById("klip-input")
     let updateButton      = document.getElementById("klip-update")
@@ -133,6 +135,19 @@ let Video = {
     })
 
     document.getElementById("overview-tab").addEventListener("click", e => {
+      if (this.pendingEdit == true) {
+        document.getElementById("my-edit-container").classList.remove("hide")
+        document.getElementById("klip-cancel-edit").classList.remove("hide")
+        document.getElementById("my-edit-container").className += " hide"
+        document.getElementById("klip-cancel-edit").className += " hide"
+        document.getElementById("live-klip-container").classList.remove("hide")
+        document.getElementById("klip-edit").classList.remove("hide")
+        nextKlip.classList.remove("invisible")
+        prevKlip.classList.remove("invisible")
+        this.pendingEdit = false
+        this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
+      }
+
       this.activeView = "overview"
     })
 
@@ -175,6 +190,19 @@ let Video = {
     })
 
     addKlipTab.addEventListener("click", e => {
+      if (this.pendingEdit == true) {
+        document.getElementById("my-edit-container").classList.remove("hide")
+        document.getElementById("klip-cancel-edit").classList.remove("hide")
+        document.getElementById("my-edit-container").className += " hide"
+        document.getElementById("klip-cancel-edit").className += " hide"
+        document.getElementById("live-klip-container").classList.remove("hide")
+        document.getElementById("klip-edit").classList.remove("hide")
+        nextKlip.classList.remove("invisible")
+        prevKlip.classList.remove("invisible")
+        this.pendingEdit = false
+        this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
+      }
+
       saveAt = Player.getCurrentTime()
       if (saveAt < 1000) {
         newTsBack.className += " disabled"
@@ -371,8 +399,8 @@ let Video = {
     })
 
     editButton.addEventListener("click", e => {
-      console.log("editButton clicked")
       clearTimeout(this.liveKlipTimer)
+      this.pendingEdit = true
       document.getElementById("live-klip-container").className += " hide"
       document.getElementById("klip-edit").className += " hide"
       document.getElementById("klip-hide").className += " hide"
@@ -410,6 +438,7 @@ let Video = {
       prevKlip.classList.remove("invisible")
 
       // restart liveKlipTimer
+      this.pendingEdit = false
       this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
     })
 
@@ -567,6 +596,21 @@ let Video = {
       this.liveKlip = this.allKlips.find( klip => { return klip.id == klipId } )
       this.startTimer = true
       Player.seekTo(this.liveKlip.at)
+    })
+
+    editKlipTab.addEventListener("click", e => {
+      if (this.pendingEdit == true) {
+        document.getElementById("my-edit-container").classList.remove("hide")
+        document.getElementById("klip-cancel-edit").classList.remove("hide")
+        document.getElementById("my-edit-container").className += " hide"
+        document.getElementById("klip-cancel-edit").className += " hide"
+        document.getElementById("live-klip-container").classList.remove("hide")
+        document.getElementById("klip-edit").classList.remove("hide")
+        nextKlip.classList.remove("invisible")
+        prevKlip.classList.remove("invisible")
+        this.pendingEdit = false
+        this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
+      }
     })
 
   },

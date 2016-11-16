@@ -11632,6 +11632,7 @@ var Video = {
   currentUserId: 0,
   videoUserId: 0,
   activeView: "",
+  pendingEdit: false,
 
   currentLiveKlip: {},
   jumpedKlip: false,
@@ -11687,6 +11688,7 @@ var Video = {
     var hideButton = document.getElementById("klip-hide");
     var editButton = document.getElementById("klip-edit");
     var cancelEditButton = document.getElementById("klip-cancel-edit");
+    var editKlipTab = document.getElementById("edit-klip-tab");
 
     var klipInput = document.getElementById("klip-input");
     var updateButton = document.getElementById("klip-update");
@@ -11764,6 +11766,19 @@ var Video = {
     });
 
     document.getElementById("overview-tab").addEventListener("click", function (e) {
+      if (_this2.pendingEdit == true) {
+        document.getElementById("my-edit-container").classList.remove("hide");
+        document.getElementById("klip-cancel-edit").classList.remove("hide");
+        document.getElementById("my-edit-container").className += " hide";
+        document.getElementById("klip-cancel-edit").className += " hide";
+        document.getElementById("live-klip-container").classList.remove("hide");
+        document.getElementById("klip-edit").classList.remove("hide");
+        nextKlip.classList.remove("invisible");
+        prevKlip.classList.remove("invisible");
+        _this2.pendingEdit = false;
+        _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
+      }
+
       _this2.activeView = "overview";
     });
 
@@ -11806,6 +11821,19 @@ var Video = {
     });
 
     addKlipTab.addEventListener("click", function (e) {
+      if (_this2.pendingEdit == true) {
+        document.getElementById("my-edit-container").classList.remove("hide");
+        document.getElementById("klip-cancel-edit").classList.remove("hide");
+        document.getElementById("my-edit-container").className += " hide";
+        document.getElementById("klip-cancel-edit").className += " hide";
+        document.getElementById("live-klip-container").classList.remove("hide");
+        document.getElementById("klip-edit").classList.remove("hide");
+        nextKlip.classList.remove("invisible");
+        prevKlip.classList.remove("invisible");
+        _this2.pendingEdit = false;
+        _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
+      }
+
       saveAt = _player2.default.getCurrentTime();
       if (saveAt < 1000) {
         newTsBack.className += " disabled";
@@ -12020,8 +12048,8 @@ var Video = {
     });
 
     editButton.addEventListener("click", function (e) {
-      console.log("editButton clicked");
       clearTimeout(_this2.liveKlipTimer);
+      _this2.pendingEdit = true;
       document.getElementById("live-klip-container").className += " hide";
       document.getElementById("klip-edit").className += " hide";
       document.getElementById("klip-hide").className += " hide";
@@ -12060,6 +12088,7 @@ var Video = {
       prevKlip.classList.remove("invisible");
 
       // restart liveKlipTimer
+      _this2.pendingEdit = false;
       _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
     });
 
@@ -12242,6 +12271,21 @@ var Video = {
       });
       _this2.startTimer = true;
       _player2.default.seekTo(_this2.liveKlip.at);
+    });
+
+    editKlipTab.addEventListener("click", function (e) {
+      if (_this2.pendingEdit == true) {
+        document.getElementById("my-edit-container").classList.remove("hide");
+        document.getElementById("klip-cancel-edit").classList.remove("hide");
+        document.getElementById("my-edit-container").className += " hide";
+        document.getElementById("klip-cancel-edit").className += " hide";
+        document.getElementById("live-klip-container").classList.remove("hide");
+        document.getElementById("klip-edit").classList.remove("hide");
+        nextKlip.classList.remove("invisible");
+        prevKlip.classList.remove("invisible");
+        _this2.pendingEdit = false;
+        _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
+      }
     });
   },
   removeCopyOriginals: function removeCopyOriginals(arr) {
