@@ -13,6 +13,10 @@ h1, h2, h3, h4, h5, h6, p {
   max-width: 680px;
 }
 
+.accordion-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+}
 
 .top-bar {
   padding-left: 0px;
@@ -21,11 +25,6 @@ h1, h2, h3, h4, h5, h6, p {
   li {
     color: dimgray;
   }
-}
-
-.menu .vertical {
-  text-align: center;
-  padding: 12px;
 }
 
 .alert-message {
@@ -90,11 +89,6 @@ h1, h2, h3, h4, h5, h6, p {
     font-weight: 100;
     color: #ffffff;
   }
-}
-
-.accordion-title {
-  font-family: 'Oswald', sans-serif;
-  font-size: 18px;
 }
 
 .cta-button {
@@ -215,8 +209,10 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 
-.sign-out-link {
-  margin-top: 30px;
+// ***** SIGN IN PAGE *****
+
+.password-info {
+  margin-top: 40px;
 }
 
 // ***** EDIT VIDEO PAGE *****

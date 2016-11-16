@@ -148,7 +148,4 @@
     </div>
   </div>
 </div>
-<div class="row">
-  <%= link "Sign out", to: session_path(@conn, :delete), method: "delete", class: "sign-out-link float-right" %>
-</div>
 <%= render Flashklip.LayoutView, "footer.html" %>

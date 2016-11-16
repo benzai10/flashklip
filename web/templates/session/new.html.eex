@@ -7,18 +7,29 @@
 </div>
 
 <div class="row">
-<%= form_for @changeset, session_path(@conn, :create), fn f -> %>
-<%= if @changeset.action do %>
-  <div class="alerts">
-    <div class="alert callout alert-error" role="alert">
-      <p>Oops, something went wrong! Please check the errors below.</p>
+  <%= form_for @changeset, session_path(@conn, :create), fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alerts">
+      <div class="alert callout alert-error" role="alert">
+        <p>Oops, something went wrong! Please check the errors below.</p>
+      </div>
     </div>
+  <% end %>
+  <div class="form-group">
+    <%= email_input f, :email, placeholder: "Email", class: "form-control", id: "email-field", maxlength: "50" %>
+    <%= error_tag f, :email %>
   </div>
+  <%= submit "Email me a link to sign in", class: "button disabled", id: "email-submit" %>
 <% end %>
-<div class="form-group">
-  <%= email_input f, :email, placeholder: "Email", class: "form-control", id: "email-field", maxlength: "50" %>
-  <%= error_tag f, :email %>
 </div>
-<%= submit "Email me a link to sign in", class: "button disabled", id: "email-submit" %>
-<% end %>
+
+<div class="row">
+  <ul class="accordion password-info" data-accordion data-allow-all-closed="true">
+    <li class="accordion-item" data-accordion-item>
+      <a href="#" class="accordion-title">Why is there no password?</a>
+      <div class="accordion-content" data-tab-content>
+        We don't provide signing in via Facebook, Twitter or other accounts yet. Instead of user authentication with a password, you will receive a special signin link via email. Clicking on that link will directly bring you to your Flashklip user page. No forgotten passwords anymore! If your signed session has expired or you signed out manually, just enter your email address again to get an new signin link. Reminder: if you use Flashklip on a shared computer, don't forget to sign out (it's the same like other accounts with password oder social media account authentication)!
+      </div>
+    </li>
+  </ul>
 </div>

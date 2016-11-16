@@ -24,27 +24,33 @@
               </a>
             </div>
             <div class="top-bar-right">
-              <%= if @current_user do %>
-                <ul class="dropdown menu" data-dropdown-menu>
-                  <li><%= link "Home", to: page_path(@conn, :index), class: "nav-home" %></li>
-                  <li>
-                    <span id="nav-username">
-                      <%= @current_user.username %>
-                    </span>
-                  </li>
-                  <%= if Enum.at(@conn.path_info, 0) == "my" do %>
-                    <li><%= link "All Flashklips", to: page_path(@conn, :explore) %></li>
-                  <% else %>
-                    <li><%= link "My Flashklips", to: video_path(@conn, :index) %></li>
-                  <% end %>
-                </ul>
-              <% else %>
-                <ul class="menu">
-                  <li><%= link "Home", to: page_path(@conn, :index), class: "nav-home" %></li>
+              <ul class="dropdown menu" data-dropdown-menu data-close-on-click-inside="false">
+                <%= if @current_user do %>
+                  <li><%= @current_user.username %></li>
+                <% else %>
                   <li>Visitor</li>
                   <li><%= link "Sign in", to: session_path(@conn, :new) %></li>
-                </ul>
-              <% end %>
+                <% end %>
+                <li>
+                  <a href="#">Menu</a>
+                  <ul class="menu">
+                    <%= if @current_user do %>
+                      <li><%= link "Home", to: page_path(@conn, :index), class: "nav-home" %></li>
+                      <%= if Enum.at(@conn.path_info, 0) == "my" do %>
+                        <li><%= link "All Flashklips", to: page_path(@conn, :explore) %></li>
+                      <% else %>
+                        <li><%= link "My Flashklips", to: video_path(@conn, :index) %></li>
+                      <% end %>
+                      <li>
+                        <%= link "Sign out", to: session_path(@conn, :delete), method: "delete" %>
+                      </li>
+                    <% else %>
+                      <li><%= link "Home", to: page_path(@conn, :index), class: "nav-home" %></li>
+                      <li><%= link "Videos", to: page_path(@conn, :explore) %></li>
+                    <% end %>
+                  </ul>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -55,7 +61,6 @@
       <main role="main">
         <%= render @view_module, @view_template, assigns %>
       </main>
-
     </div>
 
     <script>window.userToken = "<%= assigns[:user_token] %>"</script>
@@ -71,6 +76,5 @@
      ga('send', 'pageview');
 
     </script>
-
   </body>
 </html>

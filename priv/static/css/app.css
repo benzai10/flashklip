@@ -4486,15 +4486,15 @@ h1, h2, h3, h4, h5, h6, p {
 .column, .columns {
   max-width: 680px; }
 
+.accordion-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px; }
+
 .top-bar {
   padding-left: 0px;
   padding-right: 0px; }
   .top-bar li {
     color: dimgray; }
-
-.menu .vertical {
-  text-align: center;
-  padding: 12px; }
 
 .alert-message {
   color: #FF4136; }
@@ -4544,10 +4544,6 @@ h1, h2, h3, h4, h5, h6, p {
     font-family: 'Oswald', sans-serif;
     font-weight: 100;
     color: #ffffff; }
-
-.accordion-title {
-  font-family: 'Oswald', sans-serif;
-  font-size: 18px; }
 
 .cta-button {
   margin-top: 30px;
@@ -4637,8 +4633,8 @@ h1, h2, h3, h4, h5, h6, p {
   width: 100%;
   height: auto; }
 
-.sign-out-link {
-  margin-top: 30px; }
+.password-info {
+  margin-top: 40px; }
 
 .tag-button {
   margin-bottom: 0px; }
