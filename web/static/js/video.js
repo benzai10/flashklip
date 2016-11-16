@@ -45,7 +45,6 @@ let Video = {
               e.target.parentNode.firstElementChild.getAttribute("data-seek") ||
               e.target.parentNode.parentNode.firstElementChild.getAttribute("data-seek")
 
-            console.log(seekAt)
             Player.seekTo(seekAt)
           })
         })
@@ -80,7 +79,6 @@ let Video = {
 
     // maybe later change to aggChannel?
     let vidChannel        = socket.channel("videos:" + videoId)
-    console.log(vidChannel)
 
     vidChannel.join()
       .receive("ok", resp => {
@@ -91,6 +89,7 @@ let Video = {
           this.vidKlips = resp.klips
           // initialise all klip arrays
           this.allKlips = this.removeCopyOriginals(this.vidKlips)
+          /* this.allKlips = this.vidKlips*/
           this.myKlips = this.vidKlips.filter( klip => {
             if (klip.copy_from > 0 || (klip.copy_from == 0 && klip.user.id == this.currentUserId)) {
               return true
@@ -557,11 +556,15 @@ let Video = {
 
     allKlipsContainer.addEventListener("click", e => {
       e.preventDefault()
-      let klipId =
-        e.target.closest("div").parentNode.getAttribute("id").match(/\d+/)[0]
-
+      let element = e.target.parentNode.getAttribute("id")
+      if (!element) {
+        element = e.target.parentNode.parentNode.getAttribute("id")
+      }
+      if (!element) {
+        element = e.target.parentNode.parentNode.parentNode.getAttribute("id")
+      }
+      let klipId = element.match(/\d+/)[0]
       this.liveKlip = this.allKlips.find( klip => { return klip.id == klipId } )
-
       this.startTimer = true
       Player.seekTo(this.liveKlip.at)
     })
@@ -768,7 +771,7 @@ let Video = {
   addNaviEventListeners(vidChannel) {
 
     Array.from(document.getElementsByClassName("navi-button")).forEach(function(element) {
-      element.addEventListener('click', e => {
+      element.addEventListener("click", e => {
         e.preventDefault()
 
         let currentScrollPos = e.target.closest("div").parentNode.parentNode.scrollTop
