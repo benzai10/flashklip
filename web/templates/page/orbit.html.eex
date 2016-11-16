@@ -33,7 +33,7 @@
     <!-- More slides... -->
   </ul>
   <nav class="orbit-bullets">
-    <button class="is-active" data-slide="0"><span class="show-for-sr">Add Klips</span><span class="show-for-sr">Add Klips</span></button>
+    <button class="is-active" data-slide="0"><span class="show-for-sr">Add Klips</span></span></button>
     <button data-slide="1"><span class="show-for-sr">Timeview</span></button>
     <button data-slide="2"><span class="show-for-sr">Klip Collection</span></button>
   </nav>

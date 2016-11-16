@@ -4762,8 +4762,6 @@ h1, h2, h3, h4, h5, h6, p {
   .menu li a {
     padding-left: 10px;
     padding-right: 10px; }
-  .menu li .nav-home {
-    padding-left: 0px; }
   .alert-info .close-button {
     top: 0;
     right: 0;
