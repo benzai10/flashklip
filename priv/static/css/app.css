@@ -4537,6 +4537,9 @@ h1, h2, h3, h4, h5, h6, p {
 .orbit-container {
   height: 100%; }
 
+.orbit-image {
+  min-height: 100%; }
+
 .orbit-text {
   position: absolute;
   top: 30px;
