@@ -27,7 +27,7 @@
               <h6><%= metavideo.title %></h6>
               <div class="media-object-section">
                 <div class="thumbnail youtube-thumbnail">
-                  <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
+                  <img src="https://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
                 </div>
               </div>
               <div class="media-object-section">
@@ -54,7 +54,7 @@
                 <h6><%= metavideo.title %></h6>
               <div class="media-object-section">
                 <div class="thumbnail youtube-thumbnail">
-                  <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
+                  <img src="https://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(metavideo)}" %>/mqdefault.jpg">
                 </div>
               </div>
               <div class="media-object-section">
