@@ -4495,6 +4495,9 @@ h1, h2, h3, h4, h5, h6, p {
   padding-right: 0px; }
   .top-bar li {
     color: dimgray; }
+  .top-bar .sign-out-link {
+    padding-left: 15px;
+    padding-top: 8px; }
 
 .alert-message {
   color: #FF4136; }

@@ -7,20 +7,21 @@ defmodule Flashklip.Auth do
 
   def call(conn, _opts) do
     user_id = get_session(conn, :user_id)
+    assign_current_user(conn, user_id)
 
-    cond do
-      user = conn.assigns[:current_user] ->
-        put_current_user(conn, user)
-      user = user_id && Flashklip.Repo.get(Flashklip.User, user_id) ->
-        put_current_user(conn, user)
-      true ->
-        assign(conn, :current_user, nil)
-    end
+    # cond do
+    #   user = conn.assigns[:current_user] ->
+    #     put_current_user(conn, user)
+    #   user = user_id && Flashklip.Repo.get(Flashklip.User, user_id) ->
+    #     put_current_user(conn, user)
+    #   true ->
+    #     assign(conn, :current_user, nil)
+    # end
   end
 
   def login(conn, user) do
     conn
-    |> put_current_user(user)
+    # |> put_current_user(user)
     |> put_session(:user_id, user.id)
     |> configure_session(renew: true)
   end
@@ -30,13 +31,13 @@ defmodule Flashklip.Auth do
     |> configure_session(drop: true)
   end
 
-  defp put_current_user(conn, user) do
-    token = Phoenix.Token.sign(conn, "user socket", user.id)
+  # defp put_current_user(conn, user) do
+  #   token = Phoenix.Token.sign(conn, "user socket", user.id)
 
-    conn
-    |> assign(:current_user, user)
-    |> assign(:user_token, token)
-  end
+  #   conn
+  #   |> assign(:current_user, user)
+  #   |> assign(:user_token, token)
+  # end
 
   defp assign_current_user(conn, nil) do
     assign(conn, :current_user, nil)

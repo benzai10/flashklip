@@ -42,7 +42,7 @@
                         <li><%= link "My Flashklips", to: video_path(@conn, :index) %></li>
                       <% end %>
                       <li>
-                        <%= link "Sign out", to: session_path(@conn, :delete), method: "delete" %>
+                        <%= link "Sign out", to: session_path(@conn, :delete), method: "delete", class: "sign-out-link" %>
                       </li>
                     <% else %>
                       <li><%= link "Home", to: page_path(@conn, :index) %></li>
