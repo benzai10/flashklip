@@ -17,7 +17,8 @@ defmodule Flashklip.Klip do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:content, :at, :copy_from, :in_timeview])
+     |> cast(params, [:content, :at, :copy_from, :in_timeview])
     |> validate_required([:content, :at])
   end
+
 end

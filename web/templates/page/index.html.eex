@@ -37,7 +37,8 @@
 <%= if @current_user do %>
   <div class="tiny reveal" id="usernameModal" data-reveal data-close-on-click="false" data-close-on-esc="false">
     <h1>Awesome. Welcome!</h1>
-    <p class="lead">One more step: Please choose a username</p>
+    <p class="lead">One more step:</p>
+    <p>Please choose a username</p>
     <p class="alert-message"><%= get_flash(@conn, :username) %></p>
     <%= render "username_form.html",
     changeset: @changeset,

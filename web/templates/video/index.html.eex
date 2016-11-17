@@ -42,15 +42,9 @@
   </div>
 </div>
 
-<%= if @conn.params["tag"] do %>
-  <% panel_title = "Filter on '" <> @conn.params["tag"] <> "'" %>
-<% else %>
-  <% panel_title = "Resources" %>
-<% end %>
-
 <div class="row">
   <h4>
-    <%= panel_title %>
+    Resources
     <%= if @conn.params["tag"] do %>
       <%= link "Reset Filter", to: page_path(@conn, :explore), class: "float-right button reset-filter-button" %>
     <% end %>

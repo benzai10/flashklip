@@ -14,7 +14,7 @@ defmodule Flashklip.PageController do
       [conn, conn.params, conn.assigns.current_user])
   end
 
-  def index(conn, _params, current_user) do
+  def index(conn, params, current_user) do
     metavideo_query = from m in Metavideo,
       order_by: [desc: :updated_at],
       limit: 50
@@ -28,36 +28,16 @@ defmodule Flashklip.PageController do
 
     videos = Repo.all(videos_query)
 
-    if current_user do
-      not_copied_klips_query = from k in Klip,
-        where: k.copy_from == 0 and k.user_id != ^current_user.id
-
-      own_copied_klips_query = from k in Klip,
-        where: k.user_id == ^current_user.id and k.copy_from > 0
-
-      klips_query = from k in not_copied_klips_query,
-        left_join: o in subquery(own_copied_klips_query),
-        on: k.id == o.copy_from,
-        where: is_nil(o.copy_from),
-        limit: 50
-
-      klips =
-        Repo.all(klips_query)
-        |> Repo.preload([:user, {:video, :metavideo}])
-    else
-      klips_query = from k in Klip,
-        where: k.copy_from == 0,
-        order_by: [desc: :updated_at],
-        limit: 50
-
-      klips =
-        Repo.all(klips_query)
-        |> Repo.preload([:user, {:video, :metavideo}])
-    end
+    klips =
+      case current_user do
+        true -> user_klips_index(current_user)
+        _ -> klips_index
+      end
 
     if current_user do
-      changeset = Flashklip.User.username_changeset(current_user, _params)
+      changeset = Flashklip.User.username_changeset(current_user, params)
     end
+    # changeset = User.username_changeset(current_user, params)
 
     render(conn, "index.html", metavideos: metavideos, videos: videos, klips: klips, changeset: changeset)
   end
@@ -76,41 +56,53 @@ defmodule Flashklip.PageController do
 
       videos = Repo.all(Video)
 
-      if current_user do
-        not_copied_klips_query = from k in Klip,
-          where: k.copy_from == 0 and k.user_id != ^current_user.id,
-          order_by: [desc: :updated_at]
+      klips =
+        case current_user do
+          true -> user_klips_index(current_user)
+          _ -> klips_index
+        end
+      # if current_user do
+      #   not_copied_klips_query = from k in Klip,
+      #     where: k.copy_from == 0 and k.user_id != ^current_user.id,
+      #     order_by: [desc: :updated_at]
 
-        own_copied_klips_query = from k in Klip,
-          where: k.user_id == ^current_user.id and k.copy_from > 0,
-          order_by: [desc: :updated_at]
+      #   own_copied_klips_query = from k in Klip,
+      #     where: k.user_id == ^current_user.id and k.copy_from > 0,
+      #     order_by: [desc: :updated_at]
 
-        klips_query = from k in not_copied_klips_query,
-          left_join: o in subquery(own_copied_klips_query),
-          on: k.id == o.copy_from,
-          where: is_nil(o.copy_from),
-          order_by: [desc: :updated_at],
-          limit: 50
+      #   klips_query = from k in not_copied_klips_query,
+      #     left_join: o in subquery(own_copied_klips_query),
+      #     on: k.id == o.copy_from,
+      #     where: is_nil(o.copy_from),
+      #     order_by: [desc: :updated_at],
+      #     limit: 50
 
-        klips =
-          Repo.all(klips_query)
-          |> Repo.preload([:user, {:video, :metavideo}])
-      else
-          klips_query = from k in Klip,
-            where: k.copy_from == 0,
-            order_by: [desc: :updated_at],
-            limit: 50
+      #   klips =
+      #     Repo.all(klips_query)
+      #     |> Repo.preload([:user, {:video, :metavideo}])
+      # else
+      #     klips_query = from k in Klip,
+      #       where: k.copy_from == 0,
+      #       order_by: [desc: :updated_at],
+      #       limit: 50
 
-          klips =
-            Repo.all(klips_query)
-            |> Repo.preload([:user, {:video, :metavideo}])
-      end
+      #     klips =
+      #       Repo.all(klips_query)
+      #       |> Repo.preload([:user, {:video, :metavideo}])
+      # end
 
       popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30"
 
       popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
-      render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, videos: videos, klips: klips)
+      render(conn, "explore.html",
+        popular_tags: popular_tags,
+        metavideos: metavideos,
+        videos: videos,
+        klips: klips,
+        video_tab_title: "Resources",
+        tags_callout_title: "Popular Tags"
+      )
     else
       if !is_nil(params["tag"]) do
         videos = Repo.all(Video)
@@ -134,7 +126,15 @@ defmodule Flashklip.PageController do
         # popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, ["(" <> metavideos_ids <> ")"]).rows
         popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
-        render(conn, "explore.html", popular_tags: popular_tags, metavideos: metavideos, videos: videos, klips: nil)
+        render(conn, "explore.html",
+          popular_tags: popular_tags,
+          metavideos: metavideos,
+          videos: videos,
+          klips: nil,
+          tags_callout_title: "Filtered Tags",
+          video_tab_title: "Filter on '" <> params["tag"] <> "'"
+
+        )
       else
         # if !is_nil(params["search"]) do
         query = from k in Klip,
@@ -145,11 +145,13 @@ defmodule Flashklip.PageController do
           Repo.all(query)
           |> Repo.preload([:user, {:video, :metavideo}])
 
-        if current_user do
-          video_query = from v in Video, where: v.user_id == ^current_user.id
-        else
-          video_query = from v in Video
-        end
+        video_query =
+          case current_user do
+            true -> from v in Video, where: v.user_id == ^current_user.id
+            _ -> from v in Video
+
+          end
+
         videos = Repo.all(video_query)
 
         render(conn, "search_results.html", videos: videos, klips: klips)
@@ -159,5 +161,32 @@ defmodule Flashklip.PageController do
 
   def letsencrypt(conn, %{"id" => id}, _current_user) do
     text conn, "#{id}" <> "." <> Application.get_env(:flashklip, :letsencrypt_key)
+  end
+
+  defp klips_index do
+    klips_query = from k in Klip,
+      where: k.copy_from == 0,
+      order_by: [desc: :updated_at],
+      limit: 50
+
+    Repo.all(klips_query)
+    |> Repo.preload([:user, {:video, :metavideo}])
+  end
+
+  defp user_klips_index(user) do
+    not_copied_klips_query = from k in Klip,
+      where: k.copy_from == 0 and k.user_id != ^user.id
+
+    own_copied_klips_query = from k in Klip,
+      where: k.user_id == ^user.id and k.copy_from > 0
+
+    klips_query = from k in not_copied_klips_query,
+      left_join: o in subquery(own_copied_klips_query),
+      on: k.id == o.copy_from,
+      where: is_nil(o.copy_from),
+      limit: 50
+
+    Repo.all(klips_query)
+    |> Repo.preload([:user, {:video, :metavideo}])
   end
 end

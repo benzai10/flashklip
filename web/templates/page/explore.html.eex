@@ -4,17 +4,9 @@
   </h4>
 </div>
 
-<%= if @conn.params["tag"] do %>
-  <% video_tab_title = "Filter on '" <> @conn.params["tag"] <> "'" %>
-  <% tags_callout_title = "Filtered Tags" %>
-<% else %>
-  <% video_tab_title = "Resources" %>
-  <% tags_callout_title = "Popular Tags" %>
-<% end %>
-
 <div class="row">
   <div class="callout featured-callout">
-    <h6><%= tags_callout_title %></h6>
+    <h6><%= @tags_callout_title %></h6>
     <hr>
     <%= for tag <- @popular_tags do %>
       <span>
@@ -42,7 +34,7 @@
   metavideos: @metavideos,
   videos: @videos,
   klips: @klips,
-  panel_title: video_tab_title,
+  panel_title: @video_tab_title,
   video_tab_title: "VIDEOS",
   klips_tab_title: "KLIPS" %>
 </div>
