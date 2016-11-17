@@ -4495,9 +4495,16 @@ h1, h2, h3, h4, h5, h6, p {
   padding-right: 0px; }
   .top-bar li {
     color: dimgray; }
-  .top-bar .sign-out-link {
-    padding-left: 15px;
-    padding-top: 8px; }
+  .top-bar .sub-menu li {
+    /* border: 1px solid gainsboro; */
+    background-color: #0074D9;
+    border-top: 1px solid gainsboro; }
+    .top-bar .sub-menu li a {
+      color: white; }
+    .top-bar .sub-menu li .link {
+      padding-left: 15px;
+      padding-top: 8px;
+      padding-bottom: 8px; }
 
 .alert-message {
   color: #FF4136; }
@@ -4769,9 +4776,6 @@ h1, h2, h3, h4, h5, h6, p {
 /* @media screen and (min-width: 768px) { */
 @media screen and (max-width: 480px) {
   .row {
-    padding-left: 10px;
-    padding-right: 10px; }
-  .menu li a {
     padding-left: 10px;
     padding-right: 10px; }
   .alert-info .close-button {

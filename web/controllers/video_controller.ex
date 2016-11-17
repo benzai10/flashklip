@@ -12,6 +12,9 @@ defmodule Flashklip.VideoController do
   end
 
   def index(conn, params, user) do
+    if is_nil(user) do
+      conn |> redirect(to: session_path(conn, :new))
+    end
     search_tag = params["tag"]
     search_string = params["search"]["search"]
     if is_nil(search_tag) && is_nil(search_string) do

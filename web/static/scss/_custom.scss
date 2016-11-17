@@ -25,9 +25,18 @@ h1, h2, h3, h4, h5, h6, p {
   li {
     color: dimgray;
   }
-  .sign-out-link {
-    padding-left: 15px;
-    padding-top: 8px;
+  .sub-menu li {
+    /* border: 1px solid gainsboro; */
+    background-color: #0074D9;
+    border-top: 1px solid gainsboro;
+    a {
+      color: white;
+    }
+    .link {
+      padding-left: 15px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
   }
 }
 
@@ -411,14 +420,6 @@ h1, h2, h3, h4, h5, h6, p {
   .row {
     padding-left: 10px;
     padding-right: 10px;
-  }
-  .menu {
-    li {
-      a {
-        padding-left: 10px;
-        padding-right: 10px;
-      }
-    }
   }
 
   .alert-info {

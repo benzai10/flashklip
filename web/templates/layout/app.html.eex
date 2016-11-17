@@ -33,7 +33,7 @@
                 <% end %>
                 <li>
                   <a href="#">Menu</a>
-                  <ul class="menu">
+                  <ul class="menu sub-menu">
                     <%= if @current_user do %>
                       <li><%= link "Home", to: page_path(@conn, :index) %></li>
                       <%= if Enum.at(@conn.path_info, 0) == "my" do %>
@@ -42,7 +42,7 @@
                         <li><%= link "My Flashklips", to: video_path(@conn, :index) %></li>
                       <% end %>
                       <li>
-                        <%= link "Sign out", to: session_path(@conn, :delete), method: "delete", class: "sign-out-link" %>
+                        <%= link "Sign out", to: session_path(@conn, :delete), method: "delete" %>
                       </li>
                     <% else %>
                       <li><%= link "Home", to: page_path(@conn, :index) %></li>
