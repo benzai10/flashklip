@@ -71,7 +71,7 @@
                   <h6><%= video.metavideo.title %></h6>
                   <div class="media-object-section">
                     <div class="thumbnail youtube-thumbnail">
-                      <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(video.metavideo)}" %>/mqdefault.jpg">
+                      <img src="https://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(video.metavideo)}" %>/mqdefault.jpg">
                     </div>
                   </div>
                   <div class="media-object-section">
@@ -129,7 +129,7 @@
                 </div>
                 <div class="small-2 column klip-thumbnail-column">
                   <div class="thumbnail klips-thumbnail">
-                    <img src="http://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(Enum.find(@metavideos, fn(m) -> m.id == video.metavideo_id end))}" %>/mqdefault.jpg">
+                    <img src="https://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(Enum.find(@metavideos, fn(m) -> m.id == video.metavideo_id end))}" %>/mqdefault.jpg">
                   </div>
                 </div>
               </div>
