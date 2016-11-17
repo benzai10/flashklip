@@ -87,16 +87,12 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 // ***** HOMEPAGE STYLES *****
-.orbit {
-  max-height: 100%;
-}
-
 .orbit-container {
-  height: 100%;
+  height: auto !important;
 }
 
-.orbit-image {
-  min-height: 100%;
+.orbit-slide {
+  max-height: none !important;
 }
 
 .orbit-text {
