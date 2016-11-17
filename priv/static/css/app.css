@@ -4778,8 +4778,9 @@ h1, h2, h3, h4, h5, h6, p {
   p {
     padding-top: 2px;
     padding-bottom: 2px; }
-  .orbit-container {
-    max-height: 220px; }
+  /* .orbit-container { */
+  /*   max-height: 220px; */
+  /* } */
   .orbit-text {
     position: absolute;
     top: 20px;

@@ -45,7 +45,7 @@
                         <%= link "Sign out", to: session_path(@conn, :delete), method: "delete" %>
                       </li>
                     <% else %>
-                      <li><%= link "Home", to: page_path(@conn, :index), class: "nav-home" %></li>
+                      <li><%= link "Home", to: page_path(@conn, :index) %></li>
                       <li><%= link "Videos", to: page_path(@conn, :explore) %></li>
                     <% end %>
                   </ul>
