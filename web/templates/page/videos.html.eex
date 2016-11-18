@@ -25,6 +25,9 @@
     <% else %>
       Filter for '<%= @conn.query_params["tag"] %>'
     <% end %>
+    <%= if @current_user do %>
+      <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
+    <% end %>
   </h6>
   <hr>
   <%= for video <- @videos do %>
