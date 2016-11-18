@@ -46,11 +46,11 @@ defmodule Flashklip.PageController do
 
   def videos(conn, params, current_user) do
     user_id =
-      case current_user do
+      case is_nil(current_user) do
         true ->
-          current_user.id
-        _ ->
           0
+        _ ->
+          current_user.id
       end
 
     query =
@@ -87,11 +87,11 @@ defmodule Flashklip.PageController do
 
   def klips(conn, params, current_user) do
     user_id =
-      case current_user do
+      case is_nil(current_user) do
         true ->
-          current_user.id
-        _ ->
           0
+        _ ->
+          current_user.id
       end
 
     query =
