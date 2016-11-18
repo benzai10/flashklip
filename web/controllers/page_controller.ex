@@ -36,10 +36,12 @@ defmodule Flashklip.PageController do
 
     if current_user do
       changeset = Flashklip.User.username_changeset(current_user, params)
+      conn |> redirect(to: video_path(conn, :index))
+    else
+      changeset = nil
+      render(conn, "index.html", metavideos: metavideos, videos: videos, klips: klips, changeset: changeset)
     end
-    # changeset = User.username_changeset(current_user, params)
 
-    render(conn, "index.html", metavideos: metavideos, videos: videos, klips: klips, changeset: changeset)
   end
 
   def explore(conn, params, current_user) do
