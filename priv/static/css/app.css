@@ -4528,12 +4528,20 @@ hr {
   color: #2ECC40; }
   .alerts .alert-info .close-button {
     color: #2ECC40; }
+  .alerts .alert-info p {
+    color: #2ECC40;
+    padding-right: 24px;
+    margin-bottom: 0px; }
 
 .alerts .alert-error {
   border-color: #FF4136;
   color: #FF4136; }
   .alerts .alert-error .close-button {
     color: #FF4136; }
+  .alerts .alert-error p {
+    color: #FF4136;
+    padding-right: 24px;
+    margin-bottom: 0px; }
 
 .custom-field-label {
   color: dimgray;

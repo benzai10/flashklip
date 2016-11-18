@@ -2,7 +2,7 @@
   <div class="alerts">
     <%= if flash = get_flash(@conn, :info) do %>
       <div class="success callout alert-info" role="alert" data-closable>
-        <%= flash %>
+        <p><%= flash %></p>
         <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
           <span aria-hidden="true">&times;</span>
         </button>
@@ -11,7 +11,7 @@
 
     <%= if flash = get_flash(@conn, :error) do %>
       <div class="alert callout alert-error" role="alert" data-closable>
-        <%= flash %>
+        <p><%= flash %></p>
         <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
           <span aria-hidden="true">&times;</span>
         </button>

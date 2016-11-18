@@ -68,12 +68,22 @@ hr {
     .close-button {
       color: #2ECC40;
     }
+    p {
+      color: #2ECC40;
+      padding-right: 24px;
+      margin-bottom: 0px;
+    }
   }
   .alert-error {
     border-color: #FF4136;
     color: #FF4136;
     .close-button {
       color: #FF4136;
+    }
+    p {
+      color: #FF4136;
+      padding-right: 24px;
+      margin-bottom: 0px;
     }
   }
 }
