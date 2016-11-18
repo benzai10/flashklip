@@ -30,7 +30,7 @@
 
 <div class="row cta-button">
   <div class="large-6 small-centered text-center columns">
-    <%= link "More Videos and Klips", to: page_path(@conn, :explore), class: "large button" %>
+    <%= link "More Videos and Klips", to: page_path(@conn, :videos), class: "large button" %>
   </div>
 </div>
 

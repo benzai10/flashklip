@@ -21,9 +21,9 @@ defmodule Flashklip.Router do
     get "/.well-known/acme-challenge/:id", PageController, :letsencrypt
     get "/", PageController, :index
     get "/explore", PageController, :explore
-    # post "/explore", PageController, :explore
+    get "/library/videos", PageController, :videos
+    get "/library/klips", PageController, :klips
 		resources "/users", UserController, only: [:index, :show, :new, :create, :update]
-    # resources "/sessions", SessionController, only: [:new, :create, :delete]
     resources "/sessions", SessionController, only: [:new, :create, :show]
     resources "/session", SessionController, only: [:delete], singleton: true
     get "/watch/:id", WatchController, :show
@@ -39,6 +39,7 @@ defmodule Flashklip.Router do
     pipe_through [:browser]
 
     resources "/videos", VideoController
+    resources "/klips", KlipController, only: [:index]
   end
 
   scope "/manage", Flashklip do

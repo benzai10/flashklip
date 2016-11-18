@@ -1,5 +1,6 @@
 defmodule Flashklip.KlipView do
   use Flashklip.Web, :view
+  import Scrivener.HTML
 
   def render("klip.json", %{klip: klip}) do
     %{

@@ -9,6 +9,14 @@ h1, h2, h3, h4, h5, h6, p {
   color: dimgray;
 }
 
+.second-title {
+  margin-top: 16px;
+}
+
+hr {
+  margin-top: 0px;
+}
+
 .column {
   max-width: 680px;
 }
@@ -83,6 +91,24 @@ h1, h2, h3, h4, h5, h6, p {
     padding-top: 40px;
     color: #0074D9;
     font-size: 12px;
+  }
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 30px;
+  color: dimgray;
+}
+
+.current {
+  background-color: #39CCCC !important;
+  a {
+    padding: 0px;
+    background-color: #39CCCC;
+    color: white;
+    &:hover {
+      background-color: #39CCCC;
+    }
   }
 }
 
@@ -230,6 +256,19 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 
+// ***** LIBRARY PAGE *****
+.videos-row {
+  .columns {
+    padding: 4px;
+  }
+}
+
+.klips-row {
+  .columns {
+    padding: 4px;
+  }
+}
+
 // ***** SIGN IN PAGE *****
 
 .password-info {
@@ -262,6 +301,28 @@ h1, h2, h3, h4, h5, h6, p {
     margin-bottom: 4px;
   }
 }
+
+// ***** LIBRARY VIEW PAGE *****
+.library-nav {
+  margin-bottom: 20px;
+}
+
+.library-nav-column {
+  padding: 0px;
+  .library-nav-button {
+    display: inline-block;
+    margin: 0px;
+    width: 100%;
+    border: none !important;
+    &:hover {
+      border-bottom: 2px solid #39CCCC !important;
+    }
+  }
+  .active {
+    border-bottom: 2px solid #39CCCC !important;
+  }
+}
+
 
 // ***** WATCH VIDEO PAGE *****
 .flex-video {

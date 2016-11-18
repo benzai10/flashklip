@@ -4483,6 +4483,12 @@ body {
 h1, h2, h3, h4, h5, h6, p {
   color: dimgray; }
 
+.second-title {
+  margin-top: 16px; }
+
+hr {
+  margin-top: 0px; }
+
 .column, .columns {
   max-width: 680px; }
 
@@ -4540,6 +4546,20 @@ h1, h2, h3, h4, h5, h6, p {
     padding-top: 40px;
     color: #0074D9;
     font-size: 12px; }
+
+.pagination {
+  text-align: center;
+  margin-top: 30px;
+  color: dimgray; }
+
+.current {
+  background-color: #39CCCC !important; }
+  .current a {
+    padding: 0px;
+    background-color: #39CCCC;
+    color: white; }
+    .current a:hover {
+      background-color: #39CCCC; }
 
 .orbit-container {
   height: auto !important; }
@@ -4649,6 +4669,12 @@ h1, h2, h3, h4, h5, h6, p {
   width: 100%;
   height: auto; }
 
+.videos-row .columns {
+  padding: 4px; }
+
+.klips-row .columns {
+  padding: 4px; }
+
 .password-info {
   margin-top: 40px; }
 
@@ -4669,6 +4695,21 @@ h1, h2, h3, h4, h5, h6, p {
 .media-object-section hr {
   margin-top: 4px;
   margin-bottom: 4px; }
+
+.library-nav {
+  margin-bottom: 20px; }
+
+.library-nav-column {
+  padding: 0px; }
+  .library-nav-column .library-nav-button {
+    display: inline-block;
+    margin: 0px;
+    width: 100%;
+    border: none !important; }
+    .library-nav-column .library-nav-button:hover {
+      border-bottom: 2px solid #39CCCC !important; }
+  .library-nav-column .active {
+    border-bottom: 2px solid #39CCCC !important; }
 
 .flex-video {
   margin-bottom: 0; }

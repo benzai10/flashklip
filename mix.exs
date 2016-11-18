@@ -19,7 +19,7 @@ defmodule Flashklip.Mixfile do
   def application do
     [mod: {Flashklip, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger,
-                    :gettext, :phoenix_ecto, :postgrex, :comeonin, :scrivener_ecto]]
+                    :gettext, :phoenix_ecto, :postgrex, :comeonin, :scrivener_ecto, :scrivener_html]]
   end
 
   # Specifies which paths to compile per environment.
@@ -42,7 +42,8 @@ defmodule Flashklip.Mixfile do
      {:poison, "~> 2.1", override: true},
      {:comeonin, "~> 2.5"},
      {:cowboy, "~> 1.0"},
-     {:scrivener_ecto, "~> 1.0"}
+     {:scrivener_ecto, "~> 1.0"},
+     {:scrivener_html, "~> 1.1"}
     ]
   end
 

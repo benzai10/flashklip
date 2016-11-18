@@ -36,7 +36,7 @@
                   <ul class="menu sub-menu">
                     <%= if @current_user do %>
                       <%= if Enum.at(@conn.path_info, 0) == "my" do %>
-                        <li><%= link "All Flashklips", to: page_path(@conn, :explore) %></li>
+                        <li><%= link "All Flashklips", to: page_path(@conn, :videos) %></li>
                       <% else %>
                         <li><%= link "My Flashklips", to: video_path(@conn, :index) %></li>
                       <% end %>
@@ -45,7 +45,7 @@
                       </li>
                     <% else %>
                       <li><%= link "Home", to: page_path(@conn, :index) %></li>
-                      <li><%= link "Videos", to: page_path(@conn, :explore) %></li>
+                      <li><%= link "All Flashklips", to: page_path(@conn, :videos) %></li>
                     <% end %>
                   </ul>
                 </li>

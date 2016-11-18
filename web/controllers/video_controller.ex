@@ -15,53 +15,35 @@ defmodule Flashklip.VideoController do
     if is_nil(user) do
       conn |> redirect(to: session_path(conn, :new))
     end
-    search_tag = params["tag"]
-    search_string = params["search"]["search"]
-    if is_nil(search_tag) && is_nil(search_string) do
-      videos =
-        Repo.all(user_videos(user))
-        |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
-    else
-      if !is_nil(search_tag) do
-        videos =
-          Repo.all(user_videos_filtered(user, search_tag))
-          |> Enum.map(fn(v) -> Repo.preload(v, [:metavideo, :klips]) end)
-      end
-    end
-
-    if is_nil(search_string) do
-      klips = Enum.flat_map(videos, fn(v) -> v.klips end)
-
-      metavideos = Enum.map(videos, fn(v) -> v.metavideo end)
-
-      metavideos_ids =
-        metavideos
-        |> Enum.map(&(Integer.to_string(&1.id) <> ", " ))
-        |> List.to_string
-        |> String.replace_trailing(", ", "")
-
-      if String.length(metavideos_ids) > 0 do
-
-        popular_tags_query = "select unnest(tags), count(tags) from metavideos where id in" <> "(" <> metavideos_ids <> ")" <> " group by unnest(tags) order by count desc limit 30;"
-        popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
-      else
-        popular_tags = %{}
+    query =
+      case is_nil(params["tag"]) do
+        true ->
+          from v in Video,
+            where: v.user_id == ^user.id
+        _ ->
+          from v in Video,
+            join: m in Metavideo,
+            on: m.id == v.metavideo_id,
+            where: v.user_id == ^user.id and ^params["tag"] in m.tags
       end
 
-      render(conn, "index.html", videos: videos, klips: klips, metavideos: metavideos, popular_tags: popular_tags)
-    else
-      query = from k in Flashklip.Klip,
-        where: ilike(k.content, ^("%" <> search_string <> "%")) and k.user_id == ^user.id
-      klips =
-        Repo.all(query)
-        |> Repo.preload([:user, {:video, :metavideo}])
+    page =
+      query
+      |> preload(:metavideo)
+      |> Repo.paginate(params)
 
-      video_query = from v in Video, where: v.user_id == ^user.id
-      videos = Repo.all(video_query)
+    # popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30"
 
-      render(conn, "search_results.html", videos: videos, klips: klips)
-    end
+    # popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
+    render(conn, "index.html",
+      # popular_tags: popular_tags,
+      page: page,
+      videos: page.entries,
+      page_number: page.page_number,
+      page_size: page.page_size,
+      total_pages: page.total_pages,
+      total_entries: page.total_entries)
   end
 
   def new(conn, _params, user) do

@@ -1,10 +1,21 @@
 <div class="row library-nav">
   <div class="small-6 medium-3 medium-offset-3 columns library-nav-column">
-    <%= link "MY VIDEOS", to: video_path(@conn, :index), class: "hollow button library-nav-button active" %>
+    <%= link "VIDEOS", to: page_path(@conn, :videos), class: "hollow button library-nav-button active" %>
   </div>
   <div class="small-6 medium-3 columns library-nav-column end">
-    <%= link "MY KLIPS", to: klip_path(@conn, :index), class: "hollow button library-nav-button" %>
+    <%= link "KLIPS", to: page_path(@conn, :klips), class: "hollow button library-nav-button" %>
   </div>
+</div>
+
+<div class="row">
+  <h6>Popular Tags</h6>
+  <hr>
+  <%= for tag <- @popular_tags do %>
+    <span>
+      <% pop_tag_caption = Enum.at(tag, 0) <> " [" <> Integer.to_string(Enum.at(tag, 1)) <> "]"  %>
+      <%=  link pop_tag_caption, to: page_path(@conn, :videos, tag: Enum.at(tag, 0)), class: "hollow small button pop-tag-button" %>
+    </span>
+  <% end %>
 </div>
 
 <div class="row small-up-1 medium-up-2 videos-row">
@@ -19,27 +30,27 @@
   <%= for video <- @videos do %>
     <div class="columns">
       <div class="callout video-callout">
-        <a href="<%= watch_path(@conn, :show, video, v: video.id, at: 0) %>">
+        <a href="<%= watch_path(@conn, :show, video, v: 0, at: 0) %>">
           <div class="media-object">
-            <h6><%= video.metavideo.title %></h6>
+            <h6><%= video.title %></h6>
             <div class="media-object-section">
               <div class="thumbnail youtube-thumbnail">
-                <img src="https://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(video.metavideo)}" %>/mqdefault.jpg">
+                <img src="https://img.youtube.com/vi/<%="#{Flashklip.WatchView.player_id(video)}" %>/mqdefault.jpg">
               </div>
             </div>
             <div class="media-object-section">
               <p class="video-added">added: <%= Ecto.DateTime.to_date(video.inserted_at) %></p>
               <p>
-                <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span> Klips &nbsp;&nbsp;
+                <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(video) %></span> Klips &nbsp;&nbsp;
               </p>
             </div>
           </div>
           <p>
-            <%= if video.metavideo.tags && Enum.count(video.metavideo.tags) > 0 do %>
+            <%= if video.tags && Enum.count(video.tags) > 0 do %>
               <span>
                 <%= for tag <-
-                Enum.join(video.metavideo.tags, ",") |> String.split(",") do %>
-                  <%=  link tag, to: video_path(@conn, :index, tag: tag), class: "hollow tiny button tag-button" %>
+                Enum.join(video.tags, ",") |> String.split(",") do %>
+                  <%=  link tag, to: page_path(@conn, :videos, tag: tag), class: "hollow tiny button tag-button" %>
                 <% end %>
               </span>
             <% end %>
