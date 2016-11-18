@@ -1,23 +1,11 @@
 <div class="row">
   <h4 class="index-title">
-    My Flashklip
+    My Flashklips
   </h4>
 </div>
 
 <div class="row">
   <div class="callout dashboard-callout">
-    <h6>
-      Dashboard
-    </h6>
-    <hr>
-    <div class="row">
-      <div class="small-6 column">
-        <span class="video-klips-count badge"><%= Enum.count(@videos) %></span> Videos
-      </div>
-      <div class="small-6 column">
-        <span class="video-klips-count badge"><%= Enum.count(@klips) %></span> Klips
-      </div>
-    </div>
     <h6 id="pop-tags-title">Tags</h6>
     <hr>
     <%= if Enum.count(@popular_tags) == 0 do %>
@@ -44,7 +32,7 @@
 
 <div class="row">
   <h4>
-    Resources
+    My Library
     <%= if @conn.params["tag"] do %>
       <%= link "Reset Filter", to: page_path(@conn, :explore), class: "float-right button reset-filter-button" %>
     <% end %>

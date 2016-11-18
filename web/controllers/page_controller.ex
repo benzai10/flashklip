@@ -61,35 +61,6 @@ defmodule Flashklip.PageController do
           true -> user_klips_index(current_user)
           _ -> klips_index
         end
-      # if current_user do
-      #   not_copied_klips_query = from k in Klip,
-      #     where: k.copy_from == 0 and k.user_id != ^current_user.id,
-      #     order_by: [desc: :updated_at]
-
-      #   own_copied_klips_query = from k in Klip,
-      #     where: k.user_id == ^current_user.id and k.copy_from > 0,
-      #     order_by: [desc: :updated_at]
-
-      #   klips_query = from k in not_copied_klips_query,
-      #     left_join: o in subquery(own_copied_klips_query),
-      #     on: k.id == o.copy_from,
-      #     where: is_nil(o.copy_from),
-      #     order_by: [desc: :updated_at],
-      #     limit: 50
-
-      #   klips =
-      #     Repo.all(klips_query)
-      #     |> Repo.preload([:user, {:video, :metavideo}])
-      # else
-      #     klips_query = from k in Klip,
-      #       where: k.copy_from == 0,
-      #       order_by: [desc: :updated_at],
-      #       limit: 50
-
-      #     klips =
-      #       Repo.all(klips_query)
-      #       |> Repo.preload([:user, {:video, :metavideo}])
-      # end
 
       popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30"
 
@@ -100,7 +71,7 @@ defmodule Flashklip.PageController do
         metavideos: metavideos,
         videos: videos,
         klips: klips,
-        video_tab_title: "Resources",
+        video_tab_title: "Library",
         tags_callout_title: "Popular Tags"
       )
     else
