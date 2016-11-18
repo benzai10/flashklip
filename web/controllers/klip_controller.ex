@@ -14,10 +14,12 @@ defmodule Flashklip.KlipController do
       case is_nil(params["search"]) do
         true ->
           from k in Klip,
-            where: k.user_id == ^user.id
+            where: k.user_id == ^user.id,
+            order_by: [desc: :updated_at]
         _ ->
           from k in Klip,
-            where: k.user_id == ^user.id and ilike(k.content, ^("%" <> params["search"]["search"] <> "%"))
+            where: k.user_id == ^user.id and ilike(k.content, ^("%" <> params["search"]["search"] <> "%")),
+            order_by: [desc: :updated_at]
       end
 
     page =

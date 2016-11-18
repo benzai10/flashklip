@@ -7,6 +7,17 @@
   </div>
 </div>
 
+<div class="row">
+  <h6>Most Used Tags</h6>
+  <hr>
+  <%= for tag <- @popular_tags do %>
+    <span>
+      <% pop_tag_caption = Enum.at(tag, 0) <> " [" <> Integer.to_string(Enum.at(tag, 1)) <> "]"  %>
+      <%=  link pop_tag_caption, to: video_path(@conn, :index, tag: Enum.at(tag, 0)), class: "hollow small button pop-tag-button" %>
+    </span>
+  <% end %>
+</div>
+
 <div class="row small-up-1 medium-up-2 videos-row">
   <h6 class="second-title">
     <%= if is_nil(@conn.query_params["tag"]) do %>

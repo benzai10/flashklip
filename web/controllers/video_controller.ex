@@ -19,12 +19,14 @@ defmodule Flashklip.VideoController do
       case is_nil(params["tag"]) do
         true ->
           from v in Video,
-            where: v.user_id == ^user.id
+            where: v.user_id == ^user.id,
+            order_by: [desc: :updated_at]
         _ ->
           from v in Video,
             join: m in Metavideo,
             on: m.id == v.metavideo_id,
-            where: v.user_id == ^user.id and ^params["tag"] in m.tags
+            where: v.user_id == ^user.id and ^params["tag"] in m.tags,
+            order_by: [desc: :updated_at]
       end
 
     page =
@@ -32,12 +34,12 @@ defmodule Flashklip.VideoController do
       |> preload(:metavideo)
       |> Repo.paginate(params)
 
-    # popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30"
+    popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30"
 
-    # popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+    popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
 
     render(conn, "index.html",
-      # popular_tags: popular_tags,
+      popular_tags: popular_tags,
       page: page,
       videos: page.entries,
       page_number: page.page_number,

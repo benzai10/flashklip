@@ -24,6 +24,7 @@ defmodule Flashklip.PageController do
       |> Repo.preload(:videos)
 
     videos_query = from v in Video,
+      order_by: [desc: :updated_at],
       limit: 50
 
     videos = Repo.all(videos_query)
@@ -59,12 +60,14 @@ defmodule Flashklip.PageController do
           from m in Metavideo,
             left_join: v in Video,
             on: m.id == v.metavideo_id and v.user_id == ^user_id,
-            where: is_nil(v.user_id)
+            where: is_nil(v.user_id),
+            order_by: [desc: :updated_at]
         _ ->
           from m in Metavideo,
             left_join: v in Video,
             on: m.id == v.metavideo_id and v.user_id == ^user_id,
-            where: is_nil(v.user_id) and ^params["tag"] in m.tags
+            where: is_nil(v.user_id) and ^params["tag"] in m.tags,
+            order_by: [desc: :updated_at]
       end
 
     page =
@@ -98,10 +101,12 @@ defmodule Flashklip.PageController do
       case is_nil(params["search"]["search"]) do
         true ->
           from k in Klip,
-          where: k.user_id != ^user_id and k.copy_from == 0
+            where: k.user_id != ^user_id and k.copy_from == 0,
+            order_by: [desc: :updated_at]
         _ ->
           from k in Klip,
-            where: k.user_id != ^user_id and k.copy_from == 0 and ilike(k.content, ^("%" <> params["search"]["search"] <> "%"))
+            where: k.user_id != ^user_id and k.copy_from == 0 and ilike(k.content, ^("%" <> params["search"]["search"] <> "%")),
+            order_by: [desc: :updated_at]
       end
 
     page =
@@ -147,6 +152,7 @@ defmodule Flashklip.PageController do
       left_join: o in subquery(own_copied_klips_query),
       on: k.id == o.copy_from,
       where: is_nil(o.copy_from),
+      order_by: [desc: :udpated_at],
       limit: 50
 
     Repo.all(klips_query)
