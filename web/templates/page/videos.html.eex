@@ -33,7 +33,11 @@
   <%= for video <- @videos do %>
     <div class="columns">
       <div class="callout video-callout">
-        <a href="<%= watch_path(@conn, :show, video, v: 0, at: 0) %>">
+        <%= if is_nil(video.user_video_id) do %>
+          <a href="<%= watch_path(@conn, :show, video, v: 0, at: 0) %>">
+        <% else %>
+          <a href="<%= watch_path(@conn, :show, video.user_video_id, v: video.user_video_id, at: 0) %>">
+        <% end %>
           <div class="media-object">
             <h6><%= video.title %></h6>
             <div class="media-object-section">

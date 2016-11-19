@@ -13,6 +13,7 @@ defmodule Flashklip.Metavideo do
     field :youtube_video_id, :string
     field :created_by, :integer
     field :tags, {:array, :string}
+    field :user_video_id, :integer, virtual: true
     has_many :videos, Video, on_delete: :delete_all
 
     timestamps()
@@ -27,7 +28,7 @@ defmodule Flashklip.Metavideo do
   def changeset(struct, params \\ %{}) do
     struct
     |> get_title()
-    |> cast(params, [:url, :title, :youtube_video_id, :tags, :created_by])
+    |> cast(params, [:url, :title, :youtube_video_id, :tags, :created_by, :user_video_id])
     |> validate_required([:url])
     |> validate_required([:title])
     |> unique_constraint(:youtube_video_id)

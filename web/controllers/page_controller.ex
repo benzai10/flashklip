@@ -60,19 +60,23 @@ defmodule Flashklip.PageController do
           from m in Metavideo,
             left_join: v in Video,
             on: m.id == v.metavideo_id and v.user_id == ^user_id,
-            where: is_nil(v.user_id),
-            order_by: [desc: :updated_at]
+            order_by: [desc: :updated_at],
+            select: %{id: m.id, inserted_at: m.inserted_at, updated_at: m.updated_at, url: m.url, title: m.title, youtube_video_id: m.youtube_video_id, user_video_id: v.id}
         _ ->
           from m in Metavideo,
             left_join: v in Video,
             on: m.id == v.metavideo_id and v.user_id == ^user_id,
-            where: is_nil(v.user_id) and ^params["tag"] in m.tags,
-            order_by: [desc: :updated_at]
+            order_by: [desc: :updated_at],
+            select: %{id: m.id, inserted_at: m.inserted_at, updated_at: m.updated_at, url: m.url, title: m.title, youtube_video_id: m.youtube_video_id, user_video_id: v.id}
       end
 
     page =
       query
       |> Repo.paginate(params)
+
+    page_entries =
+      page.entries
+      |> Enum.map(fn(video) -> struct(Metavideo, video) end)
 
     popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30"
 
@@ -81,7 +85,7 @@ defmodule Flashklip.PageController do
     render(conn, "videos.html",
       popular_tags: popular_tags,
       page: page,
-      videos: page.entries,
+      videos: page_entries,
       page_number: page.page_number,
       page_size: page.page_size,
       total_pages: page.total_pages,
@@ -101,11 +105,11 @@ defmodule Flashklip.PageController do
       case is_nil(params["search"]["search"]) do
         true ->
           from k in Klip,
-            where: k.user_id != ^user_id and k.copy_from == 0,
+            where: k.copy_from == 0,
             order_by: [desc: :updated_at]
         _ ->
           from k in Klip,
-            where: k.user_id != ^user_id and k.copy_from == 0 and ilike(k.content, ^("%" <> params["search"]["search"] <> "%")),
+            where: ilike(k.content, ^("%" <> params["search"]["search"] <> "%")),
             order_by: [desc: :updated_at]
       end
 
