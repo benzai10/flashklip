@@ -109,7 +109,7 @@ defmodule Flashklip.PageController do
             order_by: [desc: :updated_at]
         _ ->
           from k in Klip,
-            where: ilike(k.content, ^("%" <> params["search"]["search"] <> "%")),
+            where: k.copy_from == 0 and ilike(k.content, ^("%" <> params["search"]["search"] <> "%")),
             order_by: [desc: :updated_at]
       end
 
