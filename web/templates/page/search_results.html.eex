@@ -10,16 +10,11 @@
     <p>Sorry, no search results found.</p>
   <% else %>
     <%= for klip <- @klips do %>
-      <%= if @current_user do %>
-        <% klip_video_id = Flashklip.Helpers.video_id_for_klip(@videos, klip, @current_user.id) %>
-      <% else %>
-        <% klip_video_id = nil %>
-      <% end %>
       <div class="columns klips-search-results">
         <%= render "klip.html",
         conn: @conn,
         current_user: @current_user,
-        klip_video_id: klip_video_id,
+        klip_video_id: klip_video_id(@current_user, klip, @videos),
         klip: klip,
         metavideo: klip.video.metavideo %>
       </div>

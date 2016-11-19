@@ -213,9 +213,4 @@ defmodule Flashklip.VideoController do
     assoc(user, :videos)
   end
 
-  defp user_videos_filtered(user, search_tag) do
-    query = from v in Video,
-      join: m in Metavideo, on: v.metavideo_id == m.id and ^search_tag in m.tags,
-      where: v.user_id == ^user.id
-  end
 end

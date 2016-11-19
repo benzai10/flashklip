@@ -3,7 +3,6 @@ defmodule Flashklip.PageController do
   require IEx
 
   alias Flashklip.{
-    User,
     Metavideo,
     Video,
     Klip

@@ -28,20 +28,6 @@ defmodule Flashklip.MetavideoController do
     end
   end
 
-  # def create(conn, %{"metavideo" => metavideo_params, "taggles" => tags_params}) do
-  #   changeset =
-  #     Metavideo.changeset(%Metavideo{},
-  #       Map.merge(metavideo_params, %{"tags" => tags_params}))
-
-  #   case Repo.insert(changeset) do
-  #     {:ok, _metavideo} ->
-  #       conn
-  #       |> put_flash(:info, "Metavideo created successfully.")
-  #       |> redirect(to: metavideo_path(conn, :index))
-  #     {:error, changeset} ->
-  #       render(conn, "new.html", changeset: changeset)
-  #   end
-  # end
 
   def show(conn, %{"id" => id}) do
     metavideo = Repo.get!(Metavideo, id)
@@ -70,7 +56,7 @@ defmodule Flashklip.MetavideoController do
     end
   end
 
-  def update(conn, %{"id" => id, "metavideo" => metavideo_params}) do
+  def update(conn, %{"id" => id, "metavideo" => _metavideo_params}) do
     metavideo = Repo.get!(Metavideo, id)
     changeset = Metavideo.changeset(metavideo)
 
