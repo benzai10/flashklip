@@ -65,6 +65,7 @@ defmodule Flashklip.PageController do
           from m in Metavideo,
             left_join: v in Video,
             on: m.id == v.metavideo_id and v.user_id == ^user_id,
+            where: ^params["tag"] in m.tags,
             order_by: [desc: :updated_at],
             select: %{id: m.id, inserted_at: m.inserted_at, updated_at: m.updated_at, url: m.url, title: m.title, youtube_video_id: m.youtube_video_id, user_video_id: v.id}
       end
