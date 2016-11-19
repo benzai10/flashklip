@@ -3377,12 +3377,7 @@ body {
     font-size: 0.875rem;
     margin-right: 0.0625rem;
     border-radius: 0;
-    display: none; }
-    .pagination li:last-child, .pagination li:first-child {
-      display: inline-block; }
-    @media screen and (min-width: 40em) {
-      .pagination li {
-        display: inline-block; } }
+    display: inline-block; }
   .pagination a,
   .pagination button {
     color: #0a0a0a;
