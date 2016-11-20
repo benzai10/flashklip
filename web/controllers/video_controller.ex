@@ -71,34 +71,43 @@ defmodule Flashklip.VideoController do
                     metavideo
                 end
 
-    metavideo_changeset = Metavideo.changeset(metavideo, %{"tags" => conn.params["taggles"]})
+    # check for existing video
+    video = Repo.get_by(Video, metavideo_id: metavideo.id, user_id: user.id)
 
-    if metavideo_changeset.valid? do
-      metavideo = Repo.insert_or_update!(metavideo_changeset)
-
-      changeset =
-        user
-        |> build_assoc(:videos, metavideo_id: metavideo.id)
-        |> Video.changeset(video_params)
-
-      case Repo.insert(changeset) do
-        {:ok, video} ->
-          conn
-          |> put_flash(:info, "Video [#{metavideo.title}] got added successfully.")
-          |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
-        {:error, changeset} ->
-          render(conn, "new.html", changeset: changeset)
-      end
-    else
-      changeset =
-        user
-        |> build_assoc(:videos)
-        |> Video.changeset(%{"error" => "empty or invalid url"})
-
+    if !is_nil(video) do
       conn
-      |> put_flash(:error, "Empty or invalid Youtube link")
-      |> redirect(to: video_path(conn, :new))
-      # render(conn, "new.html", changeset: changeset)
+      |> put_flash(:info, "You already added this video. Here it is!")
+      |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
+    else
+      metavideo_changeset = Metavideo.changeset(metavideo, %{"tags" => conn.params["taggles"]})
+
+      if metavideo_changeset.valid? do
+        metavideo = Repo.insert_or_update!(metavideo_changeset)
+
+        changeset =
+          user
+          |> build_assoc(:videos, metavideo_id: metavideo.id)
+          |> Video.changeset(video_params)
+
+        case Repo.insert(changeset) do
+          {:ok, video} ->
+            conn
+            |> put_flash(:info, "Video [#{metavideo.title}] got added successfully.")
+            |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
+          {:error, changeset} ->
+            render(conn, "new.html", changeset: changeset)
+        end
+      else
+        changeset =
+          user
+          |> build_assoc(:videos)
+          |> Video.changeset(%{"error" => "empty or invalid url"})
+
+        conn
+        |> put_flash(:error, "Empty or invalid Youtube link")
+        |> redirect(to: video_path(conn, :new))
+        # render(conn, "new.html", changeset: changeset)
+      end
     end
   end
 
@@ -110,32 +119,39 @@ defmodule Flashklip.VideoController do
                   metavideo ->
                     metavideo
     end
+    # check for existing video
+    video = Repo.get_by(Video, metavideo_id: metavideo.id, user_id: user.id)
 
-    metavideo_changeset = Metavideo.changeset(metavideo)
-
-    if metavideo_changeset.valid? do
-      metavideo = Repo.insert_or_update!(metavideo_changeset)
-      changeset =
-        user
-        |> build_assoc(:videos, metavideo_id: metavideo.id)
-        |> Video.changeset(video_params)
-
-      case Repo.insert(changeset) do
-        {:ok, video} ->
-          conn
-          |> put_flash(:info, "Video [#{metavideo.title}] got added successfully.")
-          |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
-          |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
-        {:error, changeset} ->
-          render(conn, "new.html", changeset: changeset)
-      end
+    if !is_nil(video) do
+      conn
+      |> put_flash(:info, "You already added this video. Here it is!")
+      |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
     else
-      changeset =
-        user
-        |> build_assoc(:videos)
-        |> Video.changeset()
+      metavideo_changeset = Metavideo.changeset(metavideo)
 
-      render(conn, "new.html", changeset: changeset)
+      if metavideo_changeset.valid? do
+        metavideo = Repo.insert_or_update!(metavideo_changeset)
+        changeset =
+          user
+          |> build_assoc(:videos, metavideo_id: metavideo.id)
+          |> Video.changeset(video_params)
+
+        case Repo.insert(changeset) do
+          {:ok, video} ->
+            conn
+            |> put_flash(:info, "Video [#{metavideo.title}] got added successfully.")
+            |> redirect(to: watch_path(conn, :show, video, v: video.id, at: 0))
+          {:error, changeset} ->
+            render(conn, "new.html", changeset: changeset)
+        end
+      else
+        changeset =
+          user
+          |> build_assoc(:videos)
+          |> Video.changeset()
+
+        render(conn, "new.html", changeset: changeset)
+      end
     end
   end
 
