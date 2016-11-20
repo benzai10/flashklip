@@ -72,7 +72,9 @@ defmodule Flashklip.VideoController do
                 end
 
     # check for existing video
-    video = Repo.get_by(Video, metavideo_id: metavideo.id, user_id: user.id)
+    if !is_nil(metavideo.id) do
+      video = Repo.get_by(Video, metavideo_id: metavideo.id, user_id: user.id)
+    end
 
     if !is_nil(video) do
       conn
@@ -120,7 +122,9 @@ defmodule Flashklip.VideoController do
                     metavideo
     end
     # check for existing video
-    video = Repo.get_by(Video, metavideo_id: metavideo.id, user_id: user.id)
+    if !is_nil(metavideo.id) do
+      video = Repo.get_by(Video, metavideo_id: metavideo.id, user_id: user.id)
+    end
 
     if !is_nil(video) do
       conn
