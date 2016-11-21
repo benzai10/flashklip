@@ -7,11 +7,11 @@
 
 <div class="row" id="tabs-container">
   <ul class="tabs" data-tabs id="klipTabs">
-    <li class="tabs-title is-active" id="timeview-tab">
-      <a href="#live" aria-selected="true">TIMEVIEW</a>
-    </li>
-    <li class="tabs-title" id="overview-tab">
+    <li class="tabs-title <%= @active_navi %>" id="overview-tab">
       <a href="#navi" id="overview-title">ALL KLIPS</a>
+    </li>
+    <li class="tabs-title <%= @active_live %>" id="timeview-tab">
+      <a href="#live" aria-selected="true">TIMEVIEW</a>
     </li>
     <%= if @current_user && @video_user_id == @current_user.id do %>
       <li class="tabs-title <%= @show %>" id="add-klip-tab">
@@ -37,7 +37,18 @@
 
 <div class="row">
   <div class="tabs-content" data-tabs-content="klipTabs">
-    <div class="tabs-panel is-active tabs-panel-watchview" id="live">
+    <div class="tabs-panel tabs-panel-watchview <%= @active_navi %>" id="navi">
+      <div id="all-klips-container">
+        <%= if !@current_user || @current_user.id != @user_video_id do %>
+        <%#= if !@current_user do %>
+          <%= for klip <- @klips do %>
+            <%= render "klip.html", klip: klip %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="tabs-panel tabs-panel-watchview <%= @active_live %>" id="live">
       <div id="live-klip-container">
         <%= if !@current_user do %>
           <p>Timeview is only available for logged in users.</p>
@@ -81,17 +92,6 @@
           <button type="button" class="small hollow button hide" id="klip-cancel-edit">Cancel Edit</button>
           <button type="button" class="small hollow button hide" id="klip-save-in-timeview">Save</button>
         </span>
-      </div>
-    </div>
-
-    <div class="tabs-panel tabs-panel-watchview" id="navi">
-      <div id="all-klips-container">
-        <%= if !@current_user || @current_user.id != @user_video_id do %>
-        <%#= if !@current_user do %>
-          <%= for klip <- @klips do %>
-            <%= render "klip.html", klip: klip %>
-          <% end %>
-        <% end %>
       </div>
     </div>
 

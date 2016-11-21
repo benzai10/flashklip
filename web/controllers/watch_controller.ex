@@ -11,7 +11,6 @@ defmodule Flashklip.WatchController do
         _ -> 0
       end
 
-    # if v > 0 && user_id != 0 do
     if String.to_integer(v) > 0 do
       video =
         Repo.get!(Video, id)
@@ -41,8 +40,21 @@ defmodule Flashklip.WatchController do
           _ ->
             "hide"
         end
-
-      render conn, "show.html", user_id: user_id, video: video.metavideo, user_video: video, user_video_id: video.id, klips: klips, show: show, at: at, video_user_id: video.user_id
+      active_navi =
+        case String.to_integer(at) > 0 do
+          true ->
+            ""
+          _ ->
+            "is-active"
+        end
+      active_live =
+        case String.to_integer(at) > 0 do
+          true ->
+            "is-active"
+          _ ->
+            ""
+        end
+      render conn, "show.html", user_id: user_id, video: video.metavideo, user_video: video, user_video_id: video.id, klips: klips, show: show, at: at, video_user_id: video.user_id, active_navi: active_navi, active_live: active_live
     else
       metavideo =
         Repo.get!(Metavideo, id)
@@ -63,7 +75,21 @@ defmodule Flashklip.WatchController do
           _ ->
             "hide"
         end
-      render conn, "show.html", user_id: user_id, video: metavideo, user_video: nil, user_video_id: 0, klips: klips, show: show, at: at, video_user_id: 0
+      active_navi =
+        case String.to_integer(at) > 0 do
+          true ->
+            ""
+          _ ->
+            "is-active"
+        end
+      active_live =
+        case String.to_integer(at) > 0 do
+          true ->
+            "is-active"
+          _ ->
+            ""
+        end
+      render conn, "show.html", user_id: user_id, video: metavideo, user_video: nil, user_video_id: 0, klips: klips, show: show, at: at, video_user_id: 0, active_navi: active_navi, active_live: active_live
     end
   end
 end
