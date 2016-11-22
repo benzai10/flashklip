@@ -13,6 +13,9 @@
   <span>
     <%= link "overdue videos", to: video_path(@conn, :index, filter: "overdue"), class: "hollow alert small button pop-tag-button" %>
   </span>
+  <span>
+    <%= link "scheduled videos", to: video_path(@conn, :index, filter: "scheduled"), class: "hollow success small button pop-tag-button" %>
+  </span>
   <%= for tag <- @popular_tags do %>
     <span>
       <% pop_tag_caption = Enum.at(tag, 0) <> " [" <> Integer.to_string(Enum.at(tag, 1)) <> "]"  %>
@@ -23,15 +26,7 @@
 
 <div class="row small-up-1 medium-up-2 videos-row">
   <h6 class="second-title">
-    <%= if is_nil(@conn.query_params["tag"]) && is_nil(@conn.query_params["filter"]) do %>
-      All
-    <% else %>
-      <%= if !is_nil(@conn.query_params["tag"]) do %>
-        Filter for '<%= @conn.query_params["tag"] %>'
-      <% else %>
-        Filter for overdue Videos
-      <% end %>
-    <% end %>
+    <%= @title_display %>
     <%= if @current_user do %>
       <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>
     <% end %>
@@ -50,6 +45,9 @@
             </div>
             <div class="media-object-section">
               <p class="video-added">added: <%= Ecto.DateTime.to_date(video.inserted_at) %></p>
+              <%= if !is_nil(video.scheduled_at) do %>
+                <p class="video-added">sched.: <%= DateTime.to_date(video.scheduled_at) %></p>
+              <% end %>
               <p>
                 <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span> Klips &nbsp;&nbsp;
               </p>

@@ -17,17 +17,21 @@ defmodule Flashklip.VideoController do
       conn |> redirect(to: session_path(conn, :new))
     end
     query =
-      case is_nil(params["tag"]) do
-        true ->
-          case is_nil(params["filter"]) do
+      case params["tag"] do
+        nil ->
+          case params["filter"] do
             true ->
               from v in Video,
                 where: v.user_id == ^user.id,
                 order_by: [desc: :updated_at]
-            _ ->
+            "overdue" ->
               from v in Video,
                 where: v.user_id == ^user.id and v.scheduled_at < ^Timex.now,
                 order_by: [desc: :scheduled_at]
+            _ ->
+              from v in Video,
+                where: v.user_id == ^user.id and v.scheduled_at > ^Timex.now,
+                order_by: [asc: :scheduled_at]
           end
         _ ->
           from v in Video,
@@ -35,6 +39,21 @@ defmodule Flashklip.VideoController do
             on: m.id == v.metavideo_id,
             where: v.user_id == ^user.id and ^params["tag"] in m.tags,
             order_by: [desc: :updated_at]
+      end
+
+    title_display =
+      case params["tag"] do
+        nil ->
+          case params["filter"] do
+            nil ->
+              "All"
+            "overdue" ->
+              "Filter for overdue Videos"
+            _ ->
+              "Filter for scheduled Videos"
+          end
+        _ ->
+          "Filter for '" <> params["tag"] <> "'"
       end
 
     page =
@@ -53,7 +72,8 @@ defmodule Flashklip.VideoController do
       page_number: page.page_number,
       page_size: page.page_size,
       total_pages: page.total_pages,
-      total_entries: page.total_entries)
+      total_entries: page.total_entries,
+      title_display: title_display)
   end
 
   def new(conn, _params, user) do

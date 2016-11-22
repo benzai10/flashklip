@@ -4663,7 +4663,7 @@ hr {
 .video-added {
   font-size: 12px;
   color: grey;
-  margin-bottom: 10px; }
+  margin-bottom: 2px; }
 
 .klip-thumbnail-column {
   padding-left: 0px; }
@@ -4676,7 +4676,10 @@ hr {
   padding: 4px; }
 
 .klips-row .columns {
-  padding: 4px; }
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+  padding-top: 0px; }
 
 .password-info {
   margin-top: 40px; }
@@ -4693,6 +4696,7 @@ hr {
   font-weight: 700; }
 
 .video-klips-count {
+  margin-top: 10px;
   font-size: 14px; }
 
 .media-object-section hr {
@@ -4883,6 +4887,7 @@ hr {
   .navi-button {
     margin-top: -4px; }
   .klip-callout {
+    margin-bottom: 0px;
     padding: 2px; }
     .klip-callout .column, .klip-callout .columns {
       padding: 0px; }
