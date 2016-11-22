@@ -4717,6 +4717,22 @@ hr {
 .flex-video {
   margin-bottom: 0; }
 
+#schedule-klip-tab {
+  padding-left: 2px !important;
+  padding-right: 2px !important; }
+  #schedule-klip-tab a {
+    padding-top: 6px !important;
+    padding-bottom: 4px !important;
+    font-size: 22px !important; }
+
+#edit-klip-tab {
+  padding-left: 2px !important;
+  padding-right: 0px !important; }
+  #edit-klip-tab a {
+    padding-top: 6px !important;
+    padding-bottom: 4px !important;
+    font-size: 22px !important; }
+
 #add-klip .callout {
   border: none; }
 
@@ -4742,8 +4758,8 @@ hr {
   #schedule-video .callout {
     border: none;
     padding-top: 8px;
-    padding-left: 34px;
-    padding-right: 20px; }
+    padding-left: 38px;
+    padding-right: 24px; }
 
 #live-klip-container {
   min-height: 60px;
@@ -4893,6 +4909,27 @@ hr {
     padding-right: 16px; }
   .video-added {
     margin-bottom: 0px; }
+  #schedule-klip-tab {
+    padding-left: 2px !important;
+    padding-right: 2px !important; }
+    #schedule-klip-tab a {
+      padding-top: 6px !important;
+      padding-bottom: 4px !important;
+      font-size: 22px !important; }
+  #edit-klip-tab {
+    padding-left: 2px !important;
+    padding-right: 0px !important; }
+    #edit-klip-tab a {
+      padding-top: 6px !important;
+      padding-bottom: 4px !important;
+      font-size: 22px !important; }
+  #schedule-video {
+    padding-top: 8px !important; }
+    #schedule-video .callout {
+      border: none;
+      padding-top: 8px;
+      padding-left: 6px;
+      padding-right: 8px; }
   #edit-video hr {
     margin-top: 4px !important;
     margin-bottom: 4px !important; }
