@@ -929,7 +929,11 @@ let Video = {
   formatTime(at) {
     let date = new Date(null)
     date.setSeconds(at / 1000)
-    return date.toISOString().substr(14, 5)
+    if (at < 3600000) {
+      return date.toISOString().substr(14, 5)
+    } else {
+      return date.toISOString().substr(11, 8)
+    }
   }
 
 }
