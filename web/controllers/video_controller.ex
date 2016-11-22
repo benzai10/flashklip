@@ -20,18 +20,18 @@ defmodule Flashklip.VideoController do
       case params["tag"] do
         nil ->
           case params["filter"] do
-            true ->
-              from v in Video,
-                where: v.user_id == ^user.id,
-                order_by: [desc: :updated_at]
             "overdue" ->
               from v in Video,
                 where: v.user_id == ^user.id and v.scheduled_at < ^Timex.now,
                 order_by: [desc: :scheduled_at]
-            _ ->
+            "scheduled" ->
               from v in Video,
                 where: v.user_id == ^user.id and v.scheduled_at > ^Timex.now,
                 order_by: [asc: :scheduled_at]
+            _ ->
+              from v in Video,
+                where: v.user_id == ^user.id,
+                order_by: [desc: :updated_at]
           end
         _ ->
           from v in Video,
@@ -45,12 +45,12 @@ defmodule Flashklip.VideoController do
       case params["tag"] do
         nil ->
           case params["filter"] do
-            nil ->
-              "All"
             "overdue" ->
               "Filter for overdue Videos"
-            _ ->
+            "scheduled" ->
               "Filter for scheduled Videos"
+            _ ->
+              "All"
           end
         _ ->
           "Filter for '" <> params["tag"] <> "'"
@@ -61,9 +61,9 @@ defmodule Flashklip.VideoController do
       |> preload(:metavideo)
       |> Repo.paginate(params)
 
-    popular_tags_query = "select unnest(tags), count(tags) from metavideos group by unnest(tags) order by count desc limit 30"
+    popular_tags_query = "select unnest(tags), count(tags) from metavideos right join videos on metavideos.id = videos.metavideo_id where videos.user_id = $1 group by unnest(tags) order by count desc limit 30"
 
-    popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, []).rows
+    popular_tags = Ecto.Adapters.SQL.query!(Repo, popular_tags_query, [user.id]).rows
 
     render(conn, "index.html",
       popular_tags: popular_tags,
