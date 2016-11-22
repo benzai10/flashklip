@@ -61,9 +61,11 @@ let Video = {
     let saveButtonInTView = document.getElementById("klip-save-in-timeview")
     let deleteButton      = document.getElementById("klip-delete")
     let hideButton        = document.getElementById("klip-hide")
+    let scheduleButton    = document.getElementById("submit-schedule-video")
     let editButton        = document.getElementById("klip-edit")
     let cancelEditButton  = document.getElementById("klip-cancel-edit")
     let editKlipTab       = document.getElementById("edit-klip-tab")
+    let scheduledDate     = document.getElementById("scheduled-date")
 
     let klipInput         = document.getElementById("klip-input")
     let updateButton      = document.getElementById("klip-update")
@@ -396,6 +398,26 @@ let Video = {
       vidChannel.push("update_klip", payload)
         .receive("error", e => console.log(e) )
 
+    })
+
+    scheduleButton.addEventListener("click", e => {
+      let scheduledIn = $("#scheduled-value").val()
+      let payload = {
+        id: this.userVideoId,
+        scheduled_at: scheduledIn
+      }
+      vidChannel.push("schedule_video", payload)
+      .receive("error", e => console.log(e))
+    })
+
+    vidChannel.on("schedule_video", (resp) => {
+      if (resp.id == this.userVideoId) {
+        if (resp.scheduled_at) {
+          scheduledDate.innerHTML = "Re-watching video is scheduled for: " + resp.scheduled_at.substring(0, 10)
+        } else {
+          scheduledDate.innerHTML = "Re-watching video is not scheduled."
+        }
+      }
     })
 
     editButton.addEventListener("click", e => {

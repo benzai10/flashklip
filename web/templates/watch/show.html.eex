@@ -27,6 +27,9 @@
       </li>
     <% else %>
       <%= if @current_user && @video_user_id == @current_user.id do %>
+        <li class="tabs-title <%= @show %>" id="schedule-klip-tab">
+          <a href="#schedule-video"><i class="fi-calendar"></i></a>
+        </li>
         <li class="tabs-title <%= @show %> float-right" id="edit-klip-tab">
           <a href="#edit-video"><i class="fi-widget"></i></a>
         </li>
@@ -132,9 +135,34 @@
     </div>
 
     <%= if @current_user && @video_user_id == @current_user.id do %>
+      <div class="tabs-panel tabs-panel-watchview" id="schedule-video">
+        <div class="callout">
+          <div class="row">
+            <p>
+              <%= if !is_nil(@scheduled_at) do %>
+                <span id="scheduled-date">Re-watching video is scheduled for: <%= @scheduled_at %></span>
+              <% else %>
+                <span id="scheduled-date">Re-watching video is not scheduled.</span>
+              <% end %>
+            </p>
+            <label>Change schedule date to:
+              <select id="scheduled-value">
+                <option value="none">None</option>
+                <option value="tomorrow">Tomorrow</option>
+                <option value="3d">In 3 days</option>
+                <option value="1w">In 1 week</option>
+                <option value="1m">In 1 month</option>
+                <option value="6m">In 6 months</option>
+              </select>
+            </label>
+            <button type="button" class="small hollow button float-right" id="submit-schedule-video">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="tabs-panel tabs-panel-watchview" id="edit-video">
         <div class="callout">
-
           <div class="row">
             <div class="small-8 columns small-text">
               <p>Save Klips and determine which Klips show up in the Timeview in your individual Klips view.</p>

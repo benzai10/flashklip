@@ -97,6 +97,26 @@ defmodule Flashklip.VideoChannel do
     end
   end
 
+  def handle_in("schedule_video", params, _user, socket) do
+    video =
+      Flashklip.Repo.get(Flashklip.Video, params["id"])
+
+    changeset =
+      video
+      |> Flashklip.Video.schedule_changeset(params)
+
+    case Flashklip.Repo.update(changeset) do
+      {:ok, video} ->
+        broadcast! socket, "schedule_video", %{
+          id: video.id,
+          scheduled_at: video.scheduled_at
+        }
+        {:reply, :ok, socket}
+      {:error, changeset} ->
+        {:reply, {:error, %{errors: changeset}}, socket}
+    end
+  end
+
   def handle_in("update_klip", params, _user, socket) do
     user = Flashklip.Repo.get(Flashklip.User, socket.assigns.user_id)
     klip = Flashklip.Repo.get!(Flashklip.Klip, params["id"])

@@ -10,6 +10,9 @@
 <div class="row">
   <h6>Most Used Tags</h6>
   <hr>
+  <span>
+    <%= link "overdue videos", to: video_path(@conn, :index, filter: "overdue"), class: "hollow alert small button pop-tag-button" %>
+  </span>
   <%= for tag <- @popular_tags do %>
     <span>
       <% pop_tag_caption = Enum.at(tag, 0) <> " [" <> Integer.to_string(Enum.at(tag, 1)) <> "]"  %>
@@ -20,10 +23,14 @@
 
 <div class="row small-up-1 medium-up-2 videos-row">
   <h6 class="second-title">
-    <%= if is_nil(@conn.query_params["tag"]) do %>
+    <%= if is_nil(@conn.query_params["tag"]) && is_nil(@conn.query_params["filter"]) do %>
       All
     <% else %>
-      Filter for '<%= @conn.query_params["tag"] %>'
+      <%= if !is_nil(@conn.query_params["tag"]) do %>
+        Filter for '<%= @conn.query_params["tag"] %>'
+      <% else %>
+        Filter for overdue Videos
+      <% end %>
     <% end %>
     <%= if @current_user do %>
       <%= link "Add Video", to: video_path(@conn, :new), class: "button float-right", id: "new-video-button" %>

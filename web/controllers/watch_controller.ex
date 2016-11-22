@@ -54,7 +54,15 @@ defmodule Flashklip.WatchController do
           _ ->
             ""
         end
-      render conn, "show.html", user_id: user_id, video: video.metavideo, user_video: video, user_video_id: video.id, klips: klips, show: show, at: at, video_user_id: video.user_id, active_navi: active_navi, active_live: active_live
+      scheduled_at =
+        case is_nil(video.scheduled_at) do
+          true ->
+            nil
+          _ ->
+            DateTime.to_string(video.scheduled_at)
+            |> String.slice(0..9)
+        end
+      render conn, "show.html", user_id: user_id, video: video.metavideo, user_video: video, user_video_id: video.id, klips: klips, show: show, at: at, video_user_id: video.user_id, active_navi: active_navi, active_live: active_live, scheduled_at: scheduled_at
     else
       metavideo =
         Repo.get!(Metavideo, id)
@@ -89,7 +97,7 @@ defmodule Flashklip.WatchController do
           _ ->
             ""
         end
-      render conn, "show.html", user_id: user_id, video: metavideo, user_video: nil, user_video_id: 0, klips: klips, show: show, at: at, video_user_id: 0, active_navi: active_navi, active_live: active_live
+      render conn, "show.html", user_id: user_id, video: metavideo, user_video: nil, user_video_id: 0, klips: klips, show: show, at: at, video_user_id: 0, active_navi: active_navi, active_live: active_live, scheduled_at: nil
     end
   end
 end

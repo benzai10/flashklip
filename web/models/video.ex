@@ -1,5 +1,7 @@
 defmodule Flashklip.Video do
   use Flashklip.Web, :model
+  use Timex
+  require IEx
 
   @primary_key {:id, Flashklip.Permalink, autogenerate: true}
 
@@ -8,6 +10,7 @@ defmodule Flashklip.Video do
     field :tags, {:array, :string}, virtual: true
     field :title, :string
     field :slug, :string
+    field :scheduled_at, Timex.Ecto.DateTime
     belongs_to :user, User
     belongs_to :metavideo, Flashklip.Metavideo
     belongs_to :category, Flashklip.Category
@@ -17,7 +20,7 @@ defmodule Flashklip.Video do
   end
 
   @required_fields ~w()
-  @optional_fields ~w(title tags user_id metavideo_id category_id)
+  @optional_fields ~w(title tags user_id metavideo_id category_id scheduled_at)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -28,6 +31,29 @@ defmodule Flashklip.Video do
     |> cast(params, @required_fields, @optional_fields)
     |> cast_assoc(:metavideo)
     |> slugify_title()
+  end
+
+  def schedule_changeset(struct, params \\ %{}) do
+    struct
+    |> change
+    |> set_scheduled_date(params["scheduled_at"])
+  end
+
+  defp set_scheduled_date(changeset, scheduled_at) do
+    case scheduled_at do
+      "none" -> put_change(changeset, :scheduled_at, nil)
+      "tomorrow" ->
+        put_change(changeset, :scheduled_at, Timex.shift(Timex.now, days: 1))
+      "3d" ->
+        put_change(changeset, :scheduled_at, Timex.shift(Timex.now, days: 3))
+      "1w" ->
+        put_change(changeset, :scheduled_at, Timex.shift(Timex.now, weeks: 1))
+      "1m" ->
+        put_change(changeset, :scheduled_at, Timex.shift(Timex.now, months: 1))
+      "6m" ->
+        put_change(changeset, :scheduled_at, Timex.shift(Timex.now, months: 6))
+      _ -> put_change(changeset, :scheduled_at, nil)
+    end
   end
 
   defp slugify_title(changeset) do

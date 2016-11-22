@@ -11686,9 +11686,11 @@ var Video = {
     var saveButtonInTView = document.getElementById("klip-save-in-timeview");
     var deleteButton = document.getElementById("klip-delete");
     var hideButton = document.getElementById("klip-hide");
+    var scheduleButton = document.getElementById("submit-schedule-video");
     var editButton = document.getElementById("klip-edit");
     var cancelEditButton = document.getElementById("klip-cancel-edit");
     var editKlipTab = document.getElementById("edit-klip-tab");
+    var scheduledDate = document.getElementById("scheduled-date");
 
     var klipInput = document.getElementById("klip-input");
     var updateButton = document.getElementById("klip-update");
@@ -12045,6 +12047,27 @@ var Video = {
       vidChannel.push("update_klip", payload).receive("error", function (e) {
         return console.log(e);
       });
+    });
+
+    scheduleButton.addEventListener("click", function (e) {
+      var scheduledIn = $("#scheduled-value").val();
+      var payload = {
+        id: _this2.userVideoId,
+        scheduled_at: scheduledIn
+      };
+      vidChannel.push("schedule_video", payload).receive("error", function (e) {
+        return console.log(e);
+      });
+    });
+
+    vidChannel.on("schedule_video", function (resp) {
+      if (resp.id == _this2.userVideoId) {
+        if (resp.scheduled_at) {
+          scheduledDate.innerHTML = "Re-watching video is scheduled for: " + resp.scheduled_at.substring(0, 10);
+        } else {
+          scheduledDate.innerHTML = "Re-watching video is not scheduled.";
+        }
+      }
     });
 
     editButton.addEventListener("click", function (e) {

@@ -1,5 +1,6 @@
 defmodule Flashklip.VideoController do
   use Flashklip.Web, :controller
+  use Timex
 
   alias Flashklip.Video
   alias Flashklip.Metavideo
@@ -18,9 +19,16 @@ defmodule Flashklip.VideoController do
     query =
       case is_nil(params["tag"]) do
         true ->
-          from v in Video,
-            where: v.user_id == ^user.id,
-            order_by: [desc: :updated_at]
+          case is_nil(params["filter"]) do
+            true ->
+              from v in Video,
+                where: v.user_id == ^user.id,
+                order_by: [desc: :updated_at]
+            _ ->
+              from v in Video,
+                where: v.user_id == ^user.id and v.scheduled_at < ^Timex.now,
+                order_by: [desc: :scheduled_at]
+          end
         _ ->
           from v in Video,
             join: m in Metavideo,
