@@ -469,8 +469,6 @@ let Video = {
       if (resp.user.id == this.currentUserId) {
         clearTimeout(this.liveKlipTimer)
 
-        console.log("timeview value: " + resp.in_timeview)
-
         if (resp.in_timeview == true) {
           this.liveKlip = resp
           this.renderLiveKlip(liveKlipContainer, resp)
@@ -516,6 +514,7 @@ let Video = {
           }
         }
         this.addNaviEventListeners(vidChannel)
+        this.pendingEdit = false
         this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
         if (resp.in_timeview == true) {
           Player.seekTo(resp.at)

@@ -12120,8 +12120,6 @@ var Video = {
       if (resp.user.id == _this2.currentUserId) {
         clearTimeout(_this2.liveKlipTimer);
 
-        console.log("timeview value: " + resp.in_timeview);
-
         if (resp.in_timeview == true) {
           _this2.liveKlip = resp;
           _this2.renderLiveKlip(liveKlipContainer, resp);
@@ -12191,6 +12189,7 @@ var Video = {
           }
         }
         _this2.addNaviEventListeners(vidChannel);
+        _this2.pendingEdit = false;
         _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
         if (resp.in_timeview == true) {
           _player2.default.seekTo(resp.at);
