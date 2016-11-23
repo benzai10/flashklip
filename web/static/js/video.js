@@ -932,7 +932,7 @@ let Video = {
     if (at < 3600000) {
       return date.toISOString().substr(14, 5)
     } else {
-      return date.toISOString().substr(11, 8)
+      return date.toISOString().substr(12, 7)
     }
   }
 
