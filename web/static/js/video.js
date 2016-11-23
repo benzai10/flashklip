@@ -14,6 +14,7 @@ let Video = {
   pendingEdit: false,
 
   currentLiveKlip: {},
+  currentEditKlip: {},
   jumpedKlip: false,
   liveKlip: null,
   nextKlip: {},
@@ -294,8 +295,6 @@ let Video = {
           $('#overview-tab').trigger("click")
         }
 
-        console.log(this.currentTimeviewKlips)
-
         this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
       } else {
         // use this section for later, e.g. to update klip likes or so.
@@ -423,6 +422,7 @@ let Video = {
     editButton.addEventListener("click", e => {
       clearTimeout(this.liveKlipTimer)
       this.pendingEdit = true
+      this.currentEditKlip = $.extend(true, {}, this.currentLiveKlip)
       document.getElementById("live-klip-container").className += " hide"
       document.getElementById("klip-edit").className += " hide"
       document.getElementById("klip-hide").className += " hide"
@@ -461,6 +461,7 @@ let Video = {
 
       // restart liveKlipTimer
       this.pendingEdit = false
+      this.currentEditKlip = {}
       this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
     })
 
@@ -525,29 +526,29 @@ let Video = {
 
     editTsBack.addEventListener("click", e => {
       e.preventDefault()
-      this.currentLiveKlip.at -= 1000
-      if (this.currentLiveKlip.at < 1000) {
+      this.currentEditKlip.at -= 1000
+      if (this.currentEditKlip.at < 1000) {
         editTsBack.className += " disabled"
       }
       this.startTimer = true
-      Player.seekTo(this.currentLiveKlip.at)
-      editTsDisplay.innerHTML = `[${this.formatTime(this.currentLiveKlip.at)}]`
+      Player.seekTo(this.currentEditKlip.at)
+      editTsDisplay.innerHTML = `[${this.formatTime(this.currentEditKlip.at)}]`
     })
 
     editTsForward.addEventListener("click", e => {
       e.preventDefault()
-      this.currentLiveKlip.at -= -1000
-      if (this.currentLiveKlip.at > 999) {
+      this.currentEditKlip.at -= -1000
+      if (this.currentEditKlip.at > 999) {
         editTsBack.classList.remove("disabled")
       }
       this.startTimer = true
-      Player.seekTo(this.currentLiveKlip.at)
-      editTsDisplay.innerHTML = `[${this.formatTime(this.currentLiveKlip.at)}]`
+      Player.seekTo(this.currentEditKlip.at)
+      editTsDisplay.innerHTML = `[${this.formatTime(this.currentEditKlip.at)}]`
     })
 
     editTsDisplay.addEventListener("click", e => {
       e.preventDefault()
-      Player.seekTo(this.currentLiveKlip.at)
+      Player.seekTo(this.currentEditKlip.at)
     })
 
     newTsBack.addEventListener("click", e => {
@@ -601,6 +602,7 @@ let Video = {
       if (!seconds) { return }
       this.startTimer = true
       Player.seekTo(seconds)
+      // prevent flickering
       document.getElementById("klip-content-display").className += " white-font"
       document.getElementById("klip-ts-display").className += " white-font"
     })
@@ -714,7 +716,7 @@ let Video = {
 
     let timestampDisplay = document.getElementById("klip-edit-ts-display")
     timestampDisplay.innerHTML = `
-    [${this.formatTime(at)}]
+      [${this.formatTime(at)}]
     `
   },
 

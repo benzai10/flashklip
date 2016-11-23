@@ -11635,6 +11635,7 @@ var Video = {
   pendingEdit: false,
 
   currentLiveKlip: {},
+  currentEditKlip: {},
   jumpedKlip: false,
   liveKlip: null,
   nextKlip: {},
@@ -11931,8 +11932,6 @@ var Video = {
           $('#overview-tab').trigger("click");
         }
 
-        console.log(_this2.currentTimeviewKlips);
-
         _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
       } else {
         // use this section for later, e.g. to update klip likes or so.
@@ -12073,6 +12072,7 @@ var Video = {
     editButton.addEventListener("click", function (e) {
       clearTimeout(_this2.liveKlipTimer);
       _this2.pendingEdit = true;
+      _this2.currentEditKlip = $.extend(true, {}, _this2.currentLiveKlip);
       document.getElementById("live-klip-container").className += " hide";
       document.getElementById("klip-edit").className += " hide";
       document.getElementById("klip-hide").className += " hide";
@@ -12112,6 +12112,7 @@ var Video = {
 
       // restart liveKlipTimer
       _this2.pendingEdit = false;
+      _this2.currentEditKlip = {};
       _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
     });
 
@@ -12199,29 +12200,29 @@ var Video = {
 
     editTsBack.addEventListener("click", function (e) {
       e.preventDefault();
-      _this2.currentLiveKlip.at -= 1000;
-      if (_this2.currentLiveKlip.at < 1000) {
+      _this2.currentEditKlip.at -= 1000;
+      if (_this2.currentEditKlip.at < 1000) {
         editTsBack.className += " disabled";
       }
       _this2.startTimer = true;
-      _player2.default.seekTo(_this2.currentLiveKlip.at);
-      editTsDisplay.innerHTML = "[" + _this2.formatTime(_this2.currentLiveKlip.at) + "]";
+      _player2.default.seekTo(_this2.currentEditKlip.at);
+      editTsDisplay.innerHTML = "[" + _this2.formatTime(_this2.currentEditKlip.at) + "]";
     });
 
     editTsForward.addEventListener("click", function (e) {
       e.preventDefault();
-      _this2.currentLiveKlip.at -= -1000;
-      if (_this2.currentLiveKlip.at > 999) {
+      _this2.currentEditKlip.at -= -1000;
+      if (_this2.currentEditKlip.at > 999) {
         editTsBack.classList.remove("disabled");
       }
       _this2.startTimer = true;
-      _player2.default.seekTo(_this2.currentLiveKlip.at);
-      editTsDisplay.innerHTML = "[" + _this2.formatTime(_this2.currentLiveKlip.at) + "]";
+      _player2.default.seekTo(_this2.currentEditKlip.at);
+      editTsDisplay.innerHTML = "[" + _this2.formatTime(_this2.currentEditKlip.at) + "]";
     });
 
     editTsDisplay.addEventListener("click", function (e) {
       e.preventDefault();
-      _player2.default.seekTo(_this2.currentLiveKlip.at);
+      _player2.default.seekTo(_this2.currentEditKlip.at);
     });
 
     newTsBack.addEventListener("click", function (e) {
@@ -12275,6 +12276,7 @@ var Video = {
       }
       _this2.startTimer = true;
       _player2.default.seekTo(seconds);
+      // prevent flickering
       document.getElementById("klip-content-display").className += " white-font";
       document.getElementById("klip-ts-display").className += " white-font";
     });
@@ -12378,7 +12380,7 @@ var Video = {
     }
 
     var timestampDisplay = document.getElementById("klip-edit-ts-display");
-    timestampDisplay.innerHTML = "\n    [" + this.formatTime(at) + "]\n    ";
+    timestampDisplay.innerHTML = "\n      [" + this.formatTime(at) + "]\n    ";
   },
   renderNaviKlip: function renderNaviKlip(allKlipsContainer, _ref2, currentScrollPos) {
     var id = _ref2.id;
