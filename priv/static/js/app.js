@@ -11755,7 +11755,8 @@ var Video = {
           _this2.jumpedKlip = true;
           _player2.default.seekTo(_this2.at);
         }
-        _this2.currentTimeviewKlips = $.extend(true, {}, _this2.allTimeKlips);
+        /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
+        _this2.currentTimeviewKlips = _this2.allTimeKlips;
         _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
       } else {
         _this2.vidKlips.push.apply(_this2.allKlips, resp.klips);
@@ -11802,7 +11803,8 @@ var Video = {
         overviewTitle.innerHTML = "MY KLIPS";
         switchOverview.innerHTML = "Load all Klips";
         $('#overview-tab').trigger("click");
-        _this2.currentTimeviewKlips = $.extend(true, {}, _this2.myTimeKlips);
+        /* this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)*/
+        _this2.currentTimeviewKlips = _this2.myTimeKlips;
       } else {
         _this2.allTimeKlips = _this2.allKlips.filter(function (klip) {
           if (klip.in_timeview == true || klip.copy_from == 0 && klip.user.id != _this2.currentUserId) {
@@ -11818,7 +11820,8 @@ var Video = {
         }
         _this2.addNaviEventListeners(vidChannel);
         $('#overview-tab').trigger("click");
-        _this2.currentTimeviewKlips = $.extend(true, {}, _this2.allTimeKlips);
+        /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
+        _this2.currentTimeviewKlips = _this2.allTimeKlips;
       }
       _this2.scheduleKlips(liveKlipContainer, _this2.currentTimeviewKlips);
     });
@@ -11917,12 +11920,14 @@ var Video = {
           for (i = 0; i < _this2.allKlips.length; i++) {
             _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i], resp.current_scroll_pos);
           }
-          _this2.currentTimeviewKlips = $.extend(true, {}, _this2.allTimeKlips);
+          /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
+          _this2.currentTimeviewKlips = _this2.allTimeKlips;
         } else {
           for (i = 0; i < _this2.myKlips.length; i++) {
             _this2.renderNaviKlip(allKlipsContainer, _this2.myKlips[i], resp.current_scroll_pos);
           }
-          _this2.currentTimeviewKlips = $.extend(true, {}, _this2.myTimeKlips);
+          /* this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)*/
+          _this2.currentTimeviewKlips = _this2.myTimeKlips;
         }
         _this2.addNaviEventListeners(vidChannel);
 
@@ -11997,9 +12002,11 @@ var Video = {
         }
 
         if (overviewTitle.innerHTML == "ALL KLIPS") {
-          _this2.currentTimeviewKlips = $.extend(true, {}, _this2.allTimeKlips);
+          /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
+          _this2.currentTimeviewKlips = _this2.allTimeKlips;
         } else {
-          _this2.currentTimeviewKlips = $.extend(true, {}, _this2.myTimeKlips);
+          /* this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)*/
+          _this2.currentTimeviewKlips = _this2.myTimeKlips;
         }
 
         if (originalKlip) {
@@ -12178,13 +12185,15 @@ var Video = {
         allKlipsContainer.innerHTML = "";
 
         if (overviewTitle.innerHTML == "ALL KLIPS") {
-          _this2.currentTimeviewKlips = $.extend(true, {}, _this2.allTimeKlips);
+          /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
+          _this2.currentTimeviewKlips = _this2.allTimeKlips;
           var i = 0;
           for (i = 0; i < _this2.allKlips.length; i++) {
             _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i], resp.current_scroll_pos);
           }
         } else {
-          _this2.currentTimeviewKlips = $.extend(true, {}, _this2.myTimeKlips);
+          /* this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)*/
+          _this2.currentTimeviewKlips = _this2.myTimeKlips;
           var _i2 = 0;
           for (_i2 = 0; _i2 < _this2.myKlips.length; _i2++) {
             _this2.renderNaviKlip(allKlipsContainer, _this2.myKlips[_i2], resp.current_scroll_pos);
