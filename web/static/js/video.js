@@ -124,8 +124,7 @@ let Video = {
             this.jumpedKlip = true
             Player.seekTo(this.at)
           }
-          /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
-          this.currentTimeviewKlips = this.allTimeKlips
+          this.currentTimeviewKlips = $.extend(true, [], this.allTimeKlips)
           this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
         } else {
           this.vidKlips.push.apply(this.allKlips, resp.klips)
@@ -172,8 +171,7 @@ let Video = {
         overviewTitle.innerHTML = "MY KLIPS"
         switchOverview.innerHTML = "Load all Klips"
         $('#overview-tab').trigger("click")
-        /* this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)*/
-        this.currentTimeviewKlips = this.myTimeKlips
+        this.currentTimeviewKlips = $.extend(true, [], this.myTimeKlips)
       } else {
         this.allTimeKlips = this.allKlips.filter ( klip => {
           if (klip.in_timeview == true || (klip.copy_from == 0 && klip.user.id != this.currentUserId)) {
@@ -189,8 +187,7 @@ let Video = {
         }
         this.addNaviEventListeners(vidChannel)
         $('#overview-tab').trigger("click")
-        /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
-        this.currentTimeviewKlips = this.allTimeKlips
+        this.currentTimeviewKlips = $.extend(true, [], this.allTimeKlips)
       }
       this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
     })
@@ -283,14 +280,12 @@ let Video = {
           for (i = 0; i < this.allKlips.length; i++) {
             this.renderNaviKlip(allKlipsContainer, this.allKlips[i], resp.current_scroll_pos)
           }
-          /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
-          this.currentTimeviewKlips = this.allTimeKlips
+          this.currentTimeviewKlips = $.extend(true, [], this.allTimeKlips)
         } else {
           for (i = 0; i < this.myKlips.length; i++) {
             this.renderNaviKlip(allKlipsContainer, this.myKlips[i], resp.current_scroll_pos)
           }
-          /* this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)*/
-          this.currentTimeviewKlips = this.myTimeKlips
+          this.currentTimeviewKlips = $.extend(true, [], this.myTimeKlips)
         }
         this.addNaviEventListeners(vidChannel)
 
@@ -353,11 +348,9 @@ let Video = {
         }
 
         if (overviewTitle.innerHTML == "ALL KLIPS") {
-          /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
-          this.currentTimeviewKlips = this.allTimeKlips
+          this.currentTimeviewKlips = $.extend(true, [], this.allTimeKlips)
         } else {
-          /* this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)*/
-          this.currentTimeviewKlips = this.myTimeKlips
+          this.currentTimeviewKlips = $.extend(true, [], this.myTimeKlips)
         }
 
         if (originalKlip)  {
@@ -510,15 +503,13 @@ let Video = {
         allKlipsContainer.innerHTML = ""
 
         if (overviewTitle.innerHTML == "ALL KLIPS") {
-          /* this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)*/
-          this.currentTimeviewKlips = this.allTimeKlips
+          this.currentTimeviewKlips = $.extend(true, [], this.allTimeKlips)
           let i = 0
           for (i = 0; i < this.allKlips.length; i++) {
             this.renderNaviKlip(allKlipsContainer, this.allKlips[i], resp.current_scroll_pos)
           }
         } else {
-          /* this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)*/
-          this.currentTimeviewKlips = this.myTimeKlips
+          this.currentTimeviewKlips = $.extend(true, [], this.myTimeKlips)
           let i = 0
           for (i = 0; i < this.myKlips.length; i++) {
             this.renderNaviKlip(allKlipsContainer, this.myKlips[i], resp.current_scroll_pos)
