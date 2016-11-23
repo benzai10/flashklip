@@ -348,9 +348,9 @@ let Video = {
         }
 
         if (overviewTitle.innerHTML == "ALL KLIPS") {
-          this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips
+          this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)
         } else {
-          this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips
+          this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)
         }
 
         if (originalKlip)  {
