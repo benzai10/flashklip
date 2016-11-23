@@ -124,7 +124,7 @@ let Video = {
             this.jumpedKlip = true
             Player.seekTo(this.at)
           }
-          this.currentTimeviewKlips = this.allTimeKlips
+          this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)
           this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
         } else {
           this.vidKlips.push.apply(this.allKlips, resp.klips)
@@ -171,7 +171,7 @@ let Video = {
         overviewTitle.innerHTML = "MY KLIPS"
         switchOverview.innerHTML = "Load all Klips"
         $('#overview-tab').trigger("click")
-        this.currentTimeviewKlips = this.myTimeKlips
+        this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)
       } else {
         this.allTimeKlips = this.allKlips.filter ( klip => {
           if (klip.in_timeview == true || (klip.copy_from == 0 && klip.user.id != this.currentUserId)) {
@@ -187,7 +187,7 @@ let Video = {
         }
         this.addNaviEventListeners(vidChannel)
         $('#overview-tab').trigger("click")
-        this.currentTimeviewKlips = this.allTimeKlips
+        this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)
       }
       this.scheduleKlips(liveKlipContainer, this.currentTimeviewKlips)
     })
@@ -280,12 +280,12 @@ let Video = {
           for (i = 0; i < this.allKlips.length; i++) {
             this.renderNaviKlip(allKlipsContainer, this.allKlips[i], resp.current_scroll_pos)
           }
-          this.currentTimeviewKlips = this.allTimeKlips
+          this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)
         } else {
           for (i = 0; i < this.myKlips.length; i++) {
             this.renderNaviKlip(allKlipsContainer, this.myKlips[i], resp.current_scroll_pos)
           }
-          this.currentTimeviewKlips = this.myTimeKlips
+          this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)
         }
         this.addNaviEventListeners(vidChannel)
 
@@ -348,9 +348,9 @@ let Video = {
         }
 
         if (overviewTitle.innerHTML == "ALL KLIPS") {
-          this.currentTimeviewKlips = this.allTimeKlips
+          this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips
         } else {
-          this.currentTimeviewKlips = this.myTimeKlips
+          this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips
         }
 
         if (originalKlip)  {
@@ -503,13 +503,13 @@ let Video = {
         allKlipsContainer.innerHTML = ""
 
         if (overviewTitle.innerHTML == "ALL KLIPS") {
-          this.currentTimeviewKlips = this.allTimeKlips
+          this.currentTimeviewKlips = $.extend(true, {}, this.allTimeKlips)
           let i = 0
           for (i = 0; i < this.allKlips.length; i++) {
             this.renderNaviKlip(allKlipsContainer, this.allKlips[i], resp.current_scroll_pos)
           }
         } else {
-          this.currentTimeviewKlips = this.myTimeKlips
+          this.currentTimeviewKlips = $.extend(true, {}, this.myTimeKlips)
           let i = 0
           for (i = 0; i < this.myKlips.length; i++) {
             this.renderNaviKlip(allKlipsContainer, this.myKlips[i], resp.current_scroll_pos)
@@ -580,13 +580,13 @@ let Video = {
     })
 
     nextKlip.addEventListener("click", e => {
-      this.liveKlip = this.nextKlip
+      this.liveKlip = $.extend(true, {}, this.nextKlip)
       this.startTimer = true
       Player.seekTo(this.nextKlip.at)
     })
 
     prevKlip.addEventListener("click", e => {
-      this.liveKlip = this.prevKlip
+      this.liveKlip = $.extend(true, {}, this.prevKlip)
       /* liveKlipContainer.innerHTML = ``*/
       this.startTimer = true
       document.getElementById("klip-content-display").className += " white-font"
@@ -782,6 +782,10 @@ let Video = {
   },
 
   scheduleKlips(liveKlipContainer, klips) {
+    if (this.pendingEdit == true) {
+      return
+    }
+
     this.liveKlipTimer = setTimeout(() => {
 
       let ctime = Player.getCurrentTime()
@@ -818,7 +822,7 @@ let Video = {
       }
 
       if (nowKlip) {
-        this.currentLiveKlip = nowKlip
+        this.currentLiveKlip = $.extend(true, {}, nowKlip)
         this.renderLiveKlip(liveKlipContainer, nowKlip)
       } else {
         document.getElementById("live-klip-container").innerHTML = ""
