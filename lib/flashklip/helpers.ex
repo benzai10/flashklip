@@ -18,7 +18,7 @@ defmodule Flashklip.Helpers do
     checklist =
       videos
       |> Enum.map(fn(x) -> Map.take(x, [:user_id, :id, :metavideo_id]) end)
-    video_id =
-      Enum.find(checklist, fn(x) -> x[:metavideo_id] == klip.video.metavideo_id && x[:user_id] == user_id end)[:id]
+
+    Enum.find(checklist, fn(x) -> x[:metavideo_id] == klip.video.metavideo_id && x[:user_id] == user_id end)[:id]
   end
 end
