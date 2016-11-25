@@ -1,11 +1,10 @@
 <div class="row">
-  <h4 class="index-title">
-    Watch YouTube Videos with Personal Klips
-  </h4>
-</div>
-
-<div class="row">
-  <%= render "orbit.html" %>
+  <h1 class="index-title">
+    Persistence Is The Key To Success
+  </h1>
+  <h2 class="index-subheader">
+    Make Re-Watching Videos More Effective
+  </h2>
 </div>
 
 <div class="row cta-button">
@@ -13,6 +12,41 @@
     <%= if !@current_user do %>
       <%= link "Sign in", to: session_path(@conn, :new), class: "large success button" %>
     <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <h5 id="value-proposition">
+    For determined people who want to improve their persistence, Flashklip makes re-watching videos more effective because it’s concise and scheduled.
+  </h5>
+</div>
+
+<div class="row" id="feature-list">
+  <div class="small-12 medium-6 column">
+    <div class="media-object">
+      <div class="media-object-section">
+        <p class="feature-icon"><i class="fi-calendar"></i></p>
+      </div>
+      <div class="media-object-section">
+        <h6 class="feature-title">Save Video Links With Reminders</h6>
+        <p>
+          Add a video to your Flashklip collection by saving a Youtube link. Set a reminder to schedule the next re-watch.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="small-12 medium-6 column">
+    <div class="media-object">
+      <div class="media-object-section">
+        <p class="feature-icon"><i class="fi-clock"></i></p>
+      </div>
+      <div class="media-object-section">
+        <h6 class="feature-title">Add Timestamped Notes</h6>
+        <p>
+          Add notes with a timestamp to your videos. Get more effective re-watching your concise versions of the videos.
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 

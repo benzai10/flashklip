@@ -4590,8 +4590,33 @@ hr {
   font-family: 'Oswald', sans-serif; }
 
 .index-title {
-  margin-top: 10px;
-  margin-bottom: 10px; }
+  margin-top: 80px;
+  margin-bottom: 10px;
+  color: #2ECC40;
+  font-size: 45px;
+  font-weight: 300;
+  text-align: center; }
+
+.index-subheader {
+  text-align: center;
+  color: #39CCCC;
+  font-size: 32px;
+  font-weight: 300; }
+
+#value-proposition {
+  margin-top: 30px;
+  margin-bottom: 60px;
+  font-family: 'Lato', sans-serif;
+  text-align: center; }
+
+#feature-list {
+  margin-bottom: 60px; }
+
+.feature-icon {
+  font-size: 50px; }
+
+.feature-title {
+  margin-top: 28px; }
 
 .reset-filter-button {
   margin-left: 8px; }
