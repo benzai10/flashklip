@@ -1,9 +1,9 @@
 <div class="row">
   <h1 class="index-title">
-    Skip To Your Favorite Parts In Videos
+    Skip To Your Favorite Parts In Videos*
   </h1>
   <h2 class="index-subheader">
-    Flashklip makes re-watching videos quicker and more effective. Use it for learning, be persistent and keep track of what's important to you.
+    Flashklip improves re-watching videos. Use it for learning, being persistent and keeping track of what's important to you.
   </h2>
 </div>
 
@@ -19,12 +19,12 @@
   <div class="small-12 medium-6 column">
     <div class="media-object">
       <div class="media-object-section">
-        <p class="feature-icon"><i class="fi-next"></i></p>
+        <p class="feature-icon purple"><i class="fi-next"></i></p>
       </div>
       <div class="media-object-section">
-        <h6 class="feature-title">Mark Your Favorite Parts</h6>
+        <h6 class="feature-title purple">Mark Your Favorite Parts</h6>
         <p>
-          Add a note or keywords to quickly access the exact position in the video.
+          This allows you to skip directly to the exact position in the video. No more scrubbing and searching.
         </p>
       </div>
     </div>
@@ -32,15 +32,47 @@
   <div class="small-12 medium-6 column">
     <div class="media-object">
       <div class="media-object-section">
-        <p class="feature-icon"><i class="fi-clock"></i></p>
+        <p class="feature-icon orange"><i class="fi-clock"></i></p>
       </div>
       <div class="media-object-section">
-        <h6 class="feature-title">Add Reminders</h6>
+        <h6 class="feature-title orange">Add Reminders</h6>
         <p>
           Schedule videos for re-watching. Be more persistent and keep coming back to improve learning effects.
         </p>
       </div>
     </div>
+  </div>
+  <div class="small-12 medium-6 column">
+    <div class="media-object">
+      <div class="media-object-section">
+        <p class="feature-icon lime"><i class="fi-price-tag"></i></p>
+      </div>
+      <div class="media-object-section">
+        <h6 class="feature-title lime">Organize with Tags</h6>
+        <p>
+          Tag your videos to keep them organized by topic, goal, project or any other categorisation you like.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="small-12 medium-6 column">
+    <div class="media-object">
+      <div class="media-object-section">
+        <p class="feature-icon maroon"><i class="fi-magnifying-glass"></i></p>
+      </div>
+      <div class="media-object-section">
+        <h6 class="feature-title maroon">Searchable Notes ("Klips")</h6>
+        <p>
+          Add notes to your timestamps and create a searchable collection of your video annotations.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="small-6 small-offset-3">
+    <p class="asterisk-text">*) currently only for Youtube videos</p>
   </div>
 </div>
 

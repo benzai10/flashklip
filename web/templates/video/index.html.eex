@@ -11,10 +11,10 @@
   <h6>Most Used Tags</h6>
   <hr>
   <span>
-    <%= link "overdue videos", to: video_path(@conn, :index, filter: "overdue"), class: "hollow alert small button pop-tag-button" %>
+    <%= link "overdue", to: video_path(@conn, :index, filter: "overdue"), class: "hollow alert small button pop-tag-button" %>
   </span>
   <span>
-    <%= link "scheduled videos", to: video_path(@conn, :index, filter: "scheduled"), class: "hollow success small button pop-tag-button" %>
+    <%= link "scheduled", to: video_path(@conn, :index, filter: "scheduled"), class: "hollow success small button pop-tag-button" %>
   </span>
   <%= for tag <- @popular_tags do %>
     <span>

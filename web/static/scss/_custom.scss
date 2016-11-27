@@ -9,6 +9,22 @@ h1, h2, h3, h4, h5, h6, p {
   color: dimgray;
 }
 
+.purple {
+  color: #B10DC9;
+}
+
+.orange {
+  color: #FF851B;
+}
+
+.lime {
+  color: #01FF70;
+}
+
+.maroon {
+  color: #85144b;
+}
+
 .second-title {
   margin-top: 20px;
 }
@@ -187,6 +203,12 @@ hr {
 
 .feature-title {
   margin-top: 28px;
+}
+
+.asterisk-text {
+  margin-bottom: 40px;
+  font-size: 14px;
+  text-align: center;
 }
 
 .reset-filter-button {
