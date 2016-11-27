@@ -1,9 +1,9 @@
 <div class="row">
   <h1 class="index-title">
-    Persistence Is The Key To Success
+    Skip To Your Favorite Parts In Videos
   </h1>
   <h2 class="index-subheader">
-    Make Re-Watching Videos More Effective
+    Flashklip makes re-watching videos quicker and more effective. Use it for learning, be persistent and keep track of what's important to you.
   </h2>
 </div>
 
@@ -15,22 +15,16 @@
   </div>
 </div>
 
-<div class="row">
-  <h5 id="value-proposition">
-    For determined people who want to improve their persistence, Flashklip makes re-watching videos more effective because it’s concise and scheduled.
-  </h5>
-</div>
-
 <div class="row" id="feature-list">
   <div class="small-12 medium-6 column">
     <div class="media-object">
       <div class="media-object-section">
-        <p class="feature-icon"><i class="fi-calendar"></i></p>
+        <p class="feature-icon"><i class="fi-next"></i></p>
       </div>
       <div class="media-object-section">
-        <h6 class="feature-title">Save Video Links With Reminders</h6>
+        <h6 class="feature-title">Mark Your Favorite Parts</h6>
         <p>
-          Add a video to your Flashklip collection by saving a Youtube link. Set a reminder to schedule the next re-watch.
+          Add a note or keywords to quickly access the exact position in the video.
         </p>
       </div>
     </div>
@@ -41,9 +35,9 @@
         <p class="feature-icon"><i class="fi-clock"></i></p>
       </div>
       <div class="media-object-section">
-        <h6 class="feature-title">Add Timestamped Notes</h6>
+        <h6 class="feature-title">Add Reminders</h6>
         <p>
-          Add notes with a timestamp to your videos. Get more effective re-watching your concise versions of the videos.
+          Schedule videos for re-watching. Be more persistent and keep coming back to improve learning effects.
         </p>
       </div>
     </div>
