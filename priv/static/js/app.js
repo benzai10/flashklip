@@ -12332,10 +12332,10 @@ var Video = {
     return div.innerHTML;
   },
   renderLiveKlip: function renderLiveKlip(liveKlipContainer, _ref) {
-    var user = _ref.user;
-    var content = _ref.content;
-    var at = _ref.at;
-    var in_timeview = _ref.in_timeview;
+    var user = _ref.user,
+        content = _ref.content,
+        at = _ref.at,
+        in_timeview = _ref.in_timeview;
 
 
     var template = document.createElement("div");
@@ -12382,12 +12382,12 @@ var Video = {
     timestampDisplay.innerHTML = "\n      [" + this.formatTime(at) + "]\n    ";
   },
   renderNaviKlip: function renderNaviKlip(allKlipsContainer, _ref2, currentScrollPos) {
-    var id = _ref2.id;
-    var user = _ref2.user;
-    var content = _ref2.content;
-    var at = _ref2.at;
-    var copy_from = _ref2.copy_from;
-    var in_timeview = _ref2.in_timeview;
+    var id = _ref2.id,
+        user = _ref2.user,
+        content = _ref2.content,
+        at = _ref2.at,
+        copy_from = _ref2.copy_from,
+        in_timeview = _ref2.in_timeview;
 
     var template = document.createElement("div");
 
