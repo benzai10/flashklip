@@ -38,7 +38,7 @@ defmodule Flashklip.SessionController do
         if is_nil(user.username) do
           conn
           |> Auth.login(user)
-          |> redirect(to: video_path(conn, :index))
+          |> redirect(to: page_path(conn, :index))
         else
           conn
           |> Auth.login(user)

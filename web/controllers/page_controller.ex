@@ -34,11 +34,15 @@ defmodule Flashklip.PageController do
         _ -> klips_index
       end
 
-    if current_user do
+    if current_user && !is_nil(current_user.username) do
       changeset = Flashklip.User.username_changeset(current_user, params)
       conn |> redirect(to: video_path(conn, :index))
     else
-      changeset = nil
+      if current_user do
+        changeset = Flashklip.User.username_changeset(current_user, params)
+      else
+        changeset = nil
+      end
       render(conn, "index.html", metavideos: metavideos, videos: videos, klips: klips, changeset: changeset)
     end
 
