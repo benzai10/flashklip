@@ -15,7 +15,7 @@ defmodule Flashklip.User do
 
 	def changeset(model, params \\ :empty) do
 		model
-		# |> cast(params, ~w(email username), [])
+		# |> cast(params, ~w(email access_token), [])
     |> cast(params, [:email, :access_token])
     |> update_change(:email, &String.downcase/1)
     |> validate_required([:email])

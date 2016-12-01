@@ -10,9 +10,10 @@ defmodule Flashklip.SessionController do
   end
 
   def create(conn, %{"user" => user_params}) do
+    user_email = String.downcase(user_params["email"])
     user_struct =
-      case Repo.get_by(User, email: user_params["email"]) do
-        nil -> %User{email: user_params["email"], username: user_params["username"]}
+      case Repo.get_by(User, email: user_email) do
+        nil -> %User{email: user_email, username: user_params["username"]}
         user -> user
       end
       |> User.registration_changeset(user_params)
