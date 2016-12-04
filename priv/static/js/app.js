@@ -11810,7 +11810,7 @@ var Video = {
           }
         });
         overviewTitle.innerHTML = "ALL NOTES";
-        switchOverview.innerHTML = "Only my Klips";
+        switchOverview.innerHTML = "Only my notes";
         allKlipsContainer.innerHTML = "";
         var _i = 0;
         for (_i = 0; _i < _this2.allKlips.length; _i++) {

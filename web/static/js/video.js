@@ -179,7 +179,7 @@ let Video = {
           }
         })
         overviewTitle.innerHTML = "ALL NOTES"
-        switchOverview.innerHTML = "Only my Klips"
+        switchOverview.innerHTML = "Only my notes"
         allKlipsContainer.innerHTML = ""
         let i = 0
         for (i = 0; i < this.allKlips.length; i++) {
