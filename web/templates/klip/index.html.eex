@@ -3,7 +3,7 @@
     <%= link "MY VIDEOS", to: video_path(@conn, :index), class: "hollow button library-nav-button" %>
   </div>
   <div class="small-6 medium-3 columns library-nav-column end">
-    <%= link "MY KLIPS", to: klip_path(@conn, :index), class: "hollow button library-nav-button active" %>
+    <%= link "MY NOTES", to: klip_path(@conn, :index), class: "hollow button library-nav-button active" %>
   </div>
 </div>
 

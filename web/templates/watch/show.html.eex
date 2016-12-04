@@ -8,14 +8,14 @@
 <div class="row" id="tabs-container">
   <ul class="tabs" data-tabs id="klipTabs">
     <li class="tabs-title <%= @active_navi %>" id="overview-tab">
-      <a href="#navi" id="overview-title">ALL KLIPS</a>
+      <a href="#navi" id="overview-title">ALL NOTES</a>
     </li>
     <li class="tabs-title <%= @active_live %>" id="timeview-tab">
       <a href="#live" aria-selected="true">TIMEVIEW</a>
     </li>
     <%= if @current_user && @video_user_id == @current_user.id do %>
       <li class="tabs-title <%= @show %>" id="add-klip-tab">
-        <a href="#add-klip">ADD KLIP</a>
+        <a href="#add-klip">ADD NOTE</a>
       </li>
     <% end %>
     <%= if is_nil(@user_video) do %>
@@ -55,8 +55,8 @@
       <div id="live-klip-container">
         <%= if !@current_user do %>
           <p>Timeview is only available for logged in users.</p>
-          <p>Choose 'ALL KLIPS' to see klips. Click a klip to jump directly to the timestamp.</p>
-          <p>Please log in or register an account. You will then be able to add and save your own klips!</p>
+          <p>Choose 'ALL NOTES' to see notes. Click a note to jump directly to the timestamp.</p>
+          <p>Please log in or register an account. You will then be able to add and save your own notes!</p>
         <% else %>
           <%= if @user_id != @video_user_id do %>
             <p>The Timeview is only available for your own videos.</p>
@@ -86,8 +86,8 @@
       </div>
 
       <div id="my-edit-buttons" class="">
-        <button type="button" class="small hollow disabled button <%= @show %>" id="klip-prev">Prev Klip</button>
-        <button type="button" class="small hollow button <%= @show %>" id="klip-next">Next Klip</button>
+        <button type="button" class="small hollow disabled button <%= @show %>" id="klip-prev">Prev Note</button>
+        <button type="button" class="small hollow button <%= @show %>" id="klip-next">Next Note</button>
         <span class="float-right <%= @show %>">
           <button type="button" class="alert small hollow button hide" id="klip-delete">Delete</button>
           <button type="button" class="small hollow button hide" id="klip-hide">Hide</button>
@@ -122,7 +122,7 @@
     <div class="tabs-panel tabs-panel-watchview" id="save-video">
       <div class="callout">
         <p>
-          Save video to your own Flashklip collection for individual Klips management.
+          Save video to your own Flashklip collection for individual notes management.
         </p>
         <p>
         <%= link "Save Video",
@@ -165,7 +165,7 @@
         <div class="callout">
           <div class="row">
             <div class="small-8 columns small-text">
-              <p>Save Klips and determine which Klips show up in the Timeview in your individual Klips view.</p>
+              <p>Save notes and determine what notes show up in the Timeview in your individual view.</p>
             </div>
             <div class="small-4 columns">
               <button id="overview-switch" class="float-right hollow small button">Load my Klips</button>
@@ -197,7 +197,7 @@
             <div class="small-8 columns small-text">
               <%#= if !is_nil(@user_video) && @user_video.user_id == @user_id do %>
               <%= if !is_nil(@user_video) do %>
-                <p>Delete will remove the video from your playlist. Your klips will be deleted.</p>
+                <p>Delete will remove the video from your playlist. Your notes will be deleted.</p>
               <% end %>
             </div>
             <div class="small-2 columns">

@@ -3,7 +3,7 @@
     <%= link "MY VIDEOS", to: video_path(@conn, :index), class: "hollow button library-nav-button active" %>
   </div>
   <div class="small-6 medium-3 columns library-nav-column end">
-    <%= link "MY KLIPS", to: klip_path(@conn, :index), class: "hollow button library-nav-button" %>
+    <%= link "MY NOTES", to: klip_path(@conn, :index), class: "hollow button library-nav-button" %>
   </div>
 </div>
 
@@ -49,7 +49,7 @@
                 <p class="video-added">sched.: <%= DateTime.to_date(video.scheduled_at) %></p>
               <% end %>
               <p>
-                <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span> Klips &nbsp;&nbsp;
+                <span class="video-klips-count badge"><%= Flashklip.Metavideo.klips_count(video.metavideo) %></span> Notes &nbsp;&nbsp;
               </p>
             </div>
           </div>

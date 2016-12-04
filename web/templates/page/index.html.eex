@@ -61,7 +61,7 @@
         <p class="feature-icon maroon"><i class="fi-magnifying-glass"></i></p>
       </div>
       <div class="media-object-section">
-        <h6 class="feature-title maroon">Searchable Notes ("Klips")</h6>
+        <h6 class="feature-title maroon">Searchable Notes</h6>
         <p>
           Add notes to your timestamps and create a searchable collection of your video annotations.
         </p>
@@ -85,12 +85,12 @@
   klips: @klips,
   panel_title: "Discover Flashklip",
   video_tab_title: "LATEST VIDEOS",
-  klips_tab_title: "LATEST KLIPS" %>
+  klips_tab_title: "LATEST NOTES" %>
 </div>
 
 <div class="row cta-button">
   <div class="large-6 small-centered text-center columns">
-    <%= link "More Videos and Klips", to: page_path(@conn, :videos), class: "large button" %>
+    <%= link "More Videos and Notes", to: page_path(@conn, :videos), class: "large button" %>
   </div>
 </div>
 
