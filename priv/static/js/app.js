@@ -11787,7 +11787,7 @@ var Video = {
 
     switchOverview.addEventListener("click", function (e) {
       clearTimeout(_this2.liveKlipTimer);
-      if (overviewTitle.innerHTML == "ALL KLIPS") {
+      if (overviewTitle.innerHTML == "ALL NOTES") {
         _this2.myTimeKlips = _this2.myKlips.filter(function (klip) {
           if (klip.in_timeview == true) {
             return true;
@@ -11799,8 +11799,8 @@ var Video = {
           _this2.renderNaviKlip(allKlipsContainer, _this2.myKlips[i]);
         }
         _this2.addNaviEventListeners(vidChannel);
-        overviewTitle.innerHTML = "MY KLIPS";
-        switchOverview.innerHTML = "Load all Klips";
+        overviewTitle.innerHTML = "MY NOTES";
+        switchOverview.innerHTML = "All notes";
         $('#overview-tab').trigger("click");
         _this2.currentTimeviewKlips = $.extend(true, [], _this2.myTimeKlips);
       } else {
@@ -11809,8 +11809,8 @@ var Video = {
             return true;
           }
         });
-        overviewTitle.innerHTML = "ALL KLIPS";
-        switchOverview.innerHTML = "Load my Klips";
+        overviewTitle.innerHTML = "ALL NOTES";
+        switchOverview.innerHTML = "Only my Klips";
         allKlipsContainer.innerHTML = "";
         var _i = 0;
         for (_i = 0; _i < _this2.allKlips.length; _i++) {
@@ -11913,7 +11913,7 @@ var Video = {
         _this2.renderLiveKlip(liveKlipContainer, resp);
         allKlipsContainer.innerHTML = "";
         var i = 0;
-        if (overviewTitle.innerHTML == "ALL KLIPS") {
+        if (overviewTitle.innerHTML == "ALL NOTES") {
           for (i = 0; i < _this2.allKlips.length; i++) {
             _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i], resp.current_scroll_pos);
           }
@@ -11996,7 +11996,7 @@ var Video = {
           });
         }
 
-        if (overviewTitle.innerHTML == "ALL KLIPS") {
+        if (overviewTitle.innerHTML == "ALL NOTES") {
           _this2.currentTimeviewKlips = $.extend(true, [], _this2.allTimeKlips);
         } else {
           _this2.currentTimeviewKlips = $.extend(true, [], _this2.myTimeKlips);
@@ -12005,7 +12005,7 @@ var Video = {
         if (originalKlip) {
           allKlipsContainer.innerHTML = "";
           var i = 0;
-          if (overviewTitle.innerHTML == "ALL KLIPS") {
+          if (overviewTitle.innerHTML == "ALL NOTES") {
             for (i = 0; i < _this2.allKlips.length; i++) {
               _this2.renderNaviKlip(allKlipsContainer, _this2.allKlips[i], resp.current_scroll_pos);
             }
@@ -12017,7 +12017,7 @@ var Video = {
 
           _this2.addNaviEventListeners(vidChannel);
           liveKlipContainer.innerHTML = "";
-          if (overviewTitle.innerHTML == "ALL KLIPS") {
+          if (overviewTitle.innerHTML == "ALL NOTES") {
             _this2.renderLiveKlip(liveKlipContainer, originalKlip);
           }
         } else {
@@ -12175,7 +12175,7 @@ var Video = {
         });
         allKlipsContainer.innerHTML = "";
 
-        if (overviewTitle.innerHTML == "ALL KLIPS") {
+        if (overviewTitle.innerHTML == "ALL NOTES") {
           _this2.currentTimeviewKlips = $.extend(true, [], _this2.allTimeKlips);
           var i = 0;
           for (i = 0; i < _this2.allKlips.length; i++) {

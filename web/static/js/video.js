@@ -156,7 +156,7 @@ let Video = {
 
     switchOverview.addEventListener("click", e => {
       clearTimeout(this.liveKlipTimer)
-      if (overviewTitle.innerHTML == "ALL KLIPS") {
+      if (overviewTitle.innerHTML == "ALL NOTES") {
         this.myTimeKlips = this.myKlips.filter ( klip => {
           if (klip.in_timeview == true) {
             return true
@@ -168,8 +168,8 @@ let Video = {
           this.renderNaviKlip(allKlipsContainer, this.myKlips[i])
         }
         this.addNaviEventListeners(vidChannel)
-        overviewTitle.innerHTML = "MY KLIPS"
-        switchOverview.innerHTML = "Load all Klips"
+        overviewTitle.innerHTML = "MY NOTES"
+        switchOverview.innerHTML = "All notes"
         $('#overview-tab').trigger("click")
         this.currentTimeviewKlips = $.extend(true, [], this.myTimeKlips)
       } else {
@@ -178,8 +178,8 @@ let Video = {
             return true
           }
         })
-        overviewTitle.innerHTML = "ALL KLIPS"
-        switchOverview.innerHTML = "Load my Klips"
+        overviewTitle.innerHTML = "ALL NOTES"
+        switchOverview.innerHTML = "Only my Klips"
         allKlipsContainer.innerHTML = ""
         let i = 0
         for (i = 0; i < this.allKlips.length; i++) {
@@ -276,7 +276,7 @@ let Video = {
         this.renderLiveKlip(liveKlipContainer, resp)
         allKlipsContainer.innerHTML = ""
         let i = 0
-        if (overviewTitle.innerHTML == "ALL KLIPS") {
+        if (overviewTitle.innerHTML == "ALL NOTES") {
           for (i = 0; i < this.allKlips.length; i++) {
             this.renderNaviKlip(allKlipsContainer, this.allKlips[i], resp.current_scroll_pos)
           }
@@ -347,7 +347,7 @@ let Video = {
             return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
         }
 
-        if (overviewTitle.innerHTML == "ALL KLIPS") {
+        if (overviewTitle.innerHTML == "ALL NOTES") {
           this.currentTimeviewKlips = $.extend(true, [], this.allTimeKlips)
         } else {
           this.currentTimeviewKlips = $.extend(true, [], this.myTimeKlips)
@@ -356,7 +356,7 @@ let Video = {
         if (originalKlip)  {
           allKlipsContainer.innerHTML = ""
           let i = 0
-          if (overviewTitle.innerHTML == "ALL KLIPS") {
+          if (overviewTitle.innerHTML == "ALL NOTES") {
             for (i = 0; i < this.allKlips.length; i++) {
               this.renderNaviKlip(allKlipsContainer, this.allKlips[i], resp.current_scroll_pos)
             }
@@ -368,7 +368,7 @@ let Video = {
 
           this.addNaviEventListeners(vidChannel)
           liveKlipContainer.innerHTML = ""
-          if (overviewTitle.innerHTML == "ALL KLIPS") {
+          if (overviewTitle.innerHTML == "ALL NOTES") {
             this.renderLiveKlip(liveKlipContainer, originalKlip)
           }
         } else {
@@ -500,7 +500,7 @@ let Video = {
         this.myTimeKlips.sort( (a,b) => {return (a.at > b.at) ? 1 : ((b.at > a.at) ? -1 : 0);});
         allKlipsContainer.innerHTML = ""
 
-        if (overviewTitle.innerHTML == "ALL KLIPS") {
+        if (overviewTitle.innerHTML == "ALL NOTES") {
           this.currentTimeviewKlips = $.extend(true, [], this.allTimeKlips)
           let i = 0
           for (i = 0; i < this.allKlips.length; i++) {

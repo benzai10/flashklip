@@ -168,7 +168,7 @@
               <p>Save notes and determine what notes show up in the Timeview in your individual view.</p>
             </div>
             <div class="small-4 columns">
-              <button id="overview-switch" class="float-right hollow small button">Load my Klips</button>
+              <button id="overview-switch" class="float-right hollow small button">Only my notes</button>
             </div>
             <hr>
           </div>
