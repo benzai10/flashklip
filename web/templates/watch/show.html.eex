@@ -8,10 +8,10 @@
 <div class="row" id="tabs-container">
   <ul class="tabs" data-tabs id="klipTabs">
     <li class="tabs-title <%= @active_navi %>" id="overview-tab">
-      <a href="#navi" id="overview-title">ALL NOTES</a>
+      <a href="#navi" aria-selected="true" id="overview-title">ALL NOTES</a>
     </li>
     <li class="tabs-title <%= @active_live %>" id="timeview-tab">
-      <a href="#live" aria-selected="true">TIMEVIEW</a>
+      <a href="#live">TIMEVIEW</a>
     </li>
     <%= if @current_user && @video_user_id == @current_user.id do %>
       <li class="tabs-title <%= @show %>" id="add-klip-tab">
